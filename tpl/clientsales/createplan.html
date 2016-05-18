@@ -1,0 +1,96 @@
+<{include file="header.html"}>
+
+<{include file="library/validator.html"}>
+
+</head>
+<body>
+<table width="100%" height="100%" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="80%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[客户管理]-[计划任务]-[<{$client_rs.realname}>]</td>
+              </tr>
+            </table></td>
+            <td width="20%"><table border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr>
+                <td width="60"><table width="90%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+					<td class="STYLE1"><div align="center"><a href="#nogo" onClick="javascript:history.go(-1)"><img src="images/back.png" width="14" height="14" align="top" /> 返回</a></div></td>
+                    <td class="STYLE1"><div align="center"></div></td>
+                  </tr>
+                </table></td>
+              </tr>
+            </table></td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td>
+	    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	      <tr>
+	        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+	        <td>
+	        	<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#b5d6e6">
+	        		<tr height="50" bgcolor="#FFFFFF">
+	        			<td>
+	        			<form class="form" method="post" action="<{$saveurl}>">
+	        				<input type="hidden" name="isAjax" value="0" />
+	        				<input type="hidden" name="client_id" value="<{$client_id}>" />
+	        				<input type="hidden" name="id" value="<{$id}>" />
+	        				<input type="hidden" name="backurl" value="<{$backurl}>" />
+                            <fieldset>
+                                <legend>客户计划任务</legend>
+                                <div class="rowElem">
+                                    <label class="label">对应客户</label> 
+                                    <span class="viewtxt"><{$client_rs.realname}> / <{$client_rs.telphone}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>计划内容</label> 
+                                    <textarea name="content" rows="5" cols="50"><{$plan_rs.content}></textarea>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>计划开始时间</label> 
+                                    <input class="ui_timepicker" name="starttime" type="text" id="starttime" value="<{if $plan_rs.starttime}><{$plan_rs.starttime|date_format:'%Y-%m-%d %H:%M'}><{/if}>" readonly/>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>计划结束时间</label> 
+                                    <input class="ui_timepicker" name="endtime" type="text" id="endtime" value="<{if $plan_rs.endtime}><{$plan_rs.endtime|date_format:'%Y-%m-%d %H:%M'}><{/if}>" readonly/>
+                                </div>
+                                <div class="rowElem">
+                                	<label class="label">&nbsp;</label>
+                                    <button type="submit" id="submit-go">Submit</button>
+                                    <span class="formwarning">(保存后只能当天修改)</span>
+                                </div>
+                            </fieldset>
+                        </form>
+						</td>
+	        		</tr>
+	        	</table>
+	        </td>
+	        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+	      </tr>
+	    </table>
+    </td>
+  </tr>
+  <tr>
+    <td height="35" background="images/tab_19.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="35"><img src="images/tab_18.gif" width="12" height="35" /></td>
+        <td>&nbsp;</td>
+        <td width="16"><img src="images/tab_20.gif" width="16" height="35" /></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</div>
+</body>
+<{include file="footer.html"}>

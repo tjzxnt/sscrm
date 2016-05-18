@@ -1,0 +1,63 @@
+@CHARSET "UTF-8";
+
+#calendar .fc-header .fc-button-sidebar {
+    background-image: url("images/icon-toggle-sidebar.png");
+    background-position: 50% 0;
+    background-repeat: no-repeat;
+    width: 25px;
+}
+.calendar_contains .calendar_left .fc-header-title h2 {
+    font-size: 20px;
+    line-height: 24px;
+}
+.fc-header-title h2 {
+    margin-top: 0;
+    white-space: nowrap;
+}
+.calendar_contains .calendar_left .fc-view .fc-first th.fc-sun, .calendar_contains .calendar_left .fc-view .fc-last th.fc-sat, .calendar_contains .calendar_left .fc-view .fc-week .fc-sun .fc-day-number, .calendar_contains .calendar_left .fc-view .fc-week .fc-sat .fc-day-number {
+    color: #c43515;
+}
+.calendar_div .dataColor, .calendar_div .dataColor:hover, .calendar_contains .calendar_left .dataColor, .calendar_right .dataColor:hover {
+    color: white;
+}
+.rad_a {
+    background: #fff url("images/creatework.gif") no-repeat scroll 0 -125px;
+    float: none;
+    padding-left: 20px;
+}
+td, th {
+    word-break: break-all;
+    word-wrap: break-word;
+}
+.calendar_div .hdBackgroundColor, .calendar_contains .calendar_left .hdBackgroundColor, .calendar_overdate {
+	/*超时*/
+    background-color: #ce3b3b;
+}
+.calendar_div .rwBackgroundColor, .calendar_contains .calendar_left .rwBackgroundColor, .calendar_waiting {
+	/*等待*/
+    /*background-color: #40b7de;*/
+	background-color: #71b8ee;
+}
+.calendar_div .doingBackgroundColor, .calendar_contains .calendar_left .doingBackgroundColor, .calendar_doing {
+	/*进行中*/
+    background-color: #2b7db0;
+}
+.calendar_div .endBackgroundColor, .calendar_contains .calendar_left .endBackgroundColor, .calendar_end {
+	/*结束*/
+    /*background-color: #3eb201;*/
+	background-color: #3eb201;
+}
+.viewplan_table{
+	margin-left:15px;
+	margin-top:10px;
+	width:94%;
+}
+.viewplan_table td{
+	font-size:14px;
+	vertical-align:top;
+	line-height:30px;
+}
+.viewplan_table td.title{
+	font-weight:bolder;
+	
+}

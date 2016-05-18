@@ -1,0 +1,14 @@
+
+<link href="<{$web_root}>/css/jquery.tipswindown.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript" src="<{$web_root}>/js/jquery.tipswindown.js"></script>
+<script type="text/javascript">
+	function showTipsWindown(title,tipurl,width,height){
+		tipsWindown(title,"url:"+tipurl,width,height,"true","","true", "");
+	}
+	$(function(){
+		$(".tipwindow").click(function(){
+			showTipsWindown($(this).attr("tiptitle"), "get&&"+$(this).attr("tipurl"), $(this).attr("tipwidth"), $(this).attr("tipheight"));
+			return false;
+		})
+	})
+</script>

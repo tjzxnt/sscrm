@@ -1,0 +1,14 @@
+upload/
+uploads/
+wsdl/
+.settings/
+.svn/
+backup/
+demo/
+document/
+tmp/
+.buildpath
+.project
+test.php
+test2.php
+db_config.php

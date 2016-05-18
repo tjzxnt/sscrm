@@ -1,0 +1,62 @@
+
+<{if $sconfig.is_extfield}>
+<{foreach item=i key=k from=$ext_group_rs}>
+<fieldset> 
+    <legend><{$i.group_name}></legend>
+    <{foreach item=ii key=kk from=$i.extfield}>
+    <{if $ii.field_content}>
+    <{assign var=field_content_array value="\n"|explode:$ii.field_content}>
+    <{else}>
+    <{assign var=field_content_array value=""}>
+    <{/if}>
+    <div class="rowElem">
+        <label class="label" field_mark="<{$ii.field_mark}>"><{$ii.field_name}></label>
+        <{if $ii.field_type eq '1'}> <{* 文本框 *}>
+        <input type="text" name="<{$ii.format_mark}>" id="<{$ii.format_id}>" class="<{$ii.field_class}>" value="<{$articles_rs.extfield[$ii.id]}>"/>
+        <{elseif $ii.field_type eq '2'}> <{* 文本域 *}>
+        <textarea name="<{$ii.format_mark}>" id="<{$ii.format_id}>" class="<{$ii.field_class}>" style="height: 150px; width: 600px;"><{$articles_rs.extfield[$ii.id]}></textarea>
+        <{elseif $ii.field_type eq '3'}> <{* 下拉菜单 *}>
+        <select name="<{$ii.format_mark}>" class="<{$ii.field_class}>" id="<{$ii.format_id}>">
+        	<{if $field_content_array}>
+        	<{foreach item=iii key=kkk from=$field_content_array}>
+        	<option value="<{$iii}>" <{if $iii == $articles_rs.extfield[$ii.id]}>selected<{/if}>><{$iii}></option>
+        	<{/foreach}>
+        	<{/if}>
+        </select>
+        <{elseif $ii.field_type eq '4'}> <{* 单选按钮 *}>
+        	<{if $field_content_array}>
+        	<{foreach item=iii key=kkk from=$field_content_array}>
+        	<input type="radio" name="<{$ii.format_mark}>" class="<{$ii.field_class}>" id="<{$ii.format_id}>" <{if $iii == $articles_rs.extfield[$ii.id]}>checked<{/if}> value="<{$iii}>"/><{$iii}>
+        	<{/foreach}>
+        	<{/if}>
+        <{elseif $ii.field_type eq '5'}> <{* 复选菜单 *}>
+        	<{if $field_content_array}>
+        	<{foreach item=iii key=kkk from=$field_content_array}>
+        	<input type="checkbox" name="<{$ii.format_mark}>[]" class="<{$ii.field_class}>" id="<{$ii.format_id}>" <{if $iii == $articles_rs.extfield[$ii.id]}>checked<{/if}> value="<{$iii}>"/><{$iii}>
+        	<{/foreach}>
+        	<{/if}>
+        <{elseif $ii.field_type eq '6'}> <{* 上传框 *}>
+	       	<input type="text" name="<{$ii.format_mark}>" id="<{$ii.format_id}>" class="zx_width_mid <{$ii.field_class}>" value="<{$articles_rs.extfield[$ii.id]}>"/>
+	       	<a href="../<{$articles_rs.extfield[$ii.id]}>" id="<{$ii.format_id}>_view" target="_blank" class="zx_margin_right_small <{if !$articles_rs.extfield[$ii.id]}>zxhide<{/if}>">查看图片</a>
+	       	<{if $field_content_array.0 && $field_content_array.1}>
+	       	推荐尺寸 <{$field_content_array.0}> * <{$field_content_array.1}> px
+	       	<{/if}>
+	       	<{if $field_content_array.0 && $field_content_array.1 && $field_content_array.2}>
+	       	，
+	       	<{/if}>
+	       	<{if $field_content_array.2}>
+	       	支持上传的格式 <{$field_content_array.2}>
+	       	<{/if}>
+		</div>
+		<div class="rowElem">
+	        <label class="label"></label>
+	       	<input type="file" name="<{$ii.format_id}>_upload" id="<{$ii.format_id}>_upload" class="<{$ii.field_class}>"/>
+	       	<a href="javascript:" class="field_upload" file_id="<{$ii.format_id}>_upload" target_id="<{$ii.format_id}>" thumb_width="<{$field_content_array.0}>" thumb_height="<{$field_content_array.1}>" allow_ext="<{$field_content_array.2}>">上传文件</a>
+        <{elseif $ii.field_type eq '7'}> <{* 富文本 *}>
+        <textarea name="<{$ii.format_mark}>" id="<{$ii.format_id}>" class="stext <{$ii.field_class}>" style="height: 450px; width: 780px;"><{$articles_rs.extfield[$ii.id]}></textarea>
+        <{/if}>
+    </div>
+    <{/foreach}>
+</fieldset>
+<{/foreach}>
+<{/if}>

@@ -1,0 +1,109 @@
+<{include file="header.html"}>
+<script type="text/javascript">
+$(function(){
+	var validator = $.parseJSON('<{$validator}>');
+	$(".form").submit({
+		showBlockMsg(".form", "");
+		return true;
+	});
+})
+</script>
+</head>
+<body>
+<table width="100%" height="100%" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="46%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[网站设置]-[生成静态页]</td>
+              </tr>
+            </table></td>
+            <td width="54%"><table border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr>
+                <td width="60"><table width="90%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+					<td class="STYLE1"><div align="center"><a href="#nogo" onClick="javascript:history.go(-1)"><img src="images/back.png" width="14" height="14" align="top" /> 返回</a></div></td>
+                    <td class="STYLE1"><div align="center"></div></td>
+                  </tr>
+                </table></td>
+              </tr>
+            </table></td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td>
+	    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	      <tr>
+	        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+	        <td>
+	        	<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#b5d6e6">
+	        		<tr height="50" bgcolor="#FFFFFF">
+	        			<td>
+	        			<form class="form" method="post" action="<{$saveurl}>" target="cacheiframe">
+	        				<input type="hidden" name="isAjax" value="0" />
+                            <fieldset>
+                                <legend>更新静态页</legend>
+                                <div class="rowElem">
+                                    <label class="label">更新页面种类</label> 
+                                    <select name="type">
+                                    	<option value="0">全部种类</option>
+                                    	<option value="1">列表</option>
+                                    	<option value="2">单页</option>
+                                    </select>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">更新页面</label> 
+                                    <select name="list">
+                                    <option value="-1">只更新首页</option>
+                                    <!--<option value="-2">生成网站地图</option>-->
+                                    <option value="0">更新全部页面</option>
+                                    <{foreach item=i key=k from=$list_rs}>
+                                    <option value="<{$i.object.sid}>"><{if $i.grade > 1}>|- <{/if}><{$i.object.sname}></option>
+                                    <{/foreach}>
+                                    </select>
+                                </div>
+                                <div class="rowElem">
+                                    <div style="margin-left:70px; margin-top:20px">温馨提示:生成静态页面时需要占用部分资源,可能需要一些时间，请耐心等待, <span class="red">更新的过程会在下方显示，请不要在更新过程中点击按钮更新</span>。</div>
+                                </div>
+                            </fieldset>
+                            <button type="submit" id="submit-go">Submit</button>
+                        </form>
+						</td>
+	        		</tr>
+	        		<tr height="50" bgcolor="#FFFFFF">
+	        			<td class="font_mid">
+	        				<fieldset>
+                                <legend class="font_mid">更新中</legend>
+                                <iframe name="cacheiframe" scrolling="auto" frameborder="0" width="100%" height="300" src="../index.php?c=main&a=htmlupdate"></iframe>
+                            </fieldset>
+	        			</td>
+	        		</tr>
+	        	</table>
+	        </td>
+	        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+	      </tr>
+	    </table>
+    </td>
+  </tr>
+  <tr>
+    <td height="35" background="images/tab_19.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="35"><img src="images/tab_18.gif" width="12" height="35" /></td>
+        <td>&nbsp;</td>
+        <td width="16"><img src="images/tab_20.gif" width="16" height="35" /></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</div>
+</body>
+<{include file="footer.html"}>

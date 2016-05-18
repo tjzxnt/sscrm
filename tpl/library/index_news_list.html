@@ -1,0 +1,37 @@
+
+<div class="ajaxnewslist">
+<ul style="height:420px;">
+	<{foreach item=i key=k from=$article_rs}>
+	<li>
+		<a href="javascript:" class="viewinfo" infoid="<{$i.pid}>" layertitle="<{$i.name}>">
+			<span <{if !$i.read_id}>class="new"<{/if}>><{$k+1}>.<{$i.name}></span><i><{$i.posttime|date_format:"%Y-%m-%d"}></i>
+			<{if !$i.read_id}>
+			<{*<img src="<{$web_root}>/images/new.gif" class="newinfogif"/>*}>
+			<span class="newico"></span>
+			<{/if}>
+			
+		</a>
+	</li>
+	<{foreachelse}>
+	<li>
+		暂无任何数据
+	</li>
+	<{/foreach}>
+</ul>
+<{if $isAjax}>
+<script>
+$(function(){
+	$(".viewinfo").click(function(){
+		showinfo($(this).attr("infoid"), $(this).attr("layertitle"));
+		$(this).find("span.new").removeClass("new");
+		$(this).find("span.newico").remove();
+	})
+})
+</script>
+<{/if}>
+<{if $article_rs}>
+<div>
+	<{include file="pager_ajax.html"}>
+</div>
+<{/if}>
+</div>

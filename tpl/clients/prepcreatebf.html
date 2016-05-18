@@ -1,0 +1,298 @@
+<{include file="header.html"}>
+
+<{include file="library/chosen.html"}>
+
+<script>
+	function prepinit(){
+		$(".origin_person_tr, .origin_person_data_tr, .origin_person_data_desc_tr, .origin_unperson_tr, .channeltr, .channelacttr, .channelacttimetr, .subtr").addClass("zxhide");
+		$(".extinput_tr").remove();
+	}
+	function prepfinish(){
+		$(".subtr").removeClass("zxhide");
+	}
+	function channelinit(){
+		prepinit();
+		$(".channeltr").removeClass("zxhide");
+	}
+	function personinit(){
+		prepinit();
+		$(".origin_person_tr").removeClass("zxhide");
+	}
+	function unpersoninit(){
+		prepinit();
+		$(".origin_unperson_tr").removeClass("zxhide");
+	}
+	function datainit(){
+		$("#channelacttime_input, #origin_person_data_desc_input").val("");
+		$("#channel_select, #channelact_select, #origin_person_select, #origin_person_data_select, #origin_unperson_select")[0].selectedIndex = 0;
+		$("#channel_select, #channelact_select, #origin_person_select, #origin_person_data_select, #origin_unperson_select").trigger("chosen:updated");
+		$("#channelact_select, #origin_person_data_select").empty();
+	}
+	$(function(){
+		$("#sourcetype").change(function(){
+			datainit();
+			if($(this).val() == "1"){ //渠道
+				prepinit();
+				$(".channeltr").removeClass("zxhide");
+			}else if($(this).val() == "2"){ //个人来源
+				prepinit();
+				$(".origin_person_tr").removeClass("zxhide");
+			}else if($(this).val() == "3"){ //其他来源
+				prepinit();
+				$(".origin_unperson_tr").removeClass("zxhide");
+			}else{ //初始
+				prepinit();
+			}
+		})
+		//渠道选择
+		$("#channel_select").change(function(){
+			if($(this).val()){
+				$.ajax({
+				   type: "POST",
+				   url: "<{spUrl c=channels a=ajaxActsByChannel}>"+"&channelid="+$(this).val(),
+				   dataType: 'json',
+				   beforeSend: function(){
+				   		showBlockMsg(".tipsdowntable", "");
+						return true;
+				   },
+				   success: function(json, textStatus){
+				     	hideBlockMsg('.tipsdowntable');
+				     	channelinit();
+				     	$("#channelact_select").empty();
+						if(json.result == 1){
+							var options_str = "<option value=\"\">==请选择==</option>";
+							$.each(json.data,function(i, item){
+								options_str += "<option value=\"" + item.id + "\" acttime=\"" + item.acttime + "\">" + item.actname + "</option>";
+							});
+							$("#channelact_select").append(options_str);
+							$(".channelacttr").removeClass("zxhide");
+						}else{
+							alert(json.msg);
+							$("#channel_select")[0].selectedIndex = 0;
+						}
+						$("#channel_select, #channelact_select").trigger("chosen:updated");
+				   },
+					error: function(xml, status){
+						hideBlockMsg('.tipsdowntable');
+						showErrorDialog(xml.responseText);
+					}
+				});
+			}else{
+				channelinit();
+			}
+		});
+		$("#origin_person_select").change(function(){
+			if($(this).val()){
+				$.ajax({
+				   type: "POST",
+				   url: "<{spUrl c=origins a=ajaxDatasByOrigin}>"+"&originid="+$(this).val(),
+				   dataType: 'json',
+				   beforeSend: function(){
+				   		showBlockMsg(".tipsdowntable", "");
+						return true;
+				   },
+				   success: function(json, textStatus){
+				     	hideBlockMsg('.tipsdowntable');
+				     	personinit();
+				     	$("#origin_person_data_select").empty();
+						if(json.result == 1){
+							var options_str = "<option value=\"\">==请选择==</option>";
+							$.each(json.data,function(i, item){
+								options_str += "<option value=\"" + item.id + "\" reason=\"" + item.reason + "\">" + item.realname + "(" + item.telphone + ")" + "</option>";
+							});
+							$("#origin_person_data_select").append(options_str);
+							$(".origin_person_data_tr").removeClass("zxhide");
+						}else{
+							alert(json.msg);
+							$("#origin_person_select")[0].selectedIndex = 0;
+						}
+						$("#origin_person_select, #origin_person_data_select").trigger("chosen:updated");
+				   },
+					error: function(xml, status){
+						hideBlockMsg('.tipsdowntable');
+						showErrorDialog(xml.responseText);
+					}
+				});
+			}else{
+				personinit();
+			}
+		});
+		$("#channelact_select").change(function(){
+			$("#channelacttime_input").val($("#channelact_select").find("option:selected").attr("acttime"));
+			$(".channelacttimetr").removeClass("zxhide");
+			prepfinish();
+		});
+		$("#origin_person_data_select").change(function(){
+			$("#origin_person_data_desc_input").val($("#origin_person_data_select").find("option:selected").attr("reason"));
+			$(".origin_person_data_desc_tr").removeClass("zxhide");
+			prepfinish();
+		});
+		$("#origin_unperson_select").change(function(){
+			$.ajax({
+			   type: "POST",
+			   url: "<{spUrl c=origins a=ajaxExtinputByOrigin}>"+"&originid="+$(this).val(),
+			   dataType: 'json',
+			   beforeSend: function(){
+			   		showBlockMsg(".tipsdowntable", "");
+					return true;
+			   },
+			   success: function(json, textStatus){
+			     	hideBlockMsg('.tipsdowntable');
+			     	unpersoninit();
+					if(json.result == 1){
+						$(".origin_unperson_tr").after(json.data);
+					}else{
+						alert(json.msg);
+					}
+					prepfinish();
+			   },
+				error: function(xml, status){
+					hideBlockMsg('.tipsdowntable');
+					showErrorDialog(xml.responseText);
+				}
+			});
+		})
+		$("#prepsubmit").click(function(){
+			if(!confirm("确认添加客户吗?"))
+				return false;
+			$.ajax({
+				   type: "POST",
+				   url: "<{$saveurl}>",
+				   data: $(".prepform").serialize(),
+				   dataType: 'json',
+				   beforeSend: function(){
+				   		showBlockMsg(".tipsdowntable", "");
+						return true;
+				   },
+				   success: function(json, textStatus){
+						if(json.result == 1){
+							window.location.href = json.url.replace(/&amp;/g,'&').replace(/&amp;/g,'&');
+						}else{
+							alert(json.msg);
+							hideBlockMsg('.tipsdowntable');
+						}
+						prepfinish();
+				   },
+					error: function(xml, status){
+						hideBlockMsg('.tipsdowntable');
+						showErrorDialog(xml.responseText);
+					}
+				});
+		})
+	})
+</script>
+<style>
+	.chosen-results{
+		max-height:300px !important;
+	}
+	.input_chosen{
+		width:190px;
+		border:1px solid #aaa;
+		border-radius:5px;
+		height:23px;
+		line-height:24px;
+		background-color: #fff;
+		background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(20%, #ffffff), color-stop(50%, #f6f6f6), color-stop(52%, #eeeeee), color-stop(100%, #f4f4f4));
+		background: -webkit-linear-gradient(top, #ffffff 20%, #f6f6f6 50%, #eeeeee 52%, #f4f4f4 100%);
+		background: -moz-linear-gradient(top, #ffffff 20%, #f6f6f6 50%, #eeeeee 52%, #f4f4f4 100%);
+		background: -o-linear-gradient(top, #ffffff 20%, #f6f6f6 50%, #eeeeee 52%, #f4f4f4 100%);
+		background: linear-gradient(top, #ffffff 20%, #f6f6f6 50%, #eeeeee 52%, #f4f4f4 100%);
+		background-clip: padding-box;
+		box-shadow: 0 0 3px white inset, 0 1px 1px rgba(0, 0, 0, 0.1);
+		color: #444;
+		white-space: nowrap;
+		padding:0 0 0 8px;
+	}
+	.tipsdowntable tr{
+		height:25px;
+	}
+	.tipstdleft{
+		text-align:right;
+	}
+</style>
+</head>
+<body>
+<form class="prepform">
+	<table class="tipsdowntable">
+		<tr>
+			<td width="90" class="tipstdleft">选择来源通道：</td>
+			<td>
+				<select class="chosen-select-nosearch" name="sourcetype" id="sourcetype">
+					<option value="">==请选择==</option>
+					<option value="1">渠道来源</option>
+					<option value="2">个人来源</option>
+					<option value="3">其他来源</option>
+				</select>
+			</td>
+		</tr>
+		<tr class="zxhide channeltr">
+			<td class="tipstdleft">选择渠道来源：</td>
+			<td>
+				<select class="chosen-select" id="channel_select" name="channelid">
+					<option value="">==请选择==</option>
+					<{foreach item=i key=k from=$channel_rs}>
+					<option value="<{$i.id}>"><{$i.mechanism}></option>
+					<{/foreach}>
+				</select>
+			</td>
+		</tr>
+		<tr class="zxhide channelacttr">
+			<td class="tipstdleft">选择渠道活动：</td>
+			<td>
+				<select class="chosen-select" id="channelact_select" name="actid">
+					
+				</select>
+			</td>
+		</tr>
+		<tr class="zxhide channelacttimetr">
+			<td class="tipstdleft">指定活动时间：</td>
+			<td>
+				<input class="input_chosen" type="text" id="channelacttime_input" value="" readonly/>
+			</td>
+		</tr>
+		<tr class="zxhide origin_person_tr">
+			<td class="tipstdleft">选择个人来源：</td>
+			<td>
+				<select class="chosen-select-nosearch" id="origin_person_select" name="origin_person" style="min-height:200px">
+					<option value="">==请选择==</option>
+					<{foreach item=i key=k from=$origin_person_rs}>
+					<option value="<{$i.id}>" isowner="<{$i.isowner}>"><{$i.oname}></option>
+					<{/foreach}>
+				</select>
+			</td>
+		</tr>
+		<tr class="zxhide origin_person_data_tr">
+			<td class="tipstdleft">选择来源数据：</td>
+			<td>
+				<select class="chosen-select" id="origin_person_data_select" name="dataid">
+					
+				</select>
+			</td>
+		</tr>
+		<tr class="zxhide origin_person_data_desc_tr">
+			<td class="tipstdleft">指定来源描述：</td>
+			<td>
+				<input class="input_chosen" type="text" id="origin_person_data_desc_input" value="" readonly/>
+			</td>
+		</tr>
+		<tr class="zxhide origin_unperson_tr">
+			<td class="tipstdleft">选择其他来源：</td>
+			<td>
+				<select class="chosen-select-nosearch" id="origin_unperson_select" name="origin_unperson" style="min-height:200px">
+					<option value="">==请选择==</option>
+					<{foreach item=i key=k from=$origin_unperson_rs}>
+					<option value="<{$i.id}>" isowner="<{$i.isowner}>"><{$i.oname}></option>
+					<{/foreach}>
+				</select>
+			</td>
+		</tr>
+		<tr class="zxhide subtr">
+			<td colspan="2">
+				<input type="button" id="prepsubmit" value="确认"/>
+			</td>
+		</tr>
+	</table>
+</form>
+
+</body>
+<{include file="footer_clean.html"}>

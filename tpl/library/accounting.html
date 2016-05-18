@@ -1,0 +1,22 @@
+
+<script type="text/javascript" src="<{$web_root}>/js/accounting.min.js"></script>
+<script>
+$(function(){
+	$(".account_input").blur(function(){
+		$(this).val(accounting.formatNumber($(this).val()));
+	});
+	$(".account_input").keyup(function(){   
+        var tmptxt=$(this).val();   
+        $(this).val(tmptxt.replace(/\D|^0/g,''));   
+    }).bind("paste",function(){   
+        var tmptxt=$(this).val();   
+        $(this).val(tmptxt.replace(/\D|^0/g,''));   
+    }).css("ime-mode", "disabled");
+	$(".account_input").focus(function(){
+		$(this).val(accounting.unformat($(this).val()));
+	});
+	$(".account_txt").each(function(){
+		$(this).text(accounting.formatNumber($(this).text()));
+	});
+})
+</script>

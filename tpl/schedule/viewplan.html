@@ -1,0 +1,123 @@
+
+<table class="viewplan_table">
+	<tr>
+		<td class="title" width="70">日程：</td>
+		<td class="content"><{$plan_rs.starttime|date_format:"%Y-%m-%d %H:%M"}> ~ <{$plan_rs.endtime|date_format:"%Y-%m-%d %H:%M"}></td>
+	</tr>
+	<tr>
+		<td class="title">参与人：</td>
+		<td class="content"><{$plan_rs.receiveUser}></td>
+	</tr>
+	<tr>
+		<td class="title">状态：</td>
+		<td class="content">
+			<{if $plan_rs.isfinish}>
+				<span class="STYLE1 Finished"><{$plan_rs.finishtime|date_format:"%Y-%m-%d %H:%M"}> 完成</span>
+			<{else}>
+				<{if $plan_rs.starttime > $smarty.now}>
+	          	<i class="iconfont zx_gray">&#xe64b;</i>
+	           	<span class="STYLE1 Waiting"><{$plan_rs.starttime|zxdate_diff}> 后开始</span>
+	           	<{elseif $plan_rs.starttime <= $smarty.now && $plan_rs.endtime > $smarty.now}>
+	           	<span class="STYLE1 Going">已进行 <{$plan_rs.starttime|zxdate_diff}></span>
+	           	<{else}>
+	           	<span class="STYLE1 Overdate">已超出 <{$plan_rs.endtime|zxdate_diff}></span>
+	           	<{/if}>
+	           	<{if $plan_rs.create_id == $smarty.session.sscrm_user.id}>
+	           	<a href="javascript:" class="isfinish zx_margin_left_smid zx_weight zx_underline zx_italic zx_font_normal">设为已完成</a>
+	           	<script>
+				$(function(){
+					$(".isfinish").click(function(){
+						if(!confirm("确认将该日程转为已完成吗？"))
+							return false;
+						$.ajax({
+						   type: "POST",
+						   url: "<{spUrl c=schedule a=modifyplan_status}>",
+						   data: {
+								isAjax : 1,
+								id : <{$plan_rs.id}>,
+								isfinish : 1
+							},
+						   dataType: 'json',
+						   beforeSend: function(){
+						   		showBlockMsg(".viewplan_table", "");
+								return true;
+						   },
+						   success: function(json, textStatus){
+						     	hideBlockMsg('.viewplan_table');
+								if(json.result == 1){   
+									showBlockMsg(".viewplan_table", json.msg, 'ok');
+									window.setTimeout(function() {
+		 								reload_recent_plan();
+		 							}, 1000);
+									window.setTimeout(function() {
+										layer.closeAll();
+										$("#refresh").click();
+										//reload_recent_plan();
+									}, 2000);
+									return false;
+								}else{
+									showBlockMsg(".viewplan_table", json.msg, 'error');
+								}
+						   },
+							error: function(xml, status){
+								hideBlockMsg('.viewplan_table');
+								showErrorDialog(xml.responseText);
+							}
+						});
+					});
+				})
+				</script>
+	           	<{/if}>
+	           	<{if $plan_rs.create_id == $smarty.session.sscrm_user.id && $plan_rs.typeid eq '1'}>
+           		<a href="javascript:" class="isdel zx_red zx_margin_left_smid zx_weight zx_underline zx_italic zx_font_normal">立即删除</a>
+           		<script>
+				$(function(){
+					$(".isdel").click(function(){
+						if(!confirm("确认删除该日程吗？"))
+							return false;
+						$.ajax({
+						   type: "POST",
+						   url: "<{spUrl c=schedule a=deleteplan}>",
+						   data: {
+								isAjax : 1,
+								id : <{$plan_rs.id}>
+							},
+						   dataType: 'json',
+						   beforeSend: function(){
+						   		showBlockMsg(".viewplan_table", "");
+								return true;
+						   },
+						   success: function(json, textStatus){
+						     	hideBlockMsg('.viewplan_table');
+								if(json.result == 1){   
+									showBlockMsg(".viewplan_table", json.msg, 'ok');
+									window.setTimeout(function() {
+		 								reload_recent_plan(); //同时操作容易js错误
+		 							}, 1000);
+									window.setTimeout(function() {
+										layer.closeAll();
+										$("#refresh").click();
+										//reload_recent_plan();
+									}, 2000);
+									return false;
+								}else{
+									showBlockMsg(".viewplan_table", json.msg, 'error');
+								}
+						   },
+							error: function(xml, status){
+								hideBlockMsg('.viewplan_table');
+								showErrorDialog(xml.responseText);
+							}
+						});
+					});
+				})
+				</script>
+           		<{/if}>
+           	<{/if}>
+         </td>
+	</tr>
+	<tr>
+		<td class="title">内容：</td>
+		<td class="content"><{$plan_rs.content|nl2br}></td>
+	</tr>
+</table>

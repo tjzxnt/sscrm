@@ -1,0 +1,124 @@
+<{include file="header.html"}>
+</head>
+<body>
+<table width="100%" height="100%" cellspacing="1" cellpadding="0" class="tablesl">
+  <tr>
+    <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="46%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[栏目管理]-[<{$column_rs.sname}>]-[扩展字段组：<{$group_rs.group_name}>]</td>
+              </tr>
+            </table></td>
+            <td width="54%"><table border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr>
+                <td width="60"><table width="87%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td class="STYLE1"><div align="center">
+                      <input type="checkbox" name="checkAll" id="checkAll" />
+                    </div></td>
+                    <td class="STYLE1"><div align="center"><label for="checkAll">全选</label></div></td>
+                  </tr>
+                </table></td>
+                <td width="150"><table width="90%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td class="STYLE1"><div align="center"><a href="<{spUrl c=column a=extfield_create column_id=$column_id group_id=$group_id}>" style="display:block">添加</a></div></td>
+                    <td class="STYLE1"><div align="center"><a href="<{spUrl c=column a=extgroup column_id=$column_id}>" style="display:block">返回分组</a></div></td>
+                    <td class="STYLE1"><div align="center"></div></td>
+                  </tr>
+                </table></td>
+                <td width="60"><table width="88%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <form action="<{spUrl c=column a=extfield_delete column_id=$column_id group_id=$group_id}>" method="POST" id="deleteForm">
+                    <td class="STYLE1"><div align="center"><input type="image" src="images/delete.gif" id="deleteAll"></div></td>
+                    <td class="STYLE1"><div align="center"></div></td>
+                  </tr>
+                </table></td>
+              </tr>
+            </table></td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+        <td><table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#b5d6e6">
+          <tr>
+          	<td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"></td>
+            <td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">序号</span></div></td>
+            <td width="12%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">字段名</span></div></td>
+            <td width="12%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">字段标识</span></div></td>
+            <td width="12%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">字段类型</span></div></td>
+            <td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">排序</span></div></td>
+			<td width="20%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">操作</span></div></td>
+          </tr>
+          <{foreach item=i key=k from=$field_rs}>
+          <tr>
+          	<td height="20" bgcolor="#FFFFFF" align="center">
+            	<div align="center">
+             		<input type="checkbox" name="id[]" class="checkId" value="<{$i.id}>" />
+            	</div>
+            </td>
+            <td height="20" bgcolor="#FFFFFF">
+            	<div align="center" class="STYLE1">
+              		<div align="center"><{$k+1}></div>
+            	</div>
+            </td>
+            <td height="20" bgcolor="#FFFFFF">
+            	<div align="center" class="STYLE1">
+              		<div align="center">
+              			<{$i.field_name}>
+              			<{if $i.istolist}><span class="zx_red">[加入列表]</span><{/if}>
+              			<{if $i.ishide}><span class="zx_red">[隐藏]</span><{/if}>
+              		</div>
+            	</div>
+            </td>
+            <td height="20" bgcolor="#FFFFFF">
+            	<div align="center" class="STYLE1">
+              		<div align="center"><{$i.field_mark}></div>
+            	</div>
+            </td>
+            <td height="20" bgcolor="#FFFFFF">
+            	<div align="center" class="STYLE1">
+              		<div align="center">
+              		<{$i.type_name}>
+              		-
+              		<{$i.type_mark}>
+              		</div>
+            	</div>
+            </td>
+            <td height="20" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1"><{$i.sort}></span></div></td>
+            <td bgcolor="#FFFFFF">
+            	<table border="0">
+                	<tr>
+                    	<td align="center">
+                        	<a href="<{spUrl c=column a=extfield_modify column_id=$column_id group_id=$group_id id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>编辑</a>
+                            <a href="#<{spUrl c=column a=extfield_delete column_id=$column_id group_id=$group_id id=$i.id}>" class="delete"><img src="images/del.gif" width="16" height="16" align="absmiddle"/>删除</a>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+          </tr>
+          <{foreachelse}>
+			<tr>
+            	<td height="20" bgcolor="#FFFFFF" colspan="8"><div style="margin-left:7px; margin-top:10px">无匹配记录</div></td>
+			</tr>
+          <{/foreach}>
+          </form>
+        </table></td>
+        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</div>
+</body>
+<{include file="footer.html"}>

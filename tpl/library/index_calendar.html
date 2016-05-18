@@ -1,0 +1,77 @@
+
+<{include file="library/chosen.html"}>
+
+<{include file="library/fullcalendar.html"}>
+
+<script>
+	var fc_day_createplan = 1;
+	
+	function zxcreateplan(data_date, status){
+		$.get('<{spUrl c=schedule a=layer_createplan}>&data_date='+data_date, {}, function(str){
+			layer.open({
+				type: 1,
+				moveType: 1,
+				maxmin: true,
+				tipsMore: true,
+				title: "添加 " + data_date +" 的日程",
+				area: ['600px', '500px'],
+				shadeClose: true, //点击遮罩关闭
+				content: str
+			});
+			chosen_init();
+		});
+	}
+</script>
+<script src="js/layer/layer.js"></script>
+<script>
+function zxshow(id, layertitle){
+	//window.open("<{spUrl c=schedule a=viewplan}>&id=" + id, "windowname", "width=500,height=400,resizable=no,scrollbars=no,status=no,toolbar=no,menubar=no,location=no");
+	$.post('<{spUrl c=schedule a=viewplan}>' + "&id="+id, {}, function(str){
+		layer.open({
+			type: 1,
+			moveType: 1,
+			maxmin: true,
+			tipsMore: true,
+			title: layertitle,
+			area: ['600px', '500px'],
+			shadeClose: true, //点击遮罩关闭
+			content: str
+		});
+	});
+}
+</script>
+
+<div class="zxright">
+	<a href="javascript:" id="refresh" class="zxhide">刷新</a>
+	颜色说明：（
+	<i class="zxsquare calendar_end">&nbsp;</i>已完成
+	<i class="zxsquare calendar_overdate">&nbsp;</i>过期
+	<i class="zxsquare calendar_doing">&nbsp;</i>进行中
+	<i class="zxsquare calendar_waiting">&nbsp;</i>待进行
+	）
+	<select name="status" id="status">
+		<option value="">全部状态</option>
+		<option value="doing" <{if $status == 'doing'}>selected<{/if}>>进行中</option>
+		<option value="going" <{if $status == 'going'}>selected<{/if}>>进行中未过期</option>
+		<option value="overdate" <{if $status == 'overdate'}>selected<{/if}>>进行中已过期</option>
+		<option value="waiting" <{if $status == 'waiting'}>selected<{/if}>>未开始</option>
+		<option value="finish" <{if $status == 'finish'}>selected<{/if}>>已完成</option>
+	</select>
+</div>
+<div class="zx_margin_top_small">
+	<div class="row-fluid calendar_contains">
+		<div class="span10 calendar_left" id="calendar_left">
+			<div id='calendar'></div>
+		</div>
+	</div>
+	<script type="text/javascript">
+	    $(function() {
+	        window.ATUserCalendar.init();
+	        /*
+	        window.ATGO.parameters({
+	            pageID: 0
+	        });
+	        */
+	    });
+	</script>
+</div>

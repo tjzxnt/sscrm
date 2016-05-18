@@ -1,0 +1,89 @@
+<{include file="header.html"}>
+
+<{include file="library/accounting.html"}>
+
+<script type="text/javascript" src="<{$web_root}>/js/My97DatePicker/WdatePicker.js"></script>
+
+</head>
+<body>
+<table width="100%" height="100%" cellspacing="1" cellpadding="0" class="tablesl zxblockui">
+  <tr>
+    <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="46%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[制定任务]-[<{$smarty.session.sscrm_user.dname}><{$sep_name}>任务]</td>
+              </tr>
+            </table></td>
+            <td width="54%">
+            	<form method="GET">
+	            <input type="hidden" name="c" value="pertasks"/>
+	            <input type="hidden" name="a" value="departasklist"/>
+	            <table border="0" align="right" cellpadding="0" cellspacing="0">
+	              <tr>
+	                 <td width="150">
+		                 <table width="88%" border="0" cellpadding="0" cellspacing="0">
+		                    <td class="STYLE1"><div align="center"><input type="text" name="statdate" class="Wdate" value="<{$statdate}>" onclick="WdatePicker()" readonly/></div></td>
+		                    <td class="STYLE1"><div align="top" style="margin-left:7px"><input type="image" value="" src="images/search.gif"></div></td>
+		                  </tr>
+		                </table>
+	                </td>
+	              </tr>
+	            </table>
+	            </form>
+            </td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+  	<td>
+  		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  			<tr>
+  				<td width="8" background="images/tab_12.gif">&nbsp;</td>
+  				<td class="zx_padding_top_small zx_padding_bottom_smid zxcenter">
+  					<span class="zx_font_mid">
+  						[<{$smarty.session.sscrm_user.dname}><{$sep_name}>任务]-[<{$statdate}> 任务]
+  					</span>
+  					<{include file="pertasks/include/notice.html"}>
+  				</td>
+  				<td width="8" background="images/tab_12.gif">&nbsp;</td>
+  			</tr>
+  		</table>
+  	</td>
+  </tr>
+  <tr>
+    <td>
+    <form method="POST">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+        <td>
+        	<{include file="pertasks/include/datalist.html"}>
+        </td>
+        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td height="35" background="images/tab_19.gif">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="35"><img src="images/tab_18.gif" width="12" height="35" /></td>
+        <td>
+        	<{include file="pager.html"}>
+		</td>
+        <td width="16"><img src="images/tab_20.gif" width="16" height="35" /></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</div>
+</body>
+<{include file="footer.html"}>

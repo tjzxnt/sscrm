@@ -1,0 +1,28 @@
+
+<{if $sconfig.isfilter2}>
+<{foreach item=i key=k from=$productfilter_rs}>
+<div class="rowElem <{if $i.parent_id}>filter_parent<{/if}>" <{if $i.parent_id}>filter_parent="<{$i.parent_id}>" style="display:none"<{/if}>>
+	<{if $i.sub}>
+    <label class="label"><{$i.pc_name}></label> 
+    <{foreach item=ii key=kk from=$i.sub}>
+    <input type="<{if $i.ismulti}>checkbox<{else}>radio<{/if}>" class="filter_input" filter_input="<{$ii.pc_id}>" name="filter2[<{$i.pc_id}>]<{if $i.ismulti}>[]<{/if}>" value="<{$ii.pc_id}>" <{if $articles_rs}><{if $ii.pc_id|in_array:$articles_rs.filter2_array}>checked<{/if}><{elseif !$i.ismulti && !$kk}>checked<{/if}>/><{$ii.pc_name}>
+    <{/foreach}>
+    <{/if}>
+</div>
+<{/foreach}>
+<{/if}>
+<script>
+function filter_parent(){
+	$(".filter_parent").hide();
+	$(".filter_parent").find("input").attr("disabled",true);
+	$(".filter_parent[filter_parent="+ $(this).attr("filter_input") + "]").show();
+	$(".filter_parent[filter_parent="+ $(this).attr("filter_input") + "]").find("input").attr("disabled",false);
+}
+$(function(){
+	$(".filter_parent").each(function(){
+		$(".filter_input[filter_input=" + $(this).attr("filter_parent") + "]").click(filter_parent);
+		if($(".filter_input[filter_input=" + $(this).attr("filter_parent") + "]").is(':checked'))
+			$(this).show();
+	});
+})
+</script>

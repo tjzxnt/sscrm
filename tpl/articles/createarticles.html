@@ -1,0 +1,440 @@
+<{include file="header.html"}>
+
+<script type="text/javascript">
+$(function(){
+	$('.stext').xheditor({
+		upLinkUrl:"<{$web_root}>/upload.php",
+		upLinkExt:"zip,rar,txt",
+		upImgUrl:"<{$web_root}>/upload.php",
+		upImgExt:"jpg,jpeg,gif,png",
+		upFlashUrl:"<{$web_root}>/upload.php",
+		upFlashExt:"swf",
+		upMediaUrl:"<{$web_root}>/upload.php",
+		upMediaExt:"wmv,avi,wma,mp3,mid"
+		/*
+		shortcuts:{
+			'ctrl+enter': function() {
+			}
+		}
+		*/
+	});
+	//从服务器获取数据校验规则
+	var validator = $.parseJSON('<{$validator}>');
+	$(".form").validate({
+		rules: validator['rules'],
+		messages: validator['messages'],
+		submitHandler: function(form) {
+			$(form.isAjax).attr('value', 1);	//告知服务器，客户端是通过Ajax提交的，服务端应该返回JSON
+			$(form).ajaxSubmit({
+				dataType:  'json',
+				beforeSubmit: 
+				function(formData, jqForm, options){
+					showBlockMsg(".form", "");
+					return true;
+				},
+				success: 
+				function(json, status) {
+					hideBlockMsg('.form');
+					if(json.result != 0){
+						showBlockMsg(".form", json.msg, 'error');
+						window.setTimeout(function() {
+							hideBlockMsg('.form');
+						}, 2000);
+					}
+					else {
+						showBlockMsg('.form', json.msg, 'ok');
+						window.setTimeout(function() {
+							window.location.href = json.url.replace(/&amp;/g,'&');
+						}, 2000);
+					}
+				},
+				error:
+				function(xml, status){
+					hideBlockMsg('.form');
+					showErrorDialog(xml.responseText);
+				}
+			});
+			return false;
+		}
+		/*
+		success: function(label) {
+			label.html("&nbsp;").addClass("success");
+		},
+		
+		errorPlacement: function(error, element) {
+			error.appendTo (element.parent());
+		}*/
+	});
+	
+	//datepicker
+	var now = new Date()
+	year = now.getFullYear();
+	$('.posttime').datepicker({
+		dateFormat: 'yy-mm-dd',
+		yearRange: year - 100 + ':' + year,
+		showStatus: true,
+		changeMonth: true,
+		changeYear: true 
+	});
+	$(".ui_timepicker").datetimepicker({
+        timeFormat: 'hh:mm',
+        stepHour: 1,
+        stepMinute: 1
+    })
+});
+</script>
+
+<{if $sconfig.isprice == 1}>
+<{include file="library/accounting.html"}>
+<{/if}>
+
+</head>
+<body>
+<div class="main">
+<div class="maintop"><{include file="top.html"}></div>
+<div class="mainleft">
+<{include file="left.html"}>
+</div>
+<div class="mainmiddle"></div>
+<div class="mainright">
+<table width="100%" height="100%" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="46%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：<{if $fname}>[<{$fname}>]-<{/if}>[<{$sname}>]-[<{if $articles_rs.name!=''}>文章修改<{else}>添加文章<{/if}>]</td>
+              </tr>
+            </table></td>
+            <td width="54%"><table border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr>
+                <td width="60"><table width="90%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+					<td class="STYLE1"><div align="center"><a href="<{spUrl c=articles a=articleslist fid=$fid sid=$sid}><{$catourl}>"><img src="images/back.png" width="14" height="14" align="top" /> 返回</a></div></td>
+                    <td class="STYLE1"><div align="center"></div></td>
+                  </tr>
+                </table></td>
+              </tr>
+            </table></td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td>
+	    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	      <tr>
+	        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+	        <td>
+	        	<table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#b5d6e6">
+	        		<tr height="50" bgcolor="#FFFFFF">
+	        			<td>
+	        			<form class="form" method="post" enctype="multipart/form-data" action="<{$saveurl}>">
+                        <input type="hidden" name="uppic" id="status-message" value=""/>
+                        <input type="hidden" name="isAjax" value="0" />
+                        <input type="hidden" name="ptype" value="<{$sid}>"/>
+                        <input type="hidden" name="fid" value="<{$fid}>"/>
+                        <input type="hidden" name="sid" value="<{$sid}>"/>
+                        <input type="hidden" name="catoid" value="<{$catoid}>"/>
+                            <fieldset>
+                                <legend><{if $articles_rs.name!=''}>文章修改<{else}>添加文章<{/if}></legend>
+                                
+                                <fieldset> 
+	                                <legend>文章资料</legend>
+	                                <div class="rowElem">
+	                                    <label class="label">文章标题</label> <input name="name" type="text" id="name" value="<{$articles_rs.name}>" style="width:600px">
+	                                </div>
+	                                <{if $sconfig.fname == 1}>
+	                                <div class="rowElem">
+	                                    <label class="label">副标题<br/></label><!--<span id="strLen">200</span> 个字符 onkeyup="checkWordNum(this,'200','strLen')"--> <input name="fname" type="text" id="fname" value="<{$articles_rs.fname}>" style="width:600px">
+	                                </div>
+	                                <script>
+	                                	function checkWordNum(tss,maxLengthLimit,ctrl)
+										{
+											var maxLength = maxLengthLimit || 200;	   
+											if(ctrl)
+											{
+												var showCtrl = (typeof ctrl == 'string') ? document.getElementById(ctrl) : ctrl;	
+												if(tss.value.length>maxLength)
+												{
+												   tss.value=tss.value.substring(0,maxLength);
+												   showCtrl.innerHTML=0;
+												}   
+												else
+												{
+												   var leftwords=maxLength-tss.value.length;
+												   showCtrl.innerHTML=leftwords.toString();
+												}
+											}
+											else
+											{
+												if(tss.value.length>maxLength)
+												   tss.value=tss.value.substring(0,maxLength);
+											}
+										}
+	                                </script>
+	                                <{/if}>
+	                                <{if $sconfig.iseditor == 1}>
+	                                <div class="rowElem">
+	                                    <label class="label">作者</label> <input name="author" type="text" id="author" value="<{$articles_rs.author}>" style="width:600px">
+	                                </div>
+	                                <{/if}>
+	                                <{if $sconfig.isfrom == 1}>
+	                                <div class="rowElem">
+	                                    <label class="label">来源</label> <input name="source" type="text" id="source" value="<{$articles_rs.source}>" style="width:600px">
+	                                </div>
+	                                <{/if}>
+	                                <{if $sconfig.istag == 1}>
+	                                <div class="rowElem">
+	                                    <label class="label">Tag标签<br/>(多标签用“<span style="color:#F00">,</span>”隔开)</label> <input name="tagstr" type="text" id="tagstr" value="<{$articles_rs.tagstr}>" style="width:600px">
+	                                </div>
+	                                <{/if}>
+	                                <{if $line_rs}>
+	                                <div class="rowElem">
+	                                    <label class="label">所属线路</label> 
+	                                    <select name="entrance_line_id" id="entrance_line_id">
+		                                    <option value="0">==请选择==</option>
+		                                    <{foreach item=i key=k from=$line_rs}>
+		                                    <option value="<{$i.id}>" <{if $articles_rs.entrance_line_id == $i.id}>selected<{/if}>><{$i.name}></option>
+		                                    <{/foreach}>
+	                                    </select>
+	                                </div>
+	                                <{/if}>
+	                                <{if $sconfig.iscato}>
+	                                <div class="rowElem">
+	                                    <label class="label">所属分类</label> 
+	                                    <select name="pc_id" id="pc_id">
+	                                    <option value="0">==请选择==</option>
+	                                    <{foreach item=i key=k from=$articlecato_rs}>
+	                                    <option value="<{$i.pc_id}>" <{if $articles_rs.pc_id == $i.pc_id || $catoid == $i.pc_id}>selected<{/if}>><{$i.pc_name}></option>
+	                                    <{/foreach}>
+	                                    </select>
+	                                </div>
+	                                <{/if}>
+	                                <{if $sconfig.iscato2 == 1}>
+	                                <div class="rowElem">
+	                                    <label class="label">所属分类</label> 
+	                                    <select name="pc_id" id="pc_id">
+	                                    <option value="0">==请选择==</option>
+	                                    <{foreach item=i key=k from=$articlecato_rs2}>
+	                                    <{if $i.grade == 1}>
+	                                    <option value="<{$i.object.pc_id}>"><{$i.object.pc_name}></option>
+	                                    <{elseif $i.grade==2}>
+	                                    <option value="<{$i.object.pc_id}>" <{if $articles_rs.pc_id == $i.object.pc_id}>selected<{/if}>>|-<{$i.object.pc_name}></option>
+	                                    <{/if}>
+	                                    <{/foreach}>
+	                                    </select>
+	                                </div>
+	                                <{/if}>
+	                                <{include file="articles/filterfield.html"}>
+	                                <{if $sconfig.istop == 1}>
+	                                <div class="rowElem">
+	                                    <label class="label">头条</label> <input type="radio" name="top" value="1" <{if $articles_rs.top eq "1"}>checked<{/if}>>是 <input type="radio" name="top" value="0" <{if $articles_rs.top neq "1"}>checked<{/if}>>否
+	                                </div>
+	                                <{/if}>
+	                                <{if $sconfig.isrecomd == 1}>
+	                                <div class="rowElem">
+	                                    <label class="label">推荐</label> <input type="radio" name="recomd" value="1" <{if $articles_rs.recomd eq "1"}>checked<{/if}>>是 <input type="radio" name="recomd" value="0" <{if $articles_rs.recomd neq "1"}>checked<{/if}>>否
+	                                </div>
+	                                <{/if}>
+	                                <{if $sconfig.isspecrecomd == 1 || $sconfig.stj_news == 1 || $sconfig.stj_hot == 1 || $sconfig.stj_soldout == 1}>
+	                                <div class="rowElem">
+	                                    <label class="label">属性</label>
+	                                    <{if $sconfig.isspecrecomd == 1}>
+	                                    <input type="checkbox" name="specrecomd" value="1" <{if $articles_rs.specrecomd eq "1"}>checked<{/if}>>特荐
+	                                    <{/if}>
+	                                    <{*
+	                                    <{if $sconfig.stj_news == 1}>
+	                                    &nbsp;
+	                                    <input type="checkbox" name="stj_news" value="1" <{if $articles_rs.stj_news eq "1"}>checked<{/if}>>新品
+	                                    <{/if}>
+	                                    <{if $sconfig.stj_hot == 1}>
+	                                    &nbsp;
+	                                    <input type="checkbox" name="stj_hot" value="1" <{if $articles_rs.stj_hot eq "1"}>checked<{/if}>>热卖
+	                                    <{/if}>
+	                                    <{if $sconfig.stj_soldout == 1}>
+	                                    &nbsp;
+	                                    <input type="checkbox" name="stj_soldout" value="1" <{if $articles_rs.stj_soldout eq "1"}>checked<{/if}>>售罄
+	                                    <{/if}>
+	                                    *}>
+	                                    <{if $sconfig.stj_news == 1 || $sconfig.stj_hot == 1 || $sconfig.stj_soldout == 1}>
+	                                    <input type="radio" name="stj" value="none" <{if !$articles_rs.stj_news && !$articles_rs.stj_hot && !$articles_rs.stj_soldout}>checked<{/if}>><span class="zx_red zx_weight">未设置</span>
+	                                    <{/if}>
+	                                    <{if $sconfig.stj_news == 1}>
+	                                    &nbsp;
+	                                    <input type="radio" name="stj" value="stj_news" <{if $articles_rs.stj_news eq "1"}>checked<{/if}>>新品
+	                                    <{/if}>
+	                                    <{if $sconfig.stj_hot == 1}>
+	                                    &nbsp;
+	                                    <input type="radio" name="stj" value="stj_hot" <{if $articles_rs.stj_hot eq "1"}>checked<{/if}>>热卖
+	                                    <{/if}>
+	                                    <{if $sconfig.stj_soldout == 1}>
+	                                    &nbsp;
+	                                    <input type="radio" name="stj" value="stj_soldout" <{if $articles_rs.stj_soldout eq "1"}>checked<{/if}>>售罄
+	                                    <{/if}>
+	                                </div>
+	                                <{/if}>
+	                                <{if $sconfig.isindex == 1}>
+	                                <div class="rowElem">
+	                                    <label class="label">首页推荐</label> <input type="radio" name="isindex" value="1" <{if $articles_rs.isindex eq "1"}>checked<{/if}>>是 <input type="radio" name="isindex" value="0" <{if $articles_rs.isindex neq "1"}>checked<{/if}>>否
+	                                </div>
+	                                <{/if}>
+	                                <{if $sconfig.ismetatitle == 1}>
+	                                <div class="rowElem">
+	                                    <label class="label">meta标题</label> <input name="metatitle" type="text" id="metatitle" value="<{if $articles_rs.metatitle != 'NULL'}><{$articles_rs.metatitle}><{/if}>" style="width:600px">
+	                                    (若为空,则默认)
+	                                </div>
+	                                <{/if}>
+	                                <{if $sconfig.ismeta == 1}>
+	                                <div class="rowElem">
+	                                    <label class="label">meta关键词</label> <input name="metakey" type="text" id="metakey" value="<{if $articles_rs.metakey != 'NULL'}><{$articles_rs.metakey}><{/if}>" style="width:600px">
+	                                    (若为空,则默认)
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label">meta描述</label> <input name="metades" type="text" id="metades" value="<{if $articles_rs.metades != 'NULL'}><{$articles_rs.metades}><{/if}>" style="width:600px">
+	                                    (若为空,则默认)
+	                                </div>
+	                                <{/if}>
+	                                <{if $sconfig.subcolumn}>
+	                                <div class="rowElem">
+	                                    <label class="label">从属</label> 
+	                                    <select name="subproduct" id="subproduct">
+	                                    <option value="0">==请选择==</option>
+	                                    <{foreach item=i key=k from=$sub_rs}>
+	                                    <option value="<{$i.pid}>" <{if $i.pid == $articles_rs.subproduct}>selected<{/if}>><{$i.name}></option>
+	                                    <{foreach item=ii key=kk from=$i.subc}>
+	                                    <option value="<{$ii.pid}>" <{if $ii.pid == $articles_rs.subproduct}>selected<{/if}>>&nbsp;&nbsp;|-<{$ii.name}></option>
+	                                    <{/foreach}>
+	                                    <{/foreach}>
+	                                    </select>
+	                                </div>
+	                                <{/if}>
+	                                <{if $sconfig.ispic == 1}>
+	                                <div class="rowElem">
+	                                	<label class="label">上传图片</label> <input type="file" class="file" name="img" id="img" /> <{if $sconfig.thumb_width}>(图片尺寸 <{$sconfig.thumb_width}> * <{$sconfig.thumb_height}> 像素) <{/if}><{if $articles_rs.picurlpath && $articles_rs.picurlfile}><a href="../<{$articles_rs.picurlpath}><{$articles_rs.picurlfile}>" target="_blank">查看原图</a> <a href="<{spUrl c=articles a=delproimg act=img fid=$fid sid=$sid id=$articles_rs.pid}>" onclick="return confirm('确认删除该图吗')">删除该图</a><{/if}>
+	                                </div>
+	                                <{/if}>
+	                                <{if $sconfig.ispic2 == 1}>
+	                                <div class="rowElem">
+	                                	<label class="label">上传图片2</label> <input type="file" class="file" name="img2" id="img2" /> <{if $articles_rs.picurlpath2 && $articles_rs.picurlfile2}><a href="../<{$articles_rs.picurlpath2}><{$articles_rs.picurlfile2}>" target="_blank">查看原图</a> <a href="<{spUrl c=articles a=delproimg act=img2 fid=$fid sid=$sid id=$articles_rs.pid}>" onclick="return confirm('确认删除该图吗')">删除该图</a><{/if}>
+	                                </div>
+	                                <{/if}>
+	                                <{if $sconfig.ispic3 == 1}>
+	                                <div class="rowElem">
+	                                	<label class="label">上传图片3</label> <input type="file" class="file" name="img3" id="img3" /> <{if $articles_rs.picurlpath3 && $articles_rs.picurlfile3}><a href="../<{$articles_rs.picurlpath3}><{$articles_rs.picurlfile3}>" target="_blank">查看原图</a> <a href="<{spUrl c=articles a=delproimg act=img3 fid=$fid sid=$sid id=$articles_rs.pid}>" onclick="return confirm('确认删除该图吗')">删除该图</a><{/if}>
+	                                </div>
+	                                <{/if}>
+	                                <{if $sconfig.isflv == 1}>
+	                                <div class="rowElem">
+	                                	<label class="label">上传视频</label> <input type="file" class="file" name="flv" id="flv" /> <{if $articles_rs.flvurl}><a href="<{spUrl c=articles a=viewflv id=$id}>" target="_blank">查看视频</a> <a href="<{spUrl c=articles a=delproimg act=flv fid=$fid sid=$sid id=$articles_rs.pid}>" onclick="return confirm('确认删除该视频吗')">删除该视频</a><{/if}>
+	                                </div>
+	                                <{/if}>
+	                                <{if $sconfig.ispackage == 1}>
+	                                <div class="rowElem">
+	                                	<label class="label">上传附件(pdf)</label> <input type="file" class="file" name="package" id="flv" /> <{if $articles_rs.packageurl}><a href="../<{$articles_rs.packageurl}>" target="_blank">下载附件</a> <a href="<{spUrl c=articles a=delproimg act=package fid=$fid sid=$sid id=$articles_rs.pid}>" onclick="return confirm('确认删除该附件吗')">删除该附件</a><{/if}>
+	                                </div>
+	                                <{/if}>
+	                                <{*
+	                                <{if $sconfig.iscover == 1}>
+	                                <div class="rowElem">
+	                                    <label class="label">上传图片</label> <div id="fileQueue"></div>	
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label"></label>
+	                                    <input type="file" name="uploadify" id="uploadify" />
+	                                    <a href="javascript:$('#uploadify').uploadifyUpload()">上传</a>| 
+	                                    <a href="javascript:$('#uploadify').uploadifyClearQueue()">清空</a>
+	                                    <{if $picnum != '' && $picnum > 0}> |  <a href="<{spUrl c=photo a=manage pid=$articles_rs.pid fid=$fid sid=$sid}>">多图管理(<{$picnum}>)</a><{/if}>
+	                                </div>
+	                                <{/if}>
+	                                *}>
+	                                <{if $sconfig.isprice == 1}>
+	                                <div class="rowElem">
+	                                    <label class="label">产品价格<{if $smarty.session.sys_entrance.unit}>(<{$smarty.session.sys_entrance.unit}>)<{/if}></label> 
+	                                    <input class="account_input" name="price" type="text" id="price" value="<{$articles_rs.price}>">
+	                                </div>
+	                                <{/if}>
+	                                <{if $sconfig.isprice2 == 1}>
+	                                <div class="rowElem">
+	                                    <label class="label">产品价格2<{if $smarty.session.sys_entrance.unit}>(<{$smarty.session.sys_entrance.unit}>)<{/if}></label> 
+	                                    <input class="account_input" name="price2" type="text" id="price2" value="<{$articles_rs.price2}>">
+	                                </div>
+	                                <{/if}>
+	                                <{if $sconfig.isshort == 1}>
+	                                <div class="rowElem">
+	                                    <label class="label">简述</label> <textarea name="short" id="short" style="height: 150px; width: 600px;"><{$articles_rs.short}></textarea>
+	                                </div>
+	                                <{/if}>
+	                                <{if $sconfig.isdescription == 1}>
+	                                <div class="rowElem">
+	                                    <label class="label">文章描述</label> <textarea name="description" class="stext" id="description" style="height: 450px; width: 780px;"><{$articles_rs.description}></textarea>
+	                                </div>
+	                                <{/if}>
+	                                <{if $sconfig.islinkpic == 1}>
+	                                <div class="rowElem">
+	                                    <label class="label">图片链接地址</label> <input name="linkpic" type="text" id="link" value="<{$articles_rs.linkpic}>">
+	                                </div>
+	                                <{/if}>
+	                                <{if $sconfig.islink == 1}>
+	                                <div class="rowElem">
+	                                    <label class="label">链接地址</label> <input name="link" type="text" id="link" value="<{$articles_rs.link}>">
+	                                </div>
+	                                <{/if}>
+	                                <{if $sconfig.isposttime}>
+	                                <div class="rowElem">
+	                                    <label class="label">新闻时间</label> 
+	                                    <input type="text" size="43" class="<{if $sconfig.isposttime == '1'}>posttime<{else}>ui_timepicker<{/if}>" name="posttime" value="<{if $sconfig.isposttime == '1'}><{$articles_rs.posttime|date_format:'%Y-%m-%d'}><{else}><{$articles_rs.posttime}><{/if}>" readonly/>
+	                                </div>
+	                                <{/if}>
+	                                <{if $sconfig.iscanhide == 1}>
+	                                <div class="rowElem">
+	                                    <label class="label">是否隐藏</label> <input type="checkbox" name="ishide" value="1" <{if $articles_rs.ishide}>checked<{/if}>>隐藏
+	                                </div>
+	                                <{/if}>
+                                </fieldset>
+                                <{include file="articles/extfield.html"}>
+                                <{if $sconfig.isext == 1}>
+                                <fieldset> 
+	                                <legend>扩展资料</legend>
+	                                <{foreach item=i key=k from=$extarray}>
+	                                <div class="rowElem">
+	                                    <label class="label"><{$k}></label> <{$i}>
+	                                </div>
+	                                <{/foreach}>
+	                            </fieldset>
+	                            <{/if}>
+                                <div class="rowElem">
+                                	<label class="label">&nbsp;</label>
+                                    <button type="submit" id="submit-go">Submit</button>
+                                </div>
+                            </fieldset>
+                        </form>
+						</td>
+	        		</tr>
+	        	</table>
+	        </td>
+	        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+	      </tr>
+	    </table>
+    </td>
+  </tr>
+  <tr>
+    <td height="35" background="images/tab_19.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="35"><img src="images/tab_18.gif" width="12" height="35" /></td>
+        <td>&nbsp;</td>
+        <td width="16"><img src="images/tab_20.gif" width="16" height="35" /></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</div>
+</div>
+</body>
+</html>

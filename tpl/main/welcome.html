@@ -1,0 +1,425 @@
+<{include file="header.html"}>
+<style>
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, button, textarea, p, blockquote, th, td {
+	margin: 0;
+	padding: 0;
+}
+.fontshrink {
+	-webkit-text-size-adjust: none;
+	-webkit-transform: scale(0.8);
+	-o-transform: scale(1);
+	display: inline-block
+}
+html, body {
+	-webkit-text-size-adjust: none;
+}
+body {
+	background: #fff;
+	color: #555;
+	font-size: 14px;
+	font-family: "微软雅黑";
+}
+td, th, caption {
+	font-size: 14px;
+}
+h1, h2, h3, h4, h5, h6 {
+	font-weight: normal;
+	font-size: 100%;
+}
+address, caption, cite, code, dfn, em, th, var {
+	font-style: normal;
+	font-weight: normal;
+}
+a {
+	color: #555;
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: none;
+}
+img {
+	border: none;
+}
+ol, ul, li, p {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+input, textarea, select, button {
+	font: 14px Verdana, Helvetica, Arial, sans-serif;
+}
+table {
+	border-collapse: collapse;
+}
+#linkspan {
+	cursor: pointer
+}
+.tagbox {
+	margin-top: 20px;
+	padding-left: 20px
+}
+.tagbox .tagdiv {
+	margin-top: 10px
+}
+.tagbox .taginfo { /*text-indent:2em;*/
+}
+.page-title {
+	color: #666;
+	display: block;
+	font-family: "HelveticaNeue", "Helvetica Neue", Helvetica, Arial;
+	font-size: 30px;
+	font-weight: 300;
+	letter-spacing: -1px;
+	margin: 20px 0 25px;
+	padding: 0;
+}
+.page-title small {
+	color: #888;
+	font-size: 14px;
+	font-weight: 300;
+	letter-spacing: 0;
+}
+.rb {
+	width: 100%;
+}
+.rb1, .rb2, .rb3, .rb4 {
+	padding: 1.5%;
+	width: 20%;
+	margin-right: 2%;
+	float: left;
+}
+.rb1:hover, .rb2:hover, .rb3:hover, .rb4:hover {
+	border-color: #339;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(102, 175, 233, 0.6);
+	outline: 0 none;
+}
+.rb1:hover {
+	background-color:#0093d4;
+}
+.rb2:hover {
+	background-color:#009756;
+}
+.rb3:hover {
+	background-color:#4f0061;
+}
+.rb4:hover {
+	background-color:#e39b2a;
+}
+.rb1 {
+	background-color: #27a9e3;
+}
+.c-text {
+	color: #FFF;
+	margin-left: 30px;
+	font-weight: bold;
+	float: right;
+}
+.c-text i {
+	display: block;
+	font-style: normal;
+	text-align: right;
+	margin-bottom: 3px;
+}
+.c-text b {
+	display: block;
+	font-size: 18px;
+}
+.rb2 {
+	background-color: #28b779;
+}
+.rb-f {
+	font-size: 50px;
+	color: #FFF;
+	vertical-align: middle;
+	display: block;
+	float: left;
+}
+.style1 {
+	font-size: 16px;
+}
+.rb3 {
+	background-color: #6e1881;
+}
+.rb a {
+	cursor: pointer;
+	display: block;
+}
+.rb4 {
+	background-color: #ffb848;
+}
+.leftmain {
+	float: left;
+	margin: 40px 0 0 0;
+	width: 47%;
+	margin-left: 30px;
+}
+.rightmain {
+	float: left;
+	width: 22%;
+	margin: 40px 0 0 0;
+	margin-left: 1%;
+}
+.rightmain1 {
+	float: left;
+	width: 22%;
+	margin: 40px 0 0 0;
+	margin-right: 2%;
+	margin-left: 2%;
+}
+.System_Log {
+}
+.System_Log h4 {
+	font-size: 18px;
+	border-bottom: #CCC solid 1px;
+	width: 100%;
+	padding-bottom: 10px;
+	margin-bottom: 10px;
+}
+.System_Log ul li {
+	line-height: 40px;
+	position: relative;
+}
+.System_Log ul li span {
+	font-size: 14px;/*
+	position: absolute;
+	left: 0;
+	*/
+}
+.System_Log ul li span.new{
+	font-weight:bolder;
+}
+.System_Log ul li i {
+	font-style: normal;
+	font-size: 12px;
+	color: #999;
+	position: absolute;
+	right: 0;
+}
+.calendar {
+}
+.rate h4 {
+	font-size: 18px;
+	border-bottom: #CCC solid 1px;
+	padding-bottom: 10px;
+	margin-bottom: 10px;
+}
+.calendar h4 {
+	font-size: 18px;
+	border-bottom: #CCC solid 1px;
+	padding-bottom: 10px;
+	margin-bottom: 10px;
+}
+.rc{ width:72%; padding:30px; float:left}
+.rc h4 {
+	font-size: 18px;
+	border-bottom: #CCC solid 1px;
+	padding-bottom: 10px;
+	margin-bottom: 10px;
+}
+.qtrc{ width:23%; float:left;padding-top:30px; }
+.qtrc h4	{font-size: 18px;
+	border-bottom: #CCC solid 1px;
+	padding-bottom: 10px;
+	margin-bottom: 10px;
+}
+.rc_img{ float:left; height:30px; line-height:30px;}
+.rc_select{ float:left; margin-right:20px; height:30px;}
+.rc_select #user_id{ height:30px; line-height:30px;}
+.clear{content: "."; display: block; height:0; clear:both; visibility: hidden;}
+.qb_rc{ overflow:hidden; line-height:30px; color:#000; margin-bottom:15px; padding-bottom:15px; border-bottom:#999  dashed 1px; }
+.qb_rc b{ font-weight:normal;}
+.qb1,.qb2,.qb3,.qb4,.qb5{ font-size:14px; font-weight:bold; color:#999;}
+.qb1 b{ font-size:22px; color:#000; }
+.qb1 b i{ color:#27a9e3; font-style:normal; font-size:18px;font-weight:bold;}
+.qb2 b{ font-size:18px;color:#000;  }
+.qb3 b{ font-size:16px;color:#333; margin-left:10px; }
+.qb4 b{ font-size:16px;color:#333;font-weight:bold; }
+.qb5 b{font-size:14px;color:#333;}
+</style>
+<script src="<{$web_root}>/js/layer/layer.js"></script>
+<script>
+function showinfo(infoid, layertitle){
+	$.post('<{spUrl c=main a=newsview}>' + "&id="+infoid, {}, function(str){
+		layer.open({
+			type: 1,
+			moveType: 1,
+			maxmin: true,
+			tipsMore: true,
+			title: layertitle,
+			area: ['800px', '600px'],
+			shadeClose: true, //点击遮罩关闭
+			content: str
+		});
+	});
+}
+$(function(){
+	$(".viewinfo").click(function(){
+		showinfo($(this).attr("infoid"), $(this).attr("layertitle"));
+		$(this).find("span").removeClass("new");
+		$(this).find("span.newico").remove();
+	})
+})
+</script>
+</head><body>
+<div style="padding: 10px 0 0 30px; overflow:hidden;">
+  <h3 class="page-title"> <small><{$smarty.session.sscrm_user.dname}>,</small><{$smarty.session.sscrm_user.realname}> <small>您好</small> </h3>
+  <div class="rb"> <a href="<{spUrl c=schedule a=myplanlist}>">
+    <div class="rb1"> <i class="iconfont rb-f">&#xe64e;</i> <span class="c-text"> <i><font class="style1"><{$my_doing_count}></font>进行中</i> <b>我的日程</b> </span> </div>
+    </a> <a href="<{spUrl c=schedule a=planlist}>">
+    <div class="rb2"> <i class="iconfont rb-f">&#xe651;</i> <span class="c-text"> <i><font class="style1"><{$all_doing_count}></font>进行中</i> <b>同事的日程</b> </span> </div>
+    </a>
+    <div class="rb3"> <i class="iconfont rb-f">&#xe650;</i> <span class="c-text"> <i>共<font class="style1"><{$client_total_rs.total}></font>客户</i> <b>我们的客户</b> </span> </div>
+    <div class="rb4"> <i class="iconfont rb-f">&#xe652;</i> <span class="c-text"> <i>共<font class="style1"><{$channel_total_rs.total}></font>渠道</i> <b>我们的渠道</b> </span> </div>
+  </div>
+</div>
+<div class="rc">
+	<h4>我的日程</h4>
+	<{include file="library/index_calendar.html"}>
+</div>
+
+<style>
+.calcant{
+	color:#A0A0A0;
+	cursor:help;
+}
+.ajaxnewslist ul li span.newico {
+    display: inline-block;
+	background: url("images/icogroup.png") no-repeat scroll 0 -98px;
+    height: 20px;
+    margin-left: 5px;
+    width: 17px;
+	position: relative;
+	top: 4px;
+}
+</style>
+<script>
+function check_cal(){
+	if($("#user_id").val()){
+		$(".calendarlink").removeClass("calcant");
+	}else{
+		$(".calendarlink").addClass("calcant");
+	}
+	
+}
+$(function(){
+	$(".calendarlink").click(function(){
+		if($("#user_id").val()){
+			window.location.href = '<{spUrl c=schedule a=calendar}>' + "&user_id=" + $("#user_id").val();
+		}else{
+			alert("请先在左侧选择查看人，再查看日程");
+		}
+		return false;
+	})
+	$(".allreadit").click(function(){
+		if(!confirm("确定要把系统公告全部转为已读吗?"))
+			return false;
+		$.ajax({
+			type : "post",
+			url : "<{spUrl c=main a=allreadit}>",
+			dataType : 'json',
+			beforeSend : function() {
+				showBlockMsg(".ajaxnewslist", "");
+			},
+			success : function(json, textStatus) {
+				hideBlockMsg(".ajaxnewslist");
+				if(json.result == 1){
+					$(".ajaxnewslist ul li a span.new").removeClass("new");
+					$(".ajaxnewslist ul li a span.newico").remove();
+				}else{
+					showBlockMsg(".ajaxnewslist", json.msg, 'error');
+					window.setTimeout(function() {
+						hideBlockMsg(".ajaxnewslist");					
+					}, 2000);
+				}
+				
+			},
+			error : function(xml, status) {
+				alert("未知错误，请稍后再试");
+			}
+		});
+	})
+	$("#user_id").change(function(){
+		check_cal();
+	})
+	check_cal();
+})
+</script>
+<div class="qtrc">
+	<h4>同事的日程</h4>
+ 	<div class="rc_select">                       
+		<select name="user_id" id="user_id" style="margin-right:20px;">
+			<option value="">==查看同事日程表==</option>
+			<{foreach item=i key=k from=$user_prep_rs}>
+			<optgroup label="<{$i.dname}>">
+			<{if $i.user_rs}>
+			<{foreach item=ii key=kk from=$i.user_rs}>
+			<option value="<{$ii.id}>" <{if $user_id == $ii.id}>selected<{/if}>><{$ii.py}> - <{$ii.realname}></option>
+			<{/foreach}>
+			<{/if}>
+			</optgroup>
+			<{/foreach}>
+		</select>
+	</div>
+	<div class="rc_img">
+		<a class="calendarlink calcant" style="display:block" href="javascript:">
+			<img width="19" height="19" align="absmiddle" style="vertical-align:middle;" src="images/ttbb.jpg">
+			<span style="font-size:16px;vertical-align:middle; margin-left:5px;">点击查看TA的日程表</span>
+		</a>
+	</div>                                              
+	<div class="clear" style="height:35px;"></div>
+ 	
+ 	<{include file="library/index_rencent_plan.html"}>
+ 	
+ 	<script>
+ 	function reload_recent_plan(){
+ 		return false;
+ 		$.ajax({
+			type : "post",
+			url : "<{spUrl c=apis a=rencent_plan}>",
+			dataType : 'json',
+			beforeSend : function() {
+				
+			},
+			success : function(json, textStatus) {
+				if(json.result == 1){
+					$(".recent_plan").after(json.html).remove();
+				}
+			},
+			error : function(xml, status) {
+				alert("未知错误，请稍后再试");
+			}
+		});
+ 	}
+ 	$(function(){
+ 		setInterval(function() {
+ 			reload_recent_plan();
+ 		}, 10 * 60e3);
+ 	})
+ 	</script>
+ 	
+</div>
+
+
+<div class="leftmain">
+  <div class="System_Log">
+    <h4>
+    	<a href="javaScript:" class="zxfloatright zx_red zx_position_bottom_small zx_position_left_ssmall allreadit">全部转为已读↓</a>
+    	系统公告
+    </h4>
+    <{include file="library/index_news_list.html"}>
+  </div>
+</div>
+<div class="rightmain1">
+  <div class="rate">
+    <h4>汇率</h4>
+    <iframe frameborder="0" width="400" height="638" scrolling="no" src="<{spUrl c=main a=exchange}>"></iframe>
+  </div>
+</div>
+<div class="rightmain">
+  <div class="calendar">
+    <h4>日历</h4>
+    <iframe frameborder="0" width="400" height="638" scrolling="no" src="<{spUrl c=main a=wannianli}>"></iframe>
+  </div>
+</div>
+</body>
+<{include file="footer.html"}>

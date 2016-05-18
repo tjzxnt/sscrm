@@ -1,0 +1,199 @@
+<{include file="header.html"}>
+
+<{include file="library/accounting.html"}>
+<script>
+$(function(){
+	$(".fundclear").click(function(){
+		if(!confirm("确认该订单的房款已全部到账了吗"))
+			return false;
+		$(".alert_tr").addClass("zxhide");
+		$(".clear_tr").removeClass("zxhide");
+	});
+	$('#verify').keypress(function(e){
+		if(e.keyCode==13){
+		    e.preventDefault();
+		}
+	});
+})
+</script>
+</head>
+<body>
+<table width="100%" height="100%" cellspacing="1" cellpadding="0" class="tablesl zxblockui">
+  <tr>
+    <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="75%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[客户管理]-[我跟进的客户]-[<{$client_rs.realname}> / <{if $client_rs.sex == 1}>男<{elseif $client_rs.sex == 2}>女<{else}>未知<{/if}> / <{if $client_rs.telphone}><{$client_rs.telphone}><{else}>-<{/if}></span>]-[款项记录]</td>
+              </tr>
+            </table></td>
+            <td width="25%">
+	            <table border="0" align="right" cellpadding="0" cellspacing="0">
+					<tr>
+						<{if $createurl}>
+						<td class="STYLE1">
+							<a href="<{$createurl}>" style="display:block"><img src="images/add.gif" width="48" height="19" align="absmiddle" /></a>
+						</td>
+						<td width="20"></td>
+						<{/if}>
+						<{if $backurl}>
+						<td class="STYLE1">
+							<a href="<{$backurl}>"><img src="images/back.png" width="14" height="14" align="top" /> 返回</a>
+						</td>
+						<{/if}>
+					</tr>
+	            </table>
+            </td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <{if $client_rs.isform}>
+  <tr>
+    <td>
+	    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	      <tr>
+	        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+	        <td>
+	        	<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#b5d6e6">
+	        		<tr height="50" bgcolor="#FFFFFF">
+	        			<td>
+	        			<form class="form">
+                            <fieldset>
+                                <legend>合同编号 <span class="zx_red zx_weight"><{$client_rs.bargain}></span></legend>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>房源信息</label> 
+                                    <span class="viewtxt"><{$client_rs.exp_country}> / <{$client_rs.listings}> / <{$client_rs.listingstype}> / <{$client_rs.listingsarea}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>房款</label> 
+                                    <span class="viewtxt account_txt zx_red zx_weight"><{$client_rs.service_price_standard}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>服务费比例</label> 
+                                    <span class="viewtxt"><{$client_rs.service_rate_standard}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>优惠后服务费比例</label> 
+                                    <span class="viewtxt"><{$client_rs.service_rate_preferent}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>优惠金额</label> 
+                                    <span class="viewtxt account_txt"><{$client_rs.service_price_preferential}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>实际总服务费</label> 
+                                    <span class="viewtxt account_txt"><{$client_rs.service_price_real}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">优惠说明</label> 
+                                    <span class="viewtxt"><{$client_rs.preferential_reason}></span>
+                                </div>
+                                <{if $client_rs["ispay"] eq '2'}>
+                                <div class="rowElem">
+                                    <label class="label">状态</label> 
+                                    <span class="viewtxt zx_red zx_weight">已可结佣</span>
+                                </div>
+                                <{/if}>
+                            </fieldset>
+                        </form>
+						</td>
+	        		</tr>
+	        	</table>
+	        </td>
+	        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+	      </tr>
+	    </table>
+    </td>
+  </tr>
+  <{/if}>
+  <tr>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+        <td><table class="zx_data_list" width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#b5d6e6">
+          <thead>
+          <tr>
+            <td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">序号</span></div></td>
+            <td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">添加人</span></div></td>
+            <td width="30%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">款项类型</span></div></td>
+            <td width="6%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">应交数</span></div></td>
+            <td width="6%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">应交日期</span></div></td>
+            <td width="6%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">到账日期</span></div></td>
+            <td width="6%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">实交数</span></div></td>
+            <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">欠款</span></div></td>
+            <td width="6%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">录入时间</span></div></td>
+          </tr>
+          </thead>
+          <tbody>
+          <{foreach item=i key=k from=$fund_rs}>
+          <tr>
+          	<td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$k+1}></span></div></td>
+          	<td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.realname_create}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.fund_type}></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1 account_txt"><{$i.pay_standard}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.payabletime|date_format:"%Y-%m-%d"}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.arrivaltime|date_format:"%Y-%m-%d"}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1 account_txt"><{$i.pay_real}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1 account_txt"><{$i.pay_overdraft}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.createtime|date_format:"%Y-%m-%d %H:%M"}></span></div></td>
+          </tr>
+          <{foreachelse}>
+          <tr>
+           	<td height="20" bgcolor="#FFFFFF" colspan="9"><div style="margin-left:7px; margin-top:10px">暂无任何交款记录</div></td>
+		  </tr>
+		  <{/foreach}>
+		  <{if $fund_rs && $client_rs.ispay == 1 && $client_rs.isform && $clearurl && $smarty.session.sscrm_user.depart_id == 4 && $smarty.session.sscrm_user.isdirector}>
+		  <tr class="alert_tr">
+           	<td height="20" bgcolor="#FFFFFF" colspan="9">
+           		<div class="listleft zx_red zx_weight">
+           			<a href="javascript:" class="fundclear">已可返佣？</a>
+           		</div>
+           	</td>
+		  </tr>
+		  <tr class="clear_tr zxhide">
+		  	<td height="20" bgcolor="#FFFFFF" colspan="9">
+		  		<form>
+           		<div class="listleft">
+           			<input type="hidden" name="client_id" value="<{$client_id}>"/>
+           			<input class="zx_width_bsmall" id="verify" type="text" name="verify" value="请输入右侧验证码" onfocus="if(this.value=='请输入右侧验证码'){this.value='';}" onblur="if(this.value==''){this.value='请输入右侧验证码';}"/>
+           			<a href="#" id="img_verify_a" onClick="document.getElementById('captcha_img').src='<{$web_root}>/libs/captverify.php?'+Math.random();return false;">
+						<img id="captcha_img" class="zx_margin_right_small zx_position_bottom_ssmall" src="libs/captverify.php" width="130" height="20"/>
+					</a>
+           			<input class="form_post form_post_disabled" type="button" zxalert="确认房款已全部到账了吗？ 该提交会锁定该订单" form_post_url="<{$clearurl}>" value="房款确已结清"/>
+           		</div>
+           		</form>
+           	</td>
+		  </tr>
+		  <{/if}>
+		  </tbody>
+          <tfoot>
+          <tr height="50" bgcolor="#FFFFFF"><td colspan="9">&nbsp;</td></tr>
+          </tfoot>
+        </table></td>
+        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td height="35" background="images/tab_19.gif">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="35"><img src="images/tab_18.gif" width="12" height="35" /></td>
+        <td>
+        	<{include file="pager.html"}>
+		</td>
+        <td width="16"><img src="images/tab_20.gif" width="16" height="35" /></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</div>
+</body>
+<{include file="footer.html"}>

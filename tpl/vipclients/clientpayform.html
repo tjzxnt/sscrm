@@ -1,0 +1,189 @@
+<{include file="header.html"}>
+
+<{include file="library/accounting.html"}>
+
+<{include file="library/validator.html"}>
+
+</head>
+<body>
+<table width="100%" height="100%" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="80%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[大客户管理]-[我添加的客户]-[<{$client_rs.realname}> / <{if $client_rs.sex == 1}>男<{elseif $client_rs.sex == 2}>女<{else}>未知<{/if}> / <{if $client_rs.telphone}><{$client_rs.telphone}><{else}>-<{/if}></span>]-[添加客户订单]</td>
+              </tr>
+            </table></td>
+            <td width="20%"><table border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr>
+                <td width="60"><table width="90%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+					<td class="STYLE1"><div align="center"><a href="#nogo" onClick="javascript:history.go(-1)"><img src="images/back.png" width="14" height="14" align="top" /> 返回</a></div></td>
+                    <td class="STYLE1"><div align="center"></div></td>
+                  </tr>
+                </table></td>
+              </tr>
+            </table></td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td>
+	    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	      <tr>
+	        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+	        <td>
+	        	<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#b5d6e6">
+	        		<tr height="50" bgcolor="#FFFFFF">
+	        			<td>
+	        			<form class="form" method="post" action="<{$saveurl}>">
+	        				<input type="hidden" name="isAjax" value="0" />
+	        				<input type="hidden" name="client_id" value="<{$client_id}>" />
+	        				<fieldset>
+                                <legend>大客户信息</legend>
+                                <div class="rowElem">
+                                    <label class="label">客户来源</label> 
+                                    <span class="viewtxt"><{$origin_rs.oname}></span>
+                                </div>
+                                <{foreach item=i key=k from=$ext_field_rs}>
+                                <div class="rowElem">
+                                    <label class="label"><{if $i.demand == "required"}><span class="input_required">*</span><{/if}><{$i.fieldname}></label>
+                                    <{if $i.type == "text"}>
+                                    <input name="<{$i.field}>" type="text" id="<{$i.field}>" value="<{$client_rs[$i.field]}>"/>
+                                    <{/if}>
+                                </div>
+                                <{/foreach}>
+                                
+                                <{include file="clients/clientviewfrom.html"}>
+                                
+                           	</fieldset>
+                           	
+                           	<{include file="clients/include/clientviewinfo.html"}>
+                           	
+	        				<fieldset>
+                                <legend>业务相关基本信息</legend>
+                                <div class="rowElem">
+                                    <label class="label">意向国家</label> 
+                                    <span class="viewtxt"><{$client_rs.exp_country}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">客户需求</label> 
+                                    <span class="viewtxt"><{$client_rs.demand}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">其他反馈</label> 
+                                    <textarea name="feedback" rows="5" cols="50" readonly><{$client_rs.feedback}></textarea>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">首次到访时间</label> 
+                                    <span class="viewtxt"><{if $client_rs.visit_time}><{$client_rs.visit_time|date_format:'%Y-%m-%d %H:%M'}><{/if}></span>
+                                </div>
+                            </fieldset>
+                            <fieldset>
+                                <legend>房源部分</legend>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>房源名</label> 
+                                    <input name="listings" type="text" id="listings" value="<{$client_rs.listings}>"/>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>房源类型</label> 
+                                    <input name="listingstype" type="text" id="listingstype" value="<{$client_rs.listingstype}>"/>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>房源面积</label> 
+                                    <input name="listingsarea" type="text" id="listingsarea" value="<{$client_rs.listingsarea}>"/>
+                                </div>
+                            </fieldset>
+                            <script>
+                            	function calculator(){
+                            		$real_pay = accounting.unformat($("#service_price_standard").val()) * accounting.unformat($("#service_rate_preferent").val()) / 100;
+                            		$("#service_price_real").val(Math.round($real_pay));
+                            	}
+                            	$(function(){
+                            		$("#service_price_standard").keyup(function(){
+                            			calculator();
+                            		})
+                            		$("#service_rate_standard").keyup(function(){
+                            			$("#service_rate_preferent").val($(this).val());
+                            			calculator();
+                            		}).bind("paste", function(e){
+                            			e.preventDefault();
+                            		});
+                            		$("#service_rate_preferent").keyup(function(){
+                            			calculator();
+                            		}).bind("paste", function(e){
+                            			e.preventDefault();
+                            		});
+                            	});
+                            </script>
+                            <fieldset>
+                                <legend>订单部分</legend>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>合同编号</label> 
+                                    <input name="bargain" type="text" id="bargain" value="<{$client_rs.bargain}>"/>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>房款总价(RMB)</label> 
+                                    <input class="account_inputx" name="service_price_standard" type="text" id="service_price_standard" value="<{$client_rs.service_price_standard}>"/>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>服务费比例<span class="zx_red zx_weight">(%)</span></label> 
+                                    <input class="account_inputx zx_width_bsmall" name="service_rate_standard" type="text" id="service_rate_standard" value="<{$client_rs.service_rate_standard}>"/>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>优惠后服务费比例<span class="zx_red zx_weight">(%)</span></label> 
+                                    <input class="account_input zx_width_bsmall" name="service_rate_preferent" type="text" id="service_rate_preferent" value="<{$client_rs.service_rate_preferent}>"/>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">优惠金额</label> 
+                                    <input class="account_input" name="service_price_preferential" type="text" id="service_price_preferential" value="<{$client_rs.service_price_preferential}>"/>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>实际总服务费</label> 
+                                    <input class="account_input" name="service_price_real" type="text" id="service_price_real" value="<{$client_rs.service_price_real}>" readonly/>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">优惠说明</label> 
+                                    <input class="longinput" name="preferential_reason" type="text" id="preferential_reason" value="<{$client_rs.preferential_reason}>"/>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>成交时间</label> 
+                                    <input class="posttime" name="dealtime" type="text" id="dealtime" value="<{if $client_rs.dealtime}><{$client_rs.dealtime}><{/if}>" readonly/>
+                                </div>
+                                <div class="rowElem">
+                                	<label class="label">&nbsp;</label>
+                                    <button type="submit" id="submit-go">Submit</button>
+                                    <span class="formwarning">(保存后无法修改)</span>
+                                </div>
+                            </fieldset>
+                        </form>
+						</td>
+	        		</tr>
+	        	</table>
+	        </td>
+	        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+	      </tr>
+	    </table>
+    </td>
+  </tr>
+  <tr>
+    <td height="35" background="images/tab_19.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="35"><img src="images/tab_18.gif" width="12" height="35" /></td>
+        <td>&nbsp;</td>
+        <td width="16"><img src="images/tab_20.gif" width="16" height="35" /></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</div>
+</body>
+<{include file="footer.html"}>

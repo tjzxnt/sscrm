@@ -1,0 +1,142 @@
+<{include file="header.html"}>
+
+</head>
+<body>
+<table width="100%" height="100%" cellspacing="1" cellpadding="0" class="tablesl zxblockui">
+  <tr>
+    <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="30%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[客户管理]-[计划任务]<{if $client_rs}>-[<{$client_rs.realname}>]<{/if}></td>
+              </tr>
+            </table></td>
+            <td width="70%">
+            	<form method="GET">
+	            <input type="hidden" name="c" value="clientsales"/>
+	            <input type="hidden" name="a" value="planlist"/>
+	            <table border="0" align="right" cellpadding="0" cellspacing="0">
+	              <tr>
+	              	<td class="STYLE1">
+                  		<select name="status">
+                  			<option value="">全部状态</option>
+                  			<option value="doing" <{if $status == 'doing'}>selected<{/if}>>进行中</option>
+                  			<option value="going" <{if $status == 'going'}>selected<{/if}>>进行中未过期</option>
+                  			<option value="overdate" <{if $status == 'overdate'}>selected<{/if}>>进行中已过期</option>
+                  			<option value="waiting" <{if $status == 'waiting'}>selected<{/if}>>未开始</option>
+                  			<option value="finish" <{if $status == 'finish'}>selected<{/if}>>已完成</option>
+                  		</select>
+                  	</td>
+                  	<td class="STYLE1"><div align="top" style="margin-left:7px"><input type="image" value="" src="images/search.gif"></div></td>
+                  	<td>&nbsp;</td>
+	              	<{if $createurl}>
+	              	<td class="STYLE1"><div align="center"><a href="<{$createurl}>" style="display:block"><img src="images/add.gif" width="48" height="19" align="absmiddle" /></a></div></td>
+	              	<{/if}>
+	              	<td width="20"></td>
+	              	<td class="STYLE1">
+	              		<a href="<{if $backurl}><{$backurl}><{else}><{spUrl c=clientsales a=myclientlist}><{/if}>"><img src="images/back.png" width="14" height="14" align="top" /> 返回</a>
+	              	</td>
+	              </tr>
+	            </table>
+	            </form>
+            </td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+        <td><table class="zx_data_list" width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#b5d6e6">
+          <thead>
+          <tr>
+          	<!--
+            <td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+            </td>
+            -->
+            <td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">序号</span></div></td>
+            <td width="7%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">客户名</span></div></td>
+            <td width="10%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">状态</span></div></td>
+            <td height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">计划内容</span></div></td>
+            <td width="15%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">起始时间</span></div></td>
+            <td width="8%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">创建于</span></div></td>
+            <td width="10%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">操作(只能当天修改)</span></div></td>
+          </tr>
+          </thead>
+          <tbody>
+          <{foreach item=i key=k from=$plan_rs}>
+          <tr>
+            <td height="20" bgcolor="#FFFFFF">
+            	<div align="center" class="STYLE1">
+              		<div align="center"><{$k+1}></div>
+            	</div>
+            </td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.realname}></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft">
+            	<{if $i.isfinish}>
+            		<span class="STYLE1 Finished"><{$i.finishtime|date_format:"%Y-%m-%d %H:%M"}> 完成</div>
+            	<{else}>
+            		<{if $i.starttime > $smarty.now}>
+            		<i class="iconfont zx_gray">&#xe64b;</i>
+	            	<span class="STYLE1 Waiting"><{$i.starttime|zxdate_diff}> 后开始</div>
+	            	<{elseif $i.starttime <= $smarty.now && $i.endtime > $smarty.now}>
+	            	<span class="STYLE1 Going">已进行 <{$i.starttime|zxdate_diff}></div>
+	            	<{else}>
+	            	<span class="STYLE1 Overdate">已超出 <{$i.endtime|zxdate_diff}></div>
+	            	<{/if}>
+            	<{/if}>
+            	
+            </td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.content}></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1"><{$i.starttime|date_format:"%Y-%m-%d %H:%M"}> ~ <{$i.endtime|date_format:"%Y-%m-%d %H:%M"}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1"><{$i.createtime|date_format:"%Y-%m-%d %H:%M"}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF">
+            	<div align="center">
+            		<{if !$i.isfinish}>
+	            		<{if $i.createtime|date_format:"%Y-%m-%d" eq $smarty.now|date_format:"%Y-%m-%d" && $i.user_sales_id = $smarty.session.sscrm_user.id}>
+	            		<a href="<{spUrl c=clientsales a=modifyplan client_id=$i.client_id id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>修改</a>
+	            		<{/if}>
+	            		<a href="<{spUrl c=clientsales a=modifyplan_status client_id=$i.client_id id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>状态</a>
+	            	<{else}>
+	            		-
+            		<{/if}>
+            	</div>
+            </td>
+          </tr>
+          <{foreachelse}>
+			<tr>
+            	<td height="20" bgcolor="#FFFFFF" colspan="8"><div style="margin-left:7px; margin-top:10px">无匹配记录</div></td>
+			</tr>
+          <{/foreach}> 
+          </tbody>
+          <tfoot>
+          <tr height="50" bgcolor="#FFFFFF"><td colspan="8">&nbsp;</td></tr>
+          </tfoot>
+        </table></td>
+        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td height="35" background="images/tab_19.gif">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="35"><img src="images/tab_18.gif" width="12" height="35" /></td>
+        <td>
+        	<{include file="pager.html"}>
+		</td>
+        <td width="16"><img src="images/tab_20.gif" width="16" height="35" /></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</div>
+</body>
+<{include file="footer.html"}>

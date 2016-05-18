@@ -1,0 +1,366 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title></title>
+<style type="text/css">
+	body {
+		margin-left: 6px;
+		margin-top: 0px;
+		margin-right: 0px;
+		margin-bottom: 0px;
+		background:#1873AA;
+	}
+	a img {
+		border:none;
+	}
+	.STYLE1 {
+		font-size: 12px;
+		color: #FFFFFF;
+	}
+	.STYLE3 {
+		font-size: 12px;
+		color: #033d61;
+		text-decoration:none
+	}
+	.menu_title SPAN {
+		FONT-WEIGHT: bold; LEFT: 3px; COLOR: #ffffff; POSITION: relative; TOP: 2px 
+	}
+	.menu_title2 SPAN {
+		FONT-WEIGHT: bold; LEFT: 3px; COLOR: #FFCC00; POSITION: relative; TOP: 2px
+	}
+</style>
+<body>
+<table width="165" border="0" cellpadding="0" cellspacing="0">
+  <tr>
+    <td height="28" background="images/main_40.gif">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+                <td width="19%">&nbsp;</td>
+                <td width="81%" height="20"><a href="<{spUrl c=main a=left}>" style="text-decoration:none"><span class="STYLE1">管理菜单</span></a></td>
+            </tr>
+		</table>
+	</td>
+  </tr>
+  <{foreach item=i key=k from=$menu}>
+  <tr>
+	<td valign="top" bgcolor="White">
+    	<table width="151" border="0" align="center" cellpadding="0" cellspacing="0">
+    		<tr>
+        		<td>
+                	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+          				<tr>
+                            <td height="23" background="images/main_47.gif" id="imgmenu1" class="menu_title" onMouseOver="this.className='menu_title2';" onClick="showsubmenu(<{$k}>)" onMouseOut="this.className='menu_title';" style="cursor:pointer">
+                            	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                    <tr>
+                                        <td width="18%">&nbsp;</td>
+                                        <td width="82%" class="STYLE1"><{$i.title}></td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+          				<tr>
+            				<td background="images/main_51.gif" id="submenu<{$k}>">
+			 					<div class="sec_menu" >  
+								<table width="100%" border="0" cellspacing="0" cellpadding="0">
+									<{foreach item=ii key=kk from=$i.menu}>
+                                    <tr>
+                                    	<td>
+                                        	<table width="90%" border="0" align="center" cellpadding="0" cellspacing="0">
+                                                <tr>
+                                                    <td height="25"><div align="center"><img src="images/left.gif" width="10" height="10" /></div></td>
+                                                    <td height="23">
+                                                    	<table width="95%" border="0" cellspacing="0" cellpadding="0">
+                                            				<tr>
+                                              					<td height="20" style="cursor:pointer" onmouseover="this.style.backgroundImage='url(images/bg.gif)'; this.style.padding='2px';"onmouseout="this.style.backgroundImage='url()'; this.style.padding='0'"><a href="<{$ii.url}>" target="center" class="STYLE3"><{$ii.submenu}></a></td>
+                                            				</tr>
+                                        				</table>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <{/foreach}>
+                                    <tr>
+                                    	<td height="5"><img src="images/main_52.gif" width="151" height="5" /></td>
+                                    </tr>
+           						</table>
+                                </div>
+                            </td>
+          				</tr>
+        			</table>
+                </td>
+      		</tr>
+    	</table>
+    </td>
+  </tr>
+  <{/foreach}>
+  <!-- 
+  <tr>
+	<td valign="top" bgcolor="White">
+    	<table width="151" border="0" align="center" cellpadding="0" cellspacing="0">
+    		<tr>
+        		<td>
+                	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+          				<tr>
+                            <td height="23" background="images/main_47.gif" id="imgmenu1" class="menu_title" onMouseOver="this.className='menu_title2';" onClick="showsubmenu(1)" onMouseOut="this.className='menu_title';" style="cursor:pointer">
+                            	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                    <tr>
+                                        <td width="18%">&nbsp;</td>
+                                        <td width="82%" class="STYLE1">基本设置</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+          				<tr>
+            				<td background="images/main_51.gif" id="submenu1">
+			 					<div class="sec_menu" >  
+								<table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                    <tr>
+                                    	<td>
+                                        	<table width="90%" border="0" align="center" cellpadding="0" cellspacing="0">
+                                                <tr>
+                                                    <td height="25"><div align="center"><img src="images/left.gif" width="10" height="10" /></div></td>
+                                                    <td height="23">
+                                                    	<table width="95%" border="0" cellspacing="0" cellpadding="0">
+                                            				<tr>
+                                              					<td height="20" style="cursor:pointer" onmouseover="this.style.backgroundImage='url(images/bg.gif)'; this.style.padding='2px';"onmouseout="this.style.backgroundImage='url()'; this.style.padding='0'"><a href="<{spUrl c=basic a=mypwd}>" target="center" class="STYLE3">个人资料管理</a></td>
+                                            				</tr>
+                                        				</table>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                    	<td height="5"><img src="images/main_52.gif" width="151" height="5" /></td>
+                                    </tr>
+           						</table>
+                                </div>
+                            </td>
+          				</tr>
+        			</table>
+                </td>
+      		</tr>
+    	</table>
+    </td>
+  </tr>
+  <tr>
+	<td valign="top" bgcolor="White">
+    	<table width="151" border="0" align="center" cellpadding="0" cellspacing="0">
+    		<tr>
+        		<td>
+                	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+          				<tr>
+                            <td height="23" background="images/main_47.gif" id="imgmenu1" class="menu_title" onMouseOver="this.className='menu_title2';" onClick="showsubmenu(2)" onMouseOut="this.className='menu_title';" style="cursor:pointer">
+                            	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                    <tr>
+                                        <td width="18%">&nbsp;</td>
+                                        <td width="82%" class="STYLE1">员工设置</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+          				<tr>
+            				<td background="images/main_51.gif" id="submenu2">
+			 					<div class="sec_menu" >  
+								<table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                    <tr>
+                                    	<td>
+                                        	<table width="90%" border="0" align="center" cellpadding="0" cellspacing="0">
+                                                <tr>
+                                                    <td height="25"><div align="center"><img src="images/left.gif" width="10" height="10" /></div></td>
+                                                    <td height="23">
+                                                    	<table width="95%" border="0" cellspacing="0" cellpadding="0">
+                                            				<tr>
+                                              					<td height="20" style="cursor:pointer" onmouseover="this.style.backgroundImage='url(images/bg.gif)'; this.style.padding='2px';"onmouseout="this.style.backgroundImage='url()'; this.style.padding='0'"><a href="<{spUrl c=users a=userslist}>" target="center" class="STYLE3">员工管理</a></td>
+                                            				</tr>
+                                        				</table>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                    	<td height="5"><img src="images/main_52.gif" width="151" height="5" /></td>
+                                    </tr>
+           						</table>
+                                </div>
+                            </td>
+          				</tr>
+        			</table>
+                </td>
+      		</tr>
+    	</table>
+    </td>
+  </tr>
+  <tr>
+	<td valign="top" bgcolor="White">
+    	<table width="151" border="0" align="center" cellpadding="0" cellspacing="0">
+    		<tr>
+        		<td>
+                	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+          				<tr>
+                            <td height="23" background="images/main_47.gif" id="imgmenu1" class="menu_title" onMouseOver="this.className='menu_title2';" onClick="showsubmenu(3)" onMouseOut="this.className='menu_title';" style="cursor:pointer">
+                            	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                    <tr>
+                                        <td width="18%">&nbsp;</td>
+                                        <td width="82%" class="STYLE1">渠道管理</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+          				<tr>
+            				<td background="images/main_51.gif" id="submenu3">
+			 					<div class="sec_menu" >  
+								<table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                    <tr>
+                                    	<td>
+                                        	<table width="90%" border="0" align="center" cellpadding="0" cellspacing="0">
+                                                <tr>
+                                                    <td height="25"><div align="center"><img src="images/left.gif" width="10" height="10" /></div></td>
+                                                    <td height="23">
+                                                    	<table width="95%" border="0" cellspacing="0" cellpadding="0">
+                                            				<tr>
+                                              					<td height="20" style="cursor:pointer" onmouseover="this.style.backgroundImage='url(images/bg.gif)'; this.style.padding='2px';"onmouseout="this.style.backgroundImage='url()'; this.style.padding='0'"><a href="<{spUrl c=channels a=channellist}>" target="center" class="STYLE3">我的渠道</a></td>
+                                            				</tr>
+                                        				</table>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                    	<td height="5"><img src="images/main_52.gif" width="151" height="5" /></td>
+                                    </tr>
+           						</table>
+                                </div>
+                            </td>
+          				</tr>
+        			</table>
+                </td>
+      		</tr>
+    	</table>
+    </td>
+  </tr>
+  <tr>
+	<td valign="top" bgcolor="White">
+    	<table width="151" border="0" align="center" cellpadding="0" cellspacing="0">
+    		<tr>
+        		<td>
+                	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+          				<tr>
+                            <td height="23" background="images/main_47.gif" id="imgmenu1" class="menu_title" onMouseOver="this.className='menu_title2';" onClick="showsubmenu(4)" onMouseOut="this.className='menu_title';" style="cursor:pointer">
+                            	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                    <tr>
+                                        <td width="18%">&nbsp;</td>
+                                        <td width="82%" class="STYLE1">客户源管理</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+          				<tr>
+            				<td background="images/main_51.gif" id="submenu4">
+			 					<div class="sec_menu" >  
+								<table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                    <tr>
+                                    	<td>
+                                        	<table width="90%" border="0" align="center" cellpadding="0" cellspacing="0">
+                                                <tr>
+                                                    <td height="25"><div align="center"><img src="images/left.gif" width="10" height="10" /></div></td>
+                                                    <td height="23">
+                                                    	<table width="95%" border="0" cellspacing="0" cellpadding="0">
+                                            				<tr>
+                                              					<td height="20" style="cursor:pointer" onmouseover="this.style.backgroundImage='url(images/bg.gif)'; this.style.padding='2px';"onmouseout="this.style.backgroundImage='url()'; this.style.padding='0'"><a href="<{spUrl c=origins a=originlist}>" target="center" class="STYLE3">我的客户源</a></td>
+                                            				</tr>
+                                        				</table>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                    	<td height="5"><img src="images/main_52.gif" width="151" height="5" /></td>
+                                    </tr>
+           						</table>
+                                </div>
+                            </td>
+          				</tr>
+        			</table>
+                </td>
+      		</tr>
+    	</table>
+    </td>
+  </tr>
+  <tr>
+	<td valign="top" bgcolor="White">
+    	<table width="151" border="0" align="center" cellpadding="0" cellspacing="0">
+    		<tr>
+        		<td>
+                	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+          				<tr>
+                            <td height="23" background="images/main_47.gif" id="imgmenu1" class="menu_title" onMouseOver="this.className='menu_title2';" onClick="showsubmenu(5)" onMouseOut="this.className='menu_title';" style="cursor:pointer">
+                            	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                    <tr>
+                                        <td width="18%">&nbsp;</td>
+                                        <td width="82%" class="STYLE1">客户管理</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+          				<tr>
+            				<td background="images/main_51.gif" id="submenu5">
+			 					<div class="sec_menu" >  
+								<table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                    <tr>
+                                    	<td>
+                                        	<table width="90%" border="0" align="center" cellpadding="0" cellspacing="0">
+                                                <tr>
+                                                    <td height="25"><div align="center"><img src="images/left.gif" width="10" height="10" /></div></td>
+                                                    <td height="23">
+                                                    	<table width="95%" border="0" cellspacing="0" cellpadding="0">
+                                            				<tr>
+                                              					<td height="20" style="cursor:pointer" onmouseover="this.style.backgroundImage='url(images/bg.gif)'; this.style.padding='2px';"onmouseout="this.style.backgroundImage='url()'; this.style.padding='0'"><a href="<{spUrl c=clients a=clientlist}>" target="center" class="STYLE3">我的客户</a></td>
+                                            				</tr>
+                                        				</table>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                    	<td height="5"><img src="images/main_52.gif" width="151" height="5" /></td>
+                                    </tr>
+           						</table>
+                                </div>
+                            </td>
+          				</tr>
+        			</table>
+                </td>
+      		</tr>
+    	</table>
+    </td>
+  </tr>
+   -->
+  <tr>
+    <td height="18" background="images/main_58.gif">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+           		<td height="18" valign="bottom"><div align="center" class="STYLE3"></div></td>
+            </tr>
+        </table>
+    </td>
+  </tr>
+</table>
+<script type="text/javascript">
+	function showsubmenu(sid){
+		whichEl = document.getElementById("submenu" + sid);
+		if (whichEl.style.display == "none"){
+			whichEl.style.display = "";
+		}else{
+			whichEl.style.display = "none";
+		}
+	}
+</script>
+</body>
+</html>

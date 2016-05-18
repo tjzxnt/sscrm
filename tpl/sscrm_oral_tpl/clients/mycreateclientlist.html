@@ -1,0 +1,122 @@
+<{include file="header.html"}>
+
+<{include file="library/tipswindown.html"}>
+</head>
+<body>
+<table width="100%" height="100%" cellspacing="1" cellpadding="0" class="tablesl zxblockui">
+  <tr>
+    <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="46%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[客户管理]-[我添加的客户]</td>
+              </tr>
+            </table></td>
+            <td width="54%">
+            <form method="GET">
+            <input type="hidden" name="c" value="clients"/>
+            <input type="hidden" name="a" value="mycreateclientlist"/>
+            <table border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr>
+              	<td width="60"><table width="90%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td class="STYLE1"><div align="center"><a href="#" class="tipwindow" tiptitle="添加客户" tipurl="<{spUrl c=clients a=prepcreate}>" tipwidth="300" tipheight="150" style="display:block"><img src="images/add.gif" width="48" height="19" align="absmiddle" /></a></div></td>
+                    <td class="STYLE1"><div align="center"></div></td>
+                  </tr>
+                </table></td>
+                 <td width="150">
+	                 <table width="88%" border="0" cellpadding="0" cellspacing="0">
+	                  <tr>
+	                    <td class="STYLE1"><div align="center"><input type="text" name="searchkey" class="searchkeysval" value="<{$searchkey}>"></div></td>
+	                    <td class="STYLE1"><div align="top" style="margin-left:7px"><input type="image" value="" src="images/search.gif"></div></td>
+	                  </tr>
+	                </table>
+                </td>
+              </tr>
+            </table>
+            </form>
+            </td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+        <td><table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#b5d6e6">
+          <tr>
+          	<!--
+            <td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+            </td>
+            -->
+            <td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">序号</span></div></td>
+            <td width="21%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">客户姓名 / 性别 / 电话</span></div></td>
+            <td width="6%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">客户来源</span></div></td>
+            <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">分配到顾问</span></div></td>
+            <td width="5%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">添加时间</span></div></td>
+            <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">客户状态</span></div></td>
+            <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">业务状态</span></div></td>
+			<td width="8%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">操作</span></div></td>			
+          </tr>
+          <{foreach item=i key=k from=$client_rs}>
+          <tr>
+            <td height="20" bgcolor="#FFFFFF">
+            	<div align="center" class="STYLE1">
+              		<div align="center"><{$k+1}></div>
+            	</div>
+            </td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{if $i.realname}><{$i.realname}> / <{if $i.sex == 1}>男<{elseif $i.sex == 2}>女<{else}>未知<{/if}> / <{if $i.telphone}><{$i.telphone}><{else}>-<{/if}><{else}>-<{/if}><{if $i.process_id == 2}><span class="zx_brown">(已于 <{$i.to_overseas_time|date_format:"%Y-%m-%d %H:%M"}> 转到海外部 [<{$i.realname_overseas}>])</span><{/if}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.oname}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.realname_sale}></span><{if $i.isauto_touser}><span class="zx_red">(自动分配)</span><{/if}></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1"><{$i.createtime|date_format:"%Y-%m-%d %H:%M"}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div align="center"><{$i.pname}></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div align="center">
+            <{if $i.ispay eq '0'}>
+            <span class="zx_red">跟进中</span>
+            <{elseif $i.ispay eq '1'}>
+            <span class="zx_brown">未付完全款</span>
+            <{elseif $i.ispay eq '2'}>
+            <span class="zx_green">已付全款</span>
+            <{else}>
+            <span class="zx_gray">未成交</span>
+            <{/if}>
+            </div></td>
+            <td bgcolor="#FFFFFF" class="listleft">
+            	<a href="<{spUrl c=clients a=viewmycreatedclient id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>查看</a>
+            	<a href="<{spUrl c=clients a=clientrecordlist client_id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>回访反馈</a>
+            </td>
+          </tr>
+          <{foreachelse}>
+			<tr>
+            	<td height="20" bgcolor="#FFFFFF" colspan="8"><div style="margin-left:7px; margin-top:10px">无匹配记录</div></td>
+			</tr>
+          <{/foreach}> 
+          <tr height="50" bgcolor="#FFFFFF"><td colspan="8">&nbsp;</td></tr>
+        </table></td>
+        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td height="35" background="images/tab_19.gif">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="35"><img src="images/tab_18.gif" width="12" height="35" /></td>
+        <td>
+        	<{include file="pager.html"}>
+		</td>
+        <td width="16"><img src="images/tab_20.gif" width="16" height="35" /></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</div>
+</body>
+<{include file="footer.html"}>

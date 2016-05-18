@@ -1,0 +1,197 @@
+<{include file="header.html"}>
+
+<{include file="library/accounting.html"}>
+
+<{include file="library/validator.html"}>
+
+</head>
+<body>
+<table width="100%" height="100%" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="80%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[客户管理]-[我的海外客户]-[<{$client_rs.realname}> / <{if $client_rs.sex == 1}>男<{elseif $client_rs.sex == 2}>女<{else}>未知<{/if}> / <{if $client_rs.telphone}><{$client_rs.telphone}><{else}>-<{/if}></span>]-[登记海外房款]</td>
+              </tr>
+            </table></td>
+            <td width="20%"><table border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr>
+                <td width="60"><table width="90%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+					<td class="STYLE1"><div align="center"><a href="#nogo" onClick="javascript:history.go(-1)"><img src="images/back.png" width="14" height="14" align="top" /> 返回</a></div></td>
+                    <td class="STYLE1"><div align="center"></div></td>
+                  </tr>
+                </table></td>
+              </tr>
+            </table></td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td>
+	    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	      <tr>
+	        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+	        <td>
+	        	<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#b5d6e6">
+	        		<tr height="50" bgcolor="#FFFFFF">
+	        			<td>
+		        			<div class="form">
+		        				<fieldset>
+	                                <legend>客户资料</legend>
+	                                <div class="rowElem">
+	                                    <label class="label">客户姓名</label> 
+	                                    <span class="viewtxt"><{$client_rs.realname}></span>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label">客户性别</label> 
+	                                    <span class="viewtxt">
+										<{if $client_rs.sex eq '0' || !$client_rs}>未知<{/if}>
+										<{if $client_rs.sex eq '1'}>男<{/if}>
+										<{if $client_rs.sex eq '2'}>女<{/if}>
+										</span>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label">客户电话</label> 
+	                                    <span class="viewtxt"><{$client_rs.telphone}></span>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label">证件号</label> 
+	                                    <span class="viewtxt"><{$client_rs.credential_name}> / <{$client_rs.cred_license}></span>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label">家庭住址</label> 
+	                                    <span class="viewtxt"><{$client_rs.address}></span>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label">客户职业</label> 
+	                                    <span class="viewtxt"><{$client_rs.profession}></span>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label">电子邮箱</label> 
+	                                    <span class="viewtxt"><{$client_rs.email}></span>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label">微信号</label> 
+	                                    <span class="viewtxt"><{$client_rs.wechat}></span>
+	                                </div>
+	                            </fieldset>
+		        				<fieldset>
+	                                <legend>业务相关基本信息</legend>
+	                                <div class="rowElem">
+	                                    <label class="label">意向国家</label> 
+	                                    <span class="viewtxt"><{$client_rs.exp_country}></span>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label">客户需求</label> 
+	                                    <span class="viewtxt"><{$client_rs.demand}></span>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label">其他反馈</label> 
+	                                    <textarea rows="5" cols="50" readonly><{$client_rs.feedback}></textarea>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label">首次到访时间</label> 
+	                                    <span class="viewtxt"><{$client_rs.visit_time|date_format:'%Y-%m-%d %H:%M'}></span>
+	                                </div>
+	                            </fieldset>
+                            </div>
+                             <form class="form formobj" method="post" action="<{$saveurl}>">
+	                        	<input type="hidden" name="isAjax" value="0" />
+	        					<input type="hidden" name="client_id" value="<{$client_id}>" />
+	                            <fieldset>
+	                                <legend>房源部分</legend>
+	                                <div class="rowElem">
+	                                    <label class="label"><span class="input_required">*</span>房源名</label> 
+	                                    <input name="listings" type="text" id="listings" value="<{$client_rs.listings}>"/>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label"><span class="input_required">*</span>房源类型</label> 
+	                                    <input name="listingstype" type="text" id="listingstype" value="<{$client_rs.listingstype}>"/>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label"><span class="input_required">*</span>房源面积</label> 
+	                                    <input name="listingsarea" type="text" id="listingsarea" value="<{$client_rs.listingsarea}>"/>
+	                                </div>
+	                            </fieldset>
+	                            <fieldset>
+	                                <legend>房款记录</legend>
+	                                <div class="rowElem">
+	                                    <label class="label"><span class="input_required">*</span>房款货币单位</label> 
+	                                    <input name="houseunit" type="text" id="houseunit" value="<{$client_rs.houseunit}>"/>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label"><span class="input_required">*</span>总房款</label> 
+	                                    <input class="account_input" name="housefund" type="text" id="housefund" value="<{$client_rs.housefund}>"/>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label"><span class="input_required">*</span>是否分期给开发商</label> 
+	                                    <input type="radio" name="ishouseloan" value="1" checked />是
+	                                    <input type="radio" name="ishouseloan" value="0" />否
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label"><span class="input_required">*</span>分期次数</label> 
+	                                    <input name="housefundtime" type="text" id="housefundtime" value="<{if $client_rs.housefundtime}><{$client_rs.housefundtime}><{else}><{$country_rs.housefundtime}><{/if}>"/>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label"><span class="input_required">*</span>客户是否贷款</label> 
+	                                    <input type="radio" name="ishouseleader" value="1" checked/>是
+	                                    <input type="radio" name="ishouseleader" value="0" />否
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label"><span class="input_required">*</span>贷款行</label> 
+	                                    <input name="houselenders" type="text" id="houselenders" value="<{$client_rs.houselenders}>"/>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label"><span class="input_required">*</span>贷款成数</label> 
+	                                    <input name="houselender_rate" type="text" id="houselender_rate" value="<{$client_rs.houselender_rate}>"/>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label"><span class="input_required">*</span>首付款</label> 
+	                                    <input class="account_input" name="house_firstpay" type="text" id="house_firstpay" value="<{$client_rs.house_firstpay}>"/>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label">贷款额</label> 
+	                                    <input class="account_input" name="houseloan" type="text" id="houseloan" value="<{$client_rs.houseloan}>"/>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label">尾款</label> 
+	                                    <input class="account_input" name="houseendpay" type="text" id="houseendpay" value="<{$client_rs.houseendpay}>"/>
+	                                </div>
+	                                <div class="rowElem">
+	                                	<label class="label">&nbsp;</label>
+	                                    <button type="submit" id="submit-go">Submit</button>
+	                                    <span class="formwarning">(保存后将无法修改)</span>
+	                                </div>
+	                            </fieldset>
+	                        </form>
+						</td>
+	        		</tr>
+	        	</table>
+	        </td>
+	        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+	      </tr>
+	    </table>
+    </td>
+  </tr>
+  <tr>
+    <td height="35" background="images/tab_19.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="35"><img src="images/tab_18.gif" width="12" height="35" /></td>
+        <td>&nbsp;</td>
+        <td width="16"><img src="images/tab_20.gif" width="16" height="35" /></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</div>
+</body>
+<{include file="footer.html"}>

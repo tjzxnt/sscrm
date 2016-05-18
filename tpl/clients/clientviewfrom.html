@@ -1,0 +1,57 @@
+
+<{if $from_rs.owner_rs}>
+<div class="rowElem">
+    <label class="label">介绍人</label> 
+    <span class="viewtxt"><{$from_rs.owner_rs.realname}></span>
+</div>
+<{/if}>
+<{if $from_rs.teler_rs}>
+<div class="rowElem">
+    <label class="label">来源CALL</label> 
+    <span class="viewtxt"><{$from_rs.teler_rs.realname}></span>
+</div>
+<{/if}>
+<{if $from_rs.preader_rs}>
+<div class="rowElem">
+    <label class="label">来源地推</label> 
+    <span class="viewtxt"><{$from_rs.preader_rs.realname}></span>
+</div>
+<{/if}>
+<{if $origin_rs.isownchannel || $origin_rs.isselfchannel}>
+<div class="rowElem">
+    <label class="label">渠道来源</label> 
+    <span class="viewtxt"><{$from_rs.channel_rs.mechanism}>[<{$from_rs.channel_rs.realname_main}>]<{if $from_rs.act_rs.actname}> - <{$from_rs.act_rs.actname}><{/if}><{if !$from_rs.channel_rs.issign}><b class="zx_red">[未签约]</b><{/if}></span>
+</div>
+<{/if}>
+<{if $origin_rs.isowntrader || $origin_rs.isselftrader}>
+<div class="rowElem">
+    <label class="label">分销商来源</label> 
+    <span class="viewtxt"><{$from_rs.trader_rs.tradername}>[<{$from_rs.trader_rs.realname_main}>]</span>
+</div>
+<{/if}>
+<{if $origin_rs.isdatafrom}>
+<div class="rowElem">
+    <label class="label">客户资料来源人</label> 
+    <span class="viewtxt"><{if $from_rs.datafrom_rs.realname}><{$from_rs.datafrom_rs.realname}><{else}>-<{/if}></span>
+</div>
+<{/if}>
+<{if $origin_rs.istravel}>
+<div class="rowElem">
+    <label class="label">旅行社来源</label> 
+    <span class="viewtxt"><{$from_rs.travel_rs.travelname}></span>
+</div>
+<{/if}>
+<{if $origin_rs.iscomactive}>
+<div class="rowElem">
+    <label class="label">公司活动</label> 
+    <span class="viewtxt"><{$from_rs.comactive_rs.name}></span>
+</div>
+<{/if}>
+<div class="rowElem">
+    <label class="label">海外负责人</label> 
+    <span class="viewtxt"><{if $from_rs.abroad_rs.realname}><{$from_rs.abroad_rs.realname}><{else}>-<{/if}></span>
+</div>
+<div class="rowElem">
+    <label class="label">跟团销售</label> 
+    <span class="viewtxt"><{if $from_rs.tour_rs.realname}><{$from_rs.tour_rs.realname}><{else}>-<{/if}></span>
+</div>

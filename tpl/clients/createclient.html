@@ -1,0 +1,433 @@
+<{include file="header.html"}>
+
+<{include file="library/chosen.html"}>
+
+<{include file="library/validator.html"}>
+
+<script>
+$(function(){
+	$("#clear_visittime").click(function(){
+		if(confirm("确认清除首次到访时间吗？"))
+			$("#visit_time").val("");
+	})
+	<{if $ass_rs}>
+	$(".form input[name=<{$ass_rs.fields}>]").change(function(){
+		<{if $ass_rs.isselfcheck}>
+		if($(this).val()){
+			$(".ass_fieldset").removeClass("zxhide");
+		}else{
+			$(".ass_fieldset").addClass("zxhide");
+		}
+		<{else}>
+		if($(this).val()){
+			if($(this).val() == <{$smarty.session.sscrm_user.id}>){
+				$(".ass_fieldset").addClass("zxhide");
+			}else{
+				$(".ass_fieldset").removeClass("zxhide");
+			}
+		}else{
+			$(".ass_fieldset").addClass("zxhide");
+		}
+		<{/if}>
+	});
+	$("#intent_check").click(function(){
+		$.ajax({
+		   type: "POST",
+		   url: "<{spUrl c=apis a=intention_check}>",
+		   data: {
+			   origin_id : <{$ass_rs.origin_id}>,
+			   type : <{$ass_rs.type}>,
+			   fieldsval : $(".form input[name=<{$ass_rs.fields}>]:checked").val(),
+			   telphone : $("#intention_tel").val()
+			},
+		   dataType: 'json',
+		   beforeSend: function(){
+		   		showBlockMsg(".form", "");
+				return true;
+		   },
+		   success: function(json, textStatus){
+		     	hideBlockMsg('.form');
+				if(json.result == 1){
+					$(".intent_error").html("<img src='<{$web_root}>/images/accept.png'/>");
+					$.each(json.data, function(key, val){
+						$("#"+key).val(val);
+						$("input[type=radio][name=" + key + "][value=" + val + "]").attr("checked",'checked');
+					});
+				}else {
+					$(".intent_error").text(json.msg);
+				}
+		   },
+			error: function(xml, status){
+				hideBlockMsg('.form');
+			}
+		});
+	})
+	<{/if}>
+})
+</script>
+</head>
+<body>
+<table width="100%" height="100%" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="46%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[客户管理]-[我添加的客户]<{*-[非渠道客户]*}></td>
+              </tr>
+            </table></td>
+            <td width="54%"><table border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr>
+                <td width="60"><table width="90%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+					<td class="STYLE1"><div align="center"><a href="#nogo" onClick="javascript:history.go(-1)"><img src="images/back.png" width="14" height="14" align="top" /> 返回</a></div></td>
+                    <td class="STYLE1"><div align="center"></div></td>
+                  </tr>
+                </table></td>
+              </tr>
+            </table></td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td>
+	    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	      <tr>
+	        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+	        <td>
+	        	<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#b5d6e6">
+	        		<tr height="50" bgcolor="#FFFFFF">
+	        			<td>
+	        			<form class="form" method="post" action="<{$saveurl}>">
+	        				<input type="hidden" name="isAjax" value="0" />
+	        				<input type="hidden" name="origin_id" value="<{$origin_id}>" />
+                            <fieldset>
+                                <legend><{$origin_rs.oname}></legend>
+                                <{foreach item=i key=k from=$ext_field_rs}>
+                                <div class="rowElem">
+                                    <label class="label"><{if $i.demand == "required"}><span class="input_required">*</span><{/if}><{$i.fieldname}></label>
+                                    <{if $i.type == "text"}>
+                                    <input name="<{$i.field}>" type="text" id="<{$i.field}>" value="<{$client_rs[$i.field]}>"/>
+                                    <{/if}>
+                                </div>
+                                <{/foreach}>
+                                <div class="rowElem">
+                                    <label class="label">置业顾问</label> 
+                                    <{if $user_sales_rs}>
+                                    <span class="viewtxt"><{$user_sales_rs.realname}></span>
+                                    <{else}>
+                                    <span class="viewtxt zx_red"><{if $origin_rs.istopool}>自动放入公共池中，顾问主动获取<{elseif $origin_rs.istotransfer}>进入待转接中，行政指定负责任<{else}>无指定<{/if}></span>
+                                    <{/if}>
+                                </div>
+                           	</fieldset>
+                           	<{if $origin_rs.isdatafrom}>
+                           	<fieldset>
+                                <legend>资料来源人</legend>
+                                <div class="rowElem">
+                                    <label class="label">请选择资料来源人</label> 
+                                    <select name="user_datafrom_id">
+                                    	<option value="">==请选择资料来源人==</option>
+                                    	<{foreach item=i key=k from=$user_prep_rs}>
+                                    	<option value="<{$i.id}>" <{if $client_rs.user_datafrom_id == $i.id}>selected<{/if}>><{$i.py}> - <{$i.realname}></option>
+                                    	<{/foreach}>
+                                    </select>
+                                </div>
+                            </fieldset>
+                           	<{/if}>
+                           	<{if $origin_rs.isowner}>
+                           	<fieldset>
+                                <legend><span class="input_required">*</span>选择客户来源</legend>
+                                <div class="rowElem">
+                                    <label class="label">-</label>
+                                    <input type="radio" name="user_owner_id" value="<{$smarty.session.sscrm_user.id}>"/><span class="zx_red zx_weight">我自己</span>
+                                </div>
+                                <{foreach item=i key=k from=$user_group_rs}>
+                                <{if $i.user_rs}>
+                                <div class="rowElem">
+                                    <label class="label"><{$i.dname}></label>
+                                    <{foreach item=ii key=kk from=$i.user_rs}>
+                                    <input type="radio" name="user_owner_id" value="<{$ii.id}>"/><{$ii.realname}> &nbsp;
+                                    <{/foreach}>
+                                </div>
+                                <{/if}>
+                                <{/foreach}>
+                           	</fieldset>
+                           	<{/if}>
+                           	<{if $origin_rs.isacter}>
+                           	<fieldset>
+                                <legend><span class="input_required">*</span>选择客户来源(地推)</legend>
+                                <div class="rowElem">
+                                    <label class="label">-</label>
+                                    <input type="radio" name="user_preader_id" value="<{$smarty.session.sscrm_user.id}>"/><span class="zx_red zx_weight">我自己</span>
+                                </div>
+                                <{foreach item=i key=k from=$user_pread_group_rs}>
+                                <{if $i.user_rs}>
+                                <div class="rowElem">
+                                    <label class="label"><{$i.dname}></label>
+                                    <{foreach item=ii key=kk from=$i.user_rs}>
+                                    <input type="radio" name="user_preader_id" value="<{$ii.id}>"/><{$ii.realname}> &nbsp;
+                                    <{/foreach}>
+                                </div>
+                                <{/if}>
+                                <{/foreach}>
+                           	</fieldset>
+                           	<{/if}>
+                           	<{if $origin_rs.isteluser}>
+                           	<fieldset>
+                                <legend><span class="input_required">*</span>选择客户来源(CALL客)</legend>
+                                <div class="rowElem">
+                                    <label class="label">-</label>
+                                    <input type="radio" name="user_teler_id" value="<{$smarty.session.sscrm_user.id}>"/><span class="zx_red zx_weight">我自己</span>
+                                </div>
+                                <{foreach item=i key=k from=$user_tel_group_rs}>
+                                <{if $i.user_rs}>
+                                <div class="rowElem">
+                                    <label class="label"><{$i.dname}></label>
+                                    <{foreach item=ii key=kk from=$i.user_rs}>
+                                    <input type="radio" name="user_teler_id" value="<{$ii.id}>"/><{$ii.realname}> &nbsp;
+                                    <{/foreach}>
+                                </div>
+                                <{/if}>
+                                <{/foreach}>
+                           	</fieldset>
+                           	<{/if}>
+                           	<{if $origin_rs.isownchannel}>
+                           	<fieldset>
+                                <legend><span class="input_required">*</span>选择来源渠道</legend>
+                                <div class="rowElem">
+                                    <label class="label">请选择渠道</label>
+	                                <select name="channel_id" class="channel_select">
+	                                	<option value="">==请选择渠道==</option>
+		                                <{foreach item=i key=k from=$channel_prep_rs}>
+		                                <option value="<{$i.id}>" <{if !$i.issign}>class="zx_red"<{/if}>><{$i.py}> - <{$i.mechanism}><{if !$i.issign}>[未签约]<{/if}></option>
+		                                <{/foreach}>
+	                                </select>
+	                            </div>
+                                <{if $origin_rs.ischannelact}>
+                                <script>
+                                	$(function(){
+                                		$(".channel_select").change(function(){
+                                			$channelid = $(this).val();
+                                			$.ajax({
+                             				   type: "POST",
+                             				   url: "<{spUrl c=clients a=getactiveByChannelid}>",
+                             				   data: "channelid=" + $channelid,
+                             				   dataType: 'json',
+                             				   beforeSend: function(){
+                             				   		showBlockMsg(".form", "");
+                             						return true;
+                             				   },
+                             				   success: function(json, textStatus){
+                             					  hideBlockMsg('.form');
+                             					  if(json.result == 1){
+                             						 $(".actdiv").removeClass("zxhide");
+                             						 $(".actdiv zxbox").html("");
+                             						 if(json.act_rs){
+                             							 $.each(json.act_rs, function(i, v){
+                             								$(".actdiv .zxbox").append('<input type="radio" name="channelact_id" class="init_input" value="' + v.id + '"/>' + v.actname + " &nbsp; ");
+                             							 });
+                             						 }
+                             					  }
+                             				   },
+                             					error: function(xml, status){
+                             						hideBlockMsg('.form');
+                             						showErrorDialog(xml.responseText);
+                             					}
+                             				});
+                             			});
+                                	})
+                                </script>
+                                 <div class="rowElem actdiv zxhide">
+                                    <label class="label">渠道活动</label>
+                                    <span class="zxbox"></span>
+                                </div>
+                                <{/if}>
+                           	</fieldset>
+                           	<{/if}>
+                           	<{if $origin_rs.isowntrader}>
+                           	<fieldset>
+                                <legend><span class="input_required">*</span>选择来源分销商</legend>
+                                <div class="rowElem">
+                                    <label class="label">请选择分销商</label>
+	                                <select name="trader_id">
+	                                	<option value="">==请选择分销商==</option>
+		                                <{foreach item=i key=k from=$trader_prep_rs}>
+		                                <option value="<{$i.id}>"><{$i.py}> - <{$i.tradername}></option>
+		                                <{/foreach}>
+	                                </select>
+	                            </div>
+                           	</fieldset>
+                           	<{/if}>
+                           	<{if $origin_rs.isselftrader}>
+                           	<fieldset>
+                                <legend><span class="input_required">*</span>选择来源分销商</legend>
+                                <{foreach item=i key=k from=$trader_group_rs}>
+                                <{if $i.trader_rs}>
+                                <div class="rowElem">
+                                    <label class="label"><{$i.realname}></label>
+                                    <{foreach item=ii key=kk from=$i.trader_rs}>
+                                    <input type="radio" name="trader_id" value="<{$ii.id}>"/><{$ii.tradername}> &nbsp;
+                                    <{/foreach}>
+                                </div>
+                                <{/if}>
+                                <{/foreach}>
+                           	</fieldset>
+                           	<{/if}>
+                           	<{if $origin_rs.istravel}>
+                           	<fieldset>
+                                <legend><span class="input_required">*</span>选择来源旅行社</legend>
+                                <div class="rowElem">
+                                    <label class="label">请选择旅行社</label>
+                                    <select name="travel_id">
+                                    	<option value="">==请选择旅行社==</option>
+		                                <{foreach item=i key=k from=$travel_prep_rs}>
+		                                <option value="<{$i.id}>"><{$i.py}> - <{$i.travelname}></option>
+		                                <{/foreach}>
+                                    </select>
+                                </div>
+                           	</fieldset>
+                           	<{/if}>
+                           	<{if $origin_rs.iscomactive}>
+                           	<fieldset>
+                                <legend><span class="input_required">*</span>请选择公司活动</legend>
+                                <div class="rowElem">
+                                    <label class="label">请选择公司活动</label>
+                                    <select name="comactive_id">
+                                    	<option value="">==请选择公司活动==</option>
+		                                <{foreach item=i key=k from=$comactive_rs}>
+		                                <option value="<{$i.id}>"><{$i.name}></option>
+		                                <{/foreach}>
+                                    </select>
+                                </div>
+                           	</fieldset>
+                           	<{/if}>
+                           	<{if $ass_rs}>
+                           	<fieldset class="ass_fieldset zxhide">
+                                <legend><span class="input_required">*</span><span class="zx_red zx_weight">请先验证意向客户</span></legend>
+                                <div class="rowElem">
+                                    <label class="label">意向客户电话</label>
+                                    <input type="text" class="num_input" id="intention_tel" value=""/>
+                                    <a href="javascript:" id="intent_check" class="zx_weight">验证并获取信息</a>
+                                    <span class="intent_error zx_weight zx_red zx_margin_left_small"></span>
+                                </div>
+                           	</fieldset>
+                           	<{/if}>
+                           	<fieldset>
+                                <legend>客户资料</legend>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>客户姓名</label> 
+                                    <input name="realname" type="text" id="realname" value="<{$client_rs.realname}>"/>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">客户性别</label> 
+                                    <input type="radio" class="radio" name="sex" value="0" checked/><label class="zx_red zx_weight">未知</label>
+                                    &nbsp;&nbsp;
+									<input type="radio" class="radio" name="sex" value="1"/><label>男</label>
+									<input type="radio" class="radio" name="sex" value="2"/><label>女</label>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">电话所在地</label> 
+                                    <input class="shortinput" name="tel_location" type="text" id="tel_location" value="<{$client_rs.tel_location}>"> (如：台湾省)
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>客户电话</label> 
+                                    <input class="num_input" name="telphone" type="text" id="telphone" value="<{$client_rs.telphone}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">证件类型</label>
+                                    <select name="cred_id">
+                                    	<{foreach item=i key=k from=$cred_rs}>
+                                    	<option value="<{$i.id}>"><{$i.cname}></option>
+                                    	<{/foreach}>
+                                    </select>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">证件号</label> <input name="cred_license" type="text" id="cred_license" value="<{$client_rs.cred_license}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">家庭住址</label> <input name="address" type="text" id="address" value="<{$client_rs.address}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">客户职业</label> <input name="profession" type="text" id="profession" value="<{$client_rs.profession}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">电子邮箱</label> <input name="email" type="text" id="email" value="<{$client_rs.email}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">微信号</label> <input name="wechat" type="text" id="wechat" value="<{$client_rs.wechat}>">
+                                </div>
+                            </fieldset>
+                            <fieldset>
+                                <legend>业务相关基本信息</legend>
+                                <div class="rowElem">
+                                    <label class="label">意向国家</label> 
+                                    <select name="exp_country_id" id="exp_country_id">
+                                    	<option>请选择意向国家</option>
+                                    	<{foreach item=i key=k from=$country_rs}>
+                                    	<option value="<{$i.id}>" <{if $client_rs.exp_country_id == $i.id}>selected<{/if}>><{$i.country}></option>
+                                    	<{/foreach}>
+                                    </select>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">客户需求</label> <input class="longinput" name="demand" type="text" id="demand" value="<{$client_rs.demand}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">其他反馈</label> 
+                                    <textarea rows="5" cols="50" name="feedback" id="feedback"><{$client_rs.feedback}></textarea>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">首次到访时间</label> 
+                                    <input class="ui_timepicker" name="visit_time" type="text" id="visit_time" value="<{if $client_rs.visit_time}><{$client_rs.visit_time|date_format:'%Y-%m-%d %H:%M'}><{/if}>" readonly/>
+                                    <a href="javascript:" id="clear_visittime">清空到访时间</a>
+                                    (保存后无法修改)
+                                </div>
+                                <{if $id}>
+                                <div class="rowElem">
+                                	<label class="label">&nbsp;</label>
+                                    <button type="submit" id="submit-go">Submit</button>
+                                </div>
+                                <{/if}>
+                            </fieldset>
+                            <{if !$id}> 
+                            <fieldset>
+                            	<legend>回访记录<span class="zx_red">（可不填）</span></legend>
+                                <div class="rowElem">
+                                    <label class="label">第一次回访记录</label> 
+                                    <textarea rows="5" cols="50" name="content"></textarea>
+                                </div>
+                                <div class="rowElem">
+                                	<label class="label">&nbsp;</label>
+                                    <button type="submit" id="submit-go">Submit</button>
+                                </div>
+                            </fieldset>
+                            <{/if}>
+                        </form>
+						</td>
+	        		</tr>
+	        	</table>
+	        </td>
+	        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+	      </tr>
+	    </table>
+    </td>
+  </tr>
+  <tr>
+    <td height="35" background="images/tab_19.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="35"><img src="images/tab_18.gif" width="12" height="35" /></td>
+        <td>&nbsp;</td>
+        <td width="16"><img src="images/tab_20.gif" width="16" height="35" /></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</div>
+</body>
+<{include file="footer.html"}>

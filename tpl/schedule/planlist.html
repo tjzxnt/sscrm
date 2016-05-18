@@ -1,0 +1,194 @@
+<{include file="header.html"}>
+
+<{include file="library/fullcalendar.html"}>
+
+<style>
+.calcant{
+	color:#A0A0A0;
+	cursor:help;
+}
+</style>
+<script>
+function check_cal(){
+	if($("#user_id").val()){
+		$(".calendarlink").removeClass("calcant");
+	}else{
+		$(".calendarlink").addClass("calcant");
+	}
+}
+$(function(){
+	$(".calendarlink").click(function(){
+		if($("#user_id").val()){
+			window.location.href = '<{spUrl c=schedule a=calendar}>' + "&user_id=" + $("#user_id").val();
+		}else{
+			alert("请先在右侧选择查看人，再查看日程");
+		}
+		return false;
+	})
+	$("#user_id").change(function(){
+		check_cal();
+	})
+	check_cal();
+})
+</script>
+
+</head>
+<body>
+<table width="100%" height="100%" cellspacing="1" cellpadding="0" class="tablesl zxblockui">
+  <tr>
+    <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="30%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[日程管理]-[其他人的动态]</td>
+              </tr>
+            </table></td>
+            <td width="70%">
+            	<form method="GET">
+	            <input type="hidden" name="c" value="schedule"/>
+	            <input type="hidden" name="a" value="planlist"/>
+	            <table border="0" align="right" cellpadding="0" cellspacing="0">
+	              <tr>
+	              	<td class="STYLE1">
+	              		<div align="center">
+		                	<a href="javascript:" style="display:block" class="calcant calendarlink"><img src="images/ttbb.jpg" style="vertical-align:middle;" width="19" height="19" align="absmiddle" /><span style="font-size:16px;vertical-align:middle; margin-left:5px;">TA的日程表</span></a>
+		                </div>
+	              	</td>
+	              	<td>&nbsp;&nbsp;</td>
+	              	<td >
+	              		<select name="user_id" id="user_id" style="margin-right:20px;">
+	              			<option value="">==查看同事日程表==</option>
+	              			<{foreach item=i key=k from=$user_prep_rs}>
+	                       		<optgroup label="<{$i.dname}>">
+	                        	<{if $i.user_rs}>
+	                        	<{foreach item=ii key=kk from=$i.user_rs}>
+	                        	<option value="<{$ii.id}>" <{if $user_id == $ii.id}>selected<{/if}>><{$ii.py}> - <{$ii.realname}></option>
+	                        	<{/foreach}>
+	                        	<{/if}>
+	                        	</optgroup>
+	                       	<{/foreach}>
+	              		</select>
+	              	</td>
+	              	<td>&nbsp;|&nbsp;</td>
+	              	<td>
+	              		<select name="depart_id" style="margin-left:20px;">
+	              			<option value="">==按部门==</option>
+	              			<{foreach item=i key=k from=$depart_rs}>
+	                       	<option value="<{$i.id}>" <{if $depart_id == $i.id}>selected<{/if}>><{$i.dname}></option>
+	                       	<{/foreach}>
+	              		</select>
+	              	</td>
+	              	<td>&nbsp;</td>
+	              	<td class="STYLE1">
+                  		<select name="status">
+                  			<option value="">全部状态</option>
+                  			<option value="doing" <{if $status == 'doing'}>selected<{/if}>>进行中</option>
+                  			<option value="going" <{if $status == 'going'}>selected<{/if}>>进行中未过期</option>
+                  			<option value="overdate" <{if $status == 'overdate'}>selected<{/if}>>进行中已过期</option>
+                  			<option value="waiting" <{if $status == 'waiting'}>selected<{/if}>>未开始</option>
+                  			<option value="finish" <{if $status == 'finish'}>selected<{/if}>>已完成</option>
+                  		</select>
+                  	</td>
+                  	<td class="STYLE1"><div align="top" style="margin-left:7px"><input type="image" value="" src="images/search.gif"></div></td>
+	              </tr>
+	            </table>
+	            </form>
+            </td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+        <td><table class="zx_data_list" width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#b5d6e6">
+          <thead>
+          <tr>
+          	<!--
+            <td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+            </td>
+            -->
+            <td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">序号</span></div></td>
+            <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">创建人</span></div></td>
+            <td width="10%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">参与人</span></div></td>
+            <td width="10%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">状态</span></div></td>
+            <td width="15%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">主题</span></div></td>
+            <td height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">内容</span></div></td>
+            <td width="15%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">任务时间</span></div></td>
+            <td width="8%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">创建于</span></div></td>
+          </tr>
+          </thead>
+          <tbody>
+          <{foreach item=i key=k from=$plan_rs}>
+          <tr>
+            <td height="20" bgcolor="#FFFFFF">
+            	<div align="center" class="STYLE1">
+              		<div align="center"><{$k+1}></div>
+            	</div>
+            </td>
+            <td height="20" bgcolor="#FFFFFF">
+            	<div align="center" class="STYLE1">
+              		<div align="center"><{$i.realname_create}></div>
+            	</div>
+            </td>
+            <td height="20" bgcolor="#FFFFFF">
+            	<div class="listleft">
+              		<span class="STYLE1"><{$i.realname_main}></span>
+            	</div>
+            </td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft">
+            	<{if $i.isfinish}>
+            		<span class="STYLE1 Finished"><{$i.finishtime|date_format:"%Y-%m-%d %H:%M"}> 完成</span>
+            	<{else}>
+            		<{if $i.starttime > $smarty.now}>
+            		<i class="iconfont zx_gray">&#xe64b;</i>
+	            	<span class="STYLE1 Waiting"><{$i.starttime|zxdate_diff}> 后开始</span>
+	            	<{elseif $i.starttime <= $smarty.now && $i.endtime > $smarty.now}>
+	            	<span class="STYLE1 Going">已进行 <{$i.starttime|zxdate_diff}></span>
+	            	<{else}>
+	            	<span class="STYLE1 Overdate">已超出 <{$i.endtime|zxdate_diff}></span>
+	            	<{/if}>
+            	<{/if}>
+            </td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.title}></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.content}></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1"><{$i.starttime|date_format:"%Y-%m-%d %H:%M"}> ~ <{$i.endtime|date_format:"%Y-%m-%d %H:%M"}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1"><{$i.createtime|date_format:"%Y-%m-%d %H:%M"}></span></div></td>
+          </tr>
+          <{foreachelse}>
+			<tr>
+            	<td height="20" bgcolor="#FFFFFF" colspan="8"><div style="margin-left:7px; margin-top:10px">无匹配记录</div></td>
+			</tr>
+          <{/foreach}> 
+          </tbody>
+          <tfoot>
+          	<tr height="50" bgcolor="#FFFFFF"><td colspan="8">&nbsp;</td></tr>
+          </tfoot>
+        </table></td>
+        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td height="35" background="images/tab_19.gif">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="35"><img src="images/tab_18.gif" width="12" height="35" /></td>
+        <td>
+        	<{include file="pager.html"}>
+		</td>
+        <td width="16"><img src="images/tab_20.gif" width="16" height="35" /></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</div>
+</body>
+<{include file="footer.html"}>

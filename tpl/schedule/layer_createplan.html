@@ -1,0 +1,53 @@
+
+<{include file="library/validator.html"}>
+<script>
+$(function(){
+	$(".ui_timepicker").datetimepicker({
+        timeFormat: 'hh:mm',
+        stepHour: 1,
+        stepMinute: 1
+    });
+});
+</script>
+<form class="form" method="post" action="<{$saveurl}>">
+	<input type="hidden" name="isAjax" value="0" />
+	<input type="hidden" name="backurl" value="<{$backurl}>" />
+	<fieldset>
+		<legend>日程管理</legend>
+		<div class="rowElem">
+		    <label class="label"><span class="input_required">*</span>主题</label> 
+		    <input type="text" name="title" id="title" value="<{$plan_rs.title}>"/>
+		</div>
+		<div class="rowElem">
+		    <label class="label"><span class="input_required">*</span>计划内容</label> 
+		    <textarea name="content" rows="5" cols="40"><{$plan_rs.content}></textarea>
+		</div>
+		<div class="rowElem">
+		    <label class="label"><span class="input_required">*</span>参与人</label> 
+		    <select name="main_id[]" class="chosen-select-multiple" data-placeholder="请选择至少一名参与人" multiple>
+		    	<{foreach item=i key=k from=$user_prep_rs}>
+		    		<optgroup label="<{$i.dname}>">
+		     	<{if $i.user_rs}>
+		     	<{foreach item=ii key=kk from=$i.user_rs}>
+		     	<option value="<{$ii.id}>" <{if $plan_rs}><{if $ii.id|in_array:$plan_rs.main_id_array}>selected<{/if}><{else}><{if $smarty.session.sscrm_user.id == $ii.id}>selected<{/if}><{/if}>><{$ii.py}> - <{$ii.realname}></option>
+		     	<{/foreach}>
+		     	<{/if}>
+		     	</optgroup>
+		    	<{/foreach}>
+		    </select>
+		</div>
+		<div class="rowElem">
+		    <label class="label"><span class="input_required">*</span>计划开始时间</label> 
+		    <input class="ui_timepicker" name="starttime" type="text" id="starttime" value="<{if $data_date}><{$data_date|date_format:'%Y-%m-%d 09:00'}><{else}><{$smarty.now|date_format:'%Y-%m-%d 09:00'}><{/if}>" readonly/>
+		</div>
+		<div class="rowElem">
+		    <label class="label"><span class="input_required">*</span>计划结束时间</label> 
+		    <input class="ui_timepicker" name="endtime" type="text" id="endtime" value="<{if $data_date}><{$data_date|date_format:'%Y-%m-%d 18:00'}><{else}><{$smarty.now|date_format:'%Y-%m-%d 18:00'}><{/if}>" readonly/>
+		</div>
+		<div class="rowElem">
+			<label class="label">&nbsp;</label>
+		    <button type="submit" id="submit-go">Submit</button>
+		    <span class="formwarning">(保存后只能当天修改)</span>
+		</div>
+	</fieldset>
+</form>

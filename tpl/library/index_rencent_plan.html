@@ -1,0 +1,29 @@
+
+<{foreach item=i key=k from=$plan_recent_rs}>
+<div class="qb_rc recent_plan">
+	<div class="qb1">创建时间：<b><{$i.createtime|date_format:"%Y-%m-%d <i>%H:%M</i>"}></b></div>
+	<div class="qb2">
+		创建人：<b><{$i.realname_create}></b>
+		<span class="zx_margin_left_smid">参与人：<b><{$i.realname_main}></b></span>
+	</div>
+	<div class="qb3">
+		主题：<a href="javascript:" onclick="zxshow('<{$i.id}>', '<{$i.title}>')"><b><{$i.title}></b></a>
+	</div>
+	<div class="qb4">
+		状态：
+		<{if $i.isfinish}>
+          		<span class="STYLE1 Finished zx_font_normal"><{$i.finishtime|date_format:"%Y-%m-%d %H:%M"}> 完成</span>
+          	<{else}>
+          		<{if $i.starttime > $smarty.now}>
+          		<i class="iconfont zx_gray">&#xe64b;</i>
+           	<span class="STYLE1 Waiting zx_font_normal"><{$i.starttime|zxdate_diff}> 后开始</span>
+           	<{elseif $i.starttime <= $smarty.now && $i.endtime > $smarty.now}>
+           	<span class="STYLE1 Going zx_font_normal">已进行 <{$i.starttime|zxdate_diff}></span>
+           	<{else}>
+           	<span class="STYLE1 Overdate zx_font_normal">已超出 <{$i.endtime|zxdate_diff}></span>
+           	<{/if}>
+          	<{/if}>
+	</div>
+	<div class="qb5">任务时间：<b><{$i.starttime|date_format:"%Y-%m-%d %H:%M"}> ~ <{$i.endtime|date_format:"%Y-%m-%d %H:%M"}></b></div>
+</div>
+<{/foreach}>

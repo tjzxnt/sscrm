@@ -1,0 +1,222 @@
+<{include file="header.html"}>
+
+<{include file="library/validator.html"}>
+
+</head>
+<body>
+<table width="100%" height="100%" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="46%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[员工设置]-[员工管理]-[<{if $user_rs}>编辑员工<{else}>添加员工<{/if}>]</td>
+              </tr>
+            </table></td>
+            <td width="54%"><table border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr>
+                <td width="60"><table width="90%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+					<td class="STYLE1"><div align="center"><a href="#nogo" onClick="javascript:history.go(-1)"><img src="images/back.png" width="14" height="14" align="top" /> 返回</a></div></td>
+                    <td class="STYLE1"><div align="center"></div></td>
+                  </tr>
+                </table></td>
+              </tr>
+            </table></td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td>
+	    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	      <tr>
+	        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+	        <td>
+	        	<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#b5d6e6">
+	        		<tr height="50" bgcolor="#FFFFFF">
+	        			<td>
+	        			<form class="form" method="post" action="<{$saveurl}>">
+	        				<input type="hidden" name="isAjax" value="0" />
+	        				<input type="hidden" name="id" value="<{$id}>"/>
+                            <fieldset>
+                                <legend><{if $user_rs}>信息修改<{else}>添加用户<{/if}></legend>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>员工姓名</label> <input name="realname" type="text" id="realname" value="<{$user_rs.realname}>"/>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">性别</label> 
+									<input type="radio" class="radio" name="sex" value="0" <{if $user_rs.sex eq '0' || !$user_rs}>checked<{/if}> /><label>未知</label>
+									<input type="radio" class="radio" name="sex" value="1" <{if $user_rs.sex eq '1'}>checked<{/if}> /><label>男</label>
+									<input type="radio" class="radio" name="sex" value="2" <{if $user_rs.sex eq '2'}>checked<{/if}> /><label>女</label>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>所属部门</label>
+                                    <select name="depart_id" class="depart_select">
+                                    	<option value="">请选择部门</option>
+                                    	<{foreach item=i key=k from=$department_rs}>
+                                    	<option value="<{$i.id}>" <{if $user_rs.depart_id == $i.id}>selected<{/if}>><{$i.dname}></option>
+                                    	<{/foreach}>
+                                    </select>
+                                </div>
+                                <div class="rowElem sepdiv zxhide">
+                                    <label class="label"><span class="input_required">*</span>部门组</label>
+                                    <select name="depart_sep_id" class="depart_sep_id">
+                                    	<option value="">请选择部门组</option>
+                                    	<{foreach item=i key=k from=$department_sep_rs}>
+                                    	<option value="<{$i.id}>" <{if $user_rs.depart_sep_id == $i.id}>selected<{/if}>><{$i.sep_name}></option>
+                                    	<{/foreach}>
+                                    </select>
+                                </div>
+                                <script>
+                                	function getidentity($departid){
+                                		$default_identity = "<{$user_rs.identity_attr}>";
+                                		$default_identity_array = "";
+                                		if($default_identity.length)
+                                			$default_identity_array = $default_identity.split(',');
+                                		$default_sep = "<{$user_rs.depart_sep_id}>";
+                                		$.ajax({
+                          				   type: "POST",
+                          				   url: "<{spUrl c=users a=getidentityBydepart}>",
+                          				   data: "departid=" + $departid,
+                          				   dataType: 'json',
+                          				   beforeSend: function(){
+                          				   		showBlockMsg(".form", "");
+                          						return true;
+                          				   },
+                          				   success: function(json, textStatus){
+                          					  //console.log($default_identity_array);
+                          					  hideBlockMsg('.form');
+                          					  if(json.result == 1){
+                          						 $(".sepdiv").removeClass("zxhide");
+                          						 $(".sepdiv .depart_sep_id").empty();
+                          						 if(json.sep_rs){
+                          							 $(".sepdiv .depart_sep_id").append("<option value=''>请选择所属组</option>");
+                         							 $.each(json.sep_rs, function(i, v){
+                         								$(".sepdiv .depart_sep_id").append("<option value='" + v.id + "' " + (($default_sep == v.id) ? 'selected' : "") + ">" + v.sep_name + "</option>");
+                         							 });
+                         						 }else{
+                         							$(".sepdiv").addClass("zxhide");
+    												$(".sepdiv .depart_sep_id").empty();
+                         						 }
+                          						 $(".actdiv").removeClass("zxhide");
+                          						 $(".actdiv zxbox").html("");
+                          						 if(json.data_rs){
+                          							 $.each(json.data_rs, function(i, v){
+                          								$(".actdiv zxbox").append('<input type="checkbox" name="identity[]" class="init_input" value="' + v.imark + '" ' + ($.inArray(v.imark, $default_identity_array) > -1 ? 'checked="checked"' : "")  + '/>' + v.iname + " &nbsp; ");
+                          							 });
+                          						 }else{
+                          							$(".actdiv").addClass("zxhide");
+    												$(".actdiv zxbox").html("");
+                          						 }
+                          					  }else{
+												console.log(json.msg);
+												$(".sepdiv").addClass("zxhide");
+												$(".sepdiv .depart_sep_id").empty();
+												$(".actdiv").addClass("zxhide");
+												$(".actdiv zxbox").html("");
+                          					  }
+                          				   },
+                          					error: function(xml, status){
+                          						hideBlockMsg('.form');
+                          						$(".sepdiv").addClass("zxhide");
+												$(".sepdiv .depart_sep_id").empty();
+                          						$(".actdiv").addClass("zxhide");
+                         						$(".actdiv zxbox").html("");
+                          						showErrorDialog(xml.responseText);
+                          					}
+                          				});
+                                	}
+                                	$(function(){
+                                		$(".depart_select").change(function(){
+                                			$departid = $(this).val();
+                                			getidentity($departid);
+                             			});
+                                		if($(".depart_select").val() != ""){
+                                			getidentity($(".depart_select").val());
+                                		}
+                                	})
+                                </script>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>账号名</label> <input name="username" type="text" id="username" value="<{$user_rs.username}>">
+                                </div>
+                                <{if !$user_rs}>
+                                <div class="rowElem">
+                                    <label class="label">密码</label> 
+                                    <span class="viewtxt">默认密码111111</span>
+                                </div>
+                                <{/if}>
+                                <div class="rowElem actdiv zxhide">
+                                    <label class="label">请选择权限</label>
+                                    <zxbox></zxbox>
+                                </div>
+                                <!-- 
+                                <div class="rowElem">
+                                    <label class="label"><{if !$user_rs}><span class="input_required">*</span><{/if}>密码</label> <input type="password" id="password" name="password">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><{if !$user_rs}><span class="input_required">*</span><{/if}>确认密码</label> <input name="password1" type="password" id="password1">
+                                </div>
+                                -->
+                                <div class="rowElem">
+                                    <label class="label">部门权限</label> 
+									<input type="checkbox" name="isdirector" value="1" <{if $user_rs.isdirector}>checked<{/if}> /><label class="zx_red zx_weight">总监</label>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">是否转正</label> 
+									<input type="checkbox" name="qualified" id="qualified" value="1" <{if $user_rs.qualified}>checked<{/if}> /><label class="zx_red zx_weight">已转正</label>
+                                </div>
+                                <div class="rowElem <{if !$user_rs.qualified}>zxhide<{/if}>">
+                                    <label class="label">转正时间</label> 
+									<input type="text" class="posttime" name="qualifiedtime" id="qualifiedtime" value="<{$user_rs.qualifiedtime}>"/>
+                                </div>
+                                <script>
+                                $(function(){
+                                	$("#qualified").click(function(){
+                                		if($(this).attr("checked")){
+                                			$("#qualifiedtime").parent(".rowElem").removeClass("zxhide");
+                                		}else{
+                                			$("#qualifiedtime").parent(".rowElem").addClass("zxhide");
+                                		}
+                                	})
+                                })
+                                </script>
+                                <div class="rowElem">
+                                    <label class="label">状态</label> 
+									<input type="radio" class="radio" name="isdel" value="0" <{if $user_rs.isdel eq '0' || !$user_rs}>checked<{/if}> /><label>正常</label>
+									<input type="radio" class="radio" name="isdel" value="1" <{if $user_rs.isdel eq '1'}>checked<{/if}> /><label>关闭</label>
+                                </div>
+                                <div class="rowElem">
+                                	<label class="label">&nbsp;</label>
+                                    <button type="submit" id="submit-go">Submit</button>
+                                </div>
+                            </fieldset>
+                        </form>
+						</td>
+	        		</tr>
+	        	</table>
+	        </td>
+	        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+	      </tr>
+	    </table>
+    </td>
+  </tr>
+  <tr>
+    <td height="35" background="images/tab_19.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="35"><img src="images/tab_18.gif" width="12" height="35" /></td>
+        <td>&nbsp;</td>
+        <td width="16"><img src="images/tab_20.gif" width="16" height="35" /></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</div>
+</body>
+<{include file="footer.html"}>

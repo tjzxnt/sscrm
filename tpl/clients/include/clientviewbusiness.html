@@ -1,0 +1,19 @@
+<fieldset>
+    <legend>业务相关基本信息</legend>
+    <div class="rowElem">
+        <label class="label">意向国家</label> 
+        <span class="viewtxt"><{$client_rs.exp_country}></span>
+    </div>
+    <div class="rowElem">
+        <label class="label">客户需求</label> 
+       <span class="viewtxt"><{$client_rs.demand}></span>
+    </div>
+    <div class="rowElem">
+        <label class="label">其他反馈</label> 
+        <textarea rows="5" cols="50" readonly><{$client_rs.feedback}></textarea>
+    </div>
+    <div class="rowElem">
+        <label class="label">首次到访时间</label> 
+        <span class="viewtxt"><{if $client_rs.visit_time}><{$client_rs.visit_time|date_format:'%Y-%m-%d %H:%M'}><{else}>-<{/if}></span>
+    </div>
+</fieldset>

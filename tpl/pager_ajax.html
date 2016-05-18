@@ -1,0 +1,81 @@
+<{if $pager}>
+<script>
+function ajaxpage(obj){
+	$.ajax({
+		type : "post",
+		url : obj.attr("data-url"),
+		data : "isAjax=1&" + obj.attr("more-data") + "&page=" + obj.attr("page"),
+		dataType : 'json',
+		beforeSend : function() {
+			$(".ajaxnewslist").html("<img class='zx_padding_top_smid' src='<{$web_root}>/images/ajax_loading.gif'>").unbind("click");
+		},
+		success : function(json, textStatus) {
+			$(".ajaxnewslist").html("");
+			if(json.result == 1){
+				$(".ajaxnewslist").after(json.html).remove();
+			}
+		},
+		error : function(xml, status) {
+			//alert(xml.responseText);
+			alert("未知错误，请稍后再试");
+			obj.click(function(){
+				data_more($(this));
+			});
+		}
+	});
+}
+$(function(){
+	$(".more_ajax").click(function(){
+		ajaxpage($(this));
+	})
+})
+
+</script>
+<div class="zxpage zxright">
+	<{if $pager.total_count}>
+	<{assign var=controler value=$c}>
+	<{assign var=actioner value=$a}>
+	<{assign var=pageid value=$pageid}>
+		<span style="padding-right:60px">
+			共<font><{$pager.total_count+$pageoffset}></font>条记录，每页10条，当前第<font><{$pager.current_page}></font>页
+		</span>
+		<{if $pager.current_page > 1}>
+			<a title="首页" href="javascript:" class="more_ajax" data-url="<{$pageurl}>" page="<{$pager.first_page}>" more-data="<{$more_data}>">首页</a>
+			<a title="上一页" href="javascript:" class="more_ajax" data-url="<{$pageurl}>" page="<{$pager.prev_page}>" more-data="<{$more_data}>">上一页</a>
+		<{/if}>
+		<{if $pager.total_page > 1}>
+			<{if $pager.current_page < 3}>
+				<{if $pager.total_page > 5}>
+					<{section name=i loop=6 start=1}>
+					<a title="第 <{$smarty.section.i.index}> 页" href="javascript:" class="more_ajax <{if $smarty.section.i.index == $pager.current_page}>current<{/if}>" data-url="<{$pageurl}>" page="<{$smarty.section.i.index}>" more-data="<{$more_data}>"><{$smarty.section.i.index}></a>
+					<{/section}>
+				<{else}>
+					<{section name=i loop=$pager.total_page+1 start=1}>
+					<a title="第 <{$smarty.section.i.index}> 页" href="javascript:" class="more_ajax <{if $smarty.section.i.index == $pager.current_page}>current<{/if}>" data-url="<{$pageurl}>" page="<{$smarty.section.i.index}>" more-data="<{$more_data}>"><{$smarty.section.i.index}></a>
+					<{/section}>
+				<{/if}>
+			<{else}>
+				<{if $pager.total_page > $pager.current_page+2}>
+					<{section name=i loop=$pager.current_page+3 start=$pager.current_page-2}>
+					<a title="第 <{$smarty.section.i.index}> 页" href="javascript:" class="more_ajax <{if $smarty.section.i.index == $pager.current_page}>current<{/if}>" data-url="<{$pageurl}>" page="<{$smarty.section.i.index}>" more-data="<{$more_data}>"><{$smarty.section.i.index}></a>
+					<{/section}>
+				<{else}>
+					<{section name=i loop=$pager.total_page+1 start=$pager.current_page-2}>
+					<a title="第 <{$smarty.section.i.index}> 页" href="javascript:" class="more_ajax <{if $smarty.section.i.index == $pager.current_page}>current<{/if}>" data-url="<{$pageurl}>" page="<{$smarty.section.i.index}>" more-data="<{$more_data}>"><{$smarty.section.i.index}></a>
+					<{/section}>
+				<{/if}>
+			<{/if}>
+		<{/if}>
+		<{if $pager.current_page < $pager.total_page && $pager.total_page > 1}>
+			<a title="下一页" href="javascript:" class="more_ajax" data-url="<{$pageurl}>" page="<{$pager.next_page}>" more-data="<{$more_data}>">下一页</a>
+			<a title="尾页" href="javascript:" class="more_ajax" data-url="<{$pageurl}>" page="<{$pager.last_page}>" more-data="<{$more_data}>">尾页</a>
+		<{/if}>	
+	<{else}>
+		<span>
+			共<font><{0 + $pageoffset}></font>条记录，每页10条，当前第<font><{$smarty.section.i.index}></font>页
+		</span>
+	<{/if}>
+</div>
+<{else}>
+	&nbsp;
+<{/if}>

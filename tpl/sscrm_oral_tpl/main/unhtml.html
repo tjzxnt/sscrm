@@ -1,0 +1,115 @@
+<{include file="header.html"}>
+<script type="text/javascript">
+$(function(){
+	var validator = $.parseJSON('<{$validator}>');
+	$(".form").validate({
+		rules: "",
+		messages: "",
+		submitHandler: function(form) {
+			$(form.isAjax).attr('value', 1);	//告知服务器，客户端是通过Ajax提交的，服务端应该返回JSON
+			$(form).ajaxSubmit({
+				dataType:  'json',
+				beforeSubmit: 
+				function(formData, jqForm, options){
+					showBlockMsg(".form", "");
+					return true;
+				},
+				success: 
+				function(json, status) {
+					hideBlockMsg('.form');
+					if(json.result == 1){
+						showBlockMsg(".form", json.msg, 'ok');
+						window.setTimeout(function() {
+							hideBlockMsg('.form');
+						}, 2000);
+					}
+					else {
+						showBlockMsg('.form', json.msg, 'error');
+						window.setTimeout(function() {
+							hideBlockMsg('.form');
+						}, 2000);
+					}
+				},
+				error:
+				function(xml, status){
+					hideBlockMsg('.form');
+					showErrorDialog(xml.responseText);
+				}
+			});
+			return false;
+		}
+	});
+})
+</script>
+</head>
+<body>
+<table width="100%" height="100%" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="46%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[网站设置]-[销毁静态设置]</td>
+              </tr>
+            </table></td>
+            <td width="54%"><table border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr>
+                <td width="60"><table width="90%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+					<td class="STYLE1"></td>
+                    <td class="STYLE1"><div align="center"></div></td>
+                  </tr>
+                </table></td>
+              </tr>
+            </table></td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td>
+	    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	      <tr>
+	        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+	        <td>
+	        	<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#b5d6e6">
+	        		<tr height="50" bgcolor="#FFFFFF">
+	        			<td>
+	        			<form class="form" method="post" action="<{$saveurl}>">
+	        				<input type="hidden" name="isAjax" value="0" />
+                            <fieldset>
+                                <legend>销毁静态设置</legend>
+                                <div class="rowElem">
+                                    <div style="margin-left:30px; margin-top:10px">点击下面的保存按钮,即可销毁所有的静态页面,将网站前台转为动态页面。</div>
+                                </div>                
+                            </fieldset>
+                            <button type="submit" id="submit-go">Submit</button>                         
+                        </form>
+						</td>
+	        		</tr>
+	        	</table>
+	        </td>
+	        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+	      </tr>
+	    </table>
+    </td>
+  </tr>
+  <tr>
+    <td height="35" background="images/tab_19.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="35"><img src="images/tab_18.gif" width="12" height="35" /></td>
+        <td>&nbsp;</td>
+        <td width="16"><img src="images/tab_20.gif" width="16" height="35" /></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</div>
+</body>
+<{include file="footer.html"}>

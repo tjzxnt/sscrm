@@ -1,0 +1,18 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+<title><{$app_config.website_name}></title>
+</head>		
+	<frameset rows="50,*,8" cols="*" frameborder="no" border="0" framespacing="0">
+	  <frame src="<{spUrl c=main a=top}>" name="topFrame" scrolling="No" noresize="noresize" id="topFrame"/>
+	  <frameset cols="165,6,*" id="middle" frameborder="no" border="0" framespacing="0">
+	  	<frame src="<{spUrl c=main a=left}>" name="leftFrame" id="leftFrame" scrolling="auto"/>
+	    <frame src="<{spUrl c=main a=split}>" name="tbl" scrolling="No" noresize="noresize" id="tbl" />
+	    <frame src="<{spUrl c=main a=welcome}>" name="center" scrolling="Yes" id="center" />
+	  </frameset>
+	  <frame src="<{spUrl c=main a=bottom}>" name="bottomFrame" scrolling="No" noresize="noresize" id="bottomFrame" />
+	</frameset>
+	<noframes></noframes>
+</html>

@@ -1,0 +1,130 @@
+<{include file="library/chosen.html"}>
+
+<{*
+
+<{include file="header.html"}>
+
+<script>
+	function prepinit(){
+		$(".channeltr, .origin_tr, .subtr").addClass("zxhide");
+	}
+	function prepfinish(){
+		$(".subtr").removeClass("zxhide");
+	}
+	function personinit(){
+		prepinit();
+		$(".origin_person_tr").removeClass("zxhide");
+	}
+	function unpersoninit(){
+		prepinit();
+		$(".origin_unperson_tr").removeClass("zxhide");
+	}
+	function datainit(){
+		$("#channel_select, #origin_select")[0].selectedIndex = 0;
+		$("#channel_select, #origin_select").trigger("chosen:updated");
+	}
+	function not_allow_channel(){
+		$("#sourcetype")[0].selectedIndex = 2;
+		$("#sourcetype").trigger("chosen:updated");
+		$(".sourcetypetr").addClass("zxhide");
+		$(".origin_tr").removeClass("zxhide");
+		prepfinish();
+	}
+	$(function(){
+		$("#sourcetype").change(function(){
+			/*datainit();*/
+			if($(this).val() == "1"){ //渠道
+				prepinit();
+				$(".channeltr").removeClass("zxhide");
+				prepfinish();
+			}else if($(this).val() == "2"){ //非渠道来源
+				prepinit();
+				$(".origin_tr").removeClass("zxhide");
+				prepfinish();
+			}else{ //初始
+				prepinit();
+			}
+		})
+	})
+</script>
+*}>
+<script>
+$(function(){
+	$("#prepsubmit").click(function(){
+		$.ajax({
+		   type: "POST",
+		   url: "<{$saveurl}>",
+		   data: $(".prepform").serialize(),
+		   dataType: 'json',
+		   beforeSend: function(){
+		   		showBlockMsg(".tipsdowntable", "");
+				return true;
+		   },
+		   success: function(json, textStatus){
+				if(json.result == 1){
+					window.location.href = json.url.replace(/&amp;/g,'&').replace(/&amp;/g,'&');
+				}else{
+					alert(json.msg);
+					hideBlockMsg('.tipsdowntable');
+				}
+				prepfinish();
+		   },
+			error: function(xml, status){
+				hideBlockMsg('.tipsdowntable');
+				showErrorDialog(xml.responseText);
+			}
+		});
+	})
+})
+</script>
+<style>
+	.chosen-results{
+		max-height:300px !important;
+	}
+	.input_chosen{
+		width:190px;
+		border:1px solid #aaa;
+		border-radius:5px;
+		height:23px;
+		line-height:24px;
+		background-color: #fff;
+		background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(20%, #ffffff), color-stop(50%, #f6f6f6), color-stop(52%, #eeeeee), color-stop(100%, #f4f4f4));
+		background: -webkit-linear-gradient(top, #ffffff 20%, #f6f6f6 50%, #eeeeee 52%, #f4f4f4 100%);
+		background: -moz-linear-gradient(top, #ffffff 20%, #f6f6f6 50%, #eeeeee 52%, #f4f4f4 100%);
+		background: -o-linear-gradient(top, #ffffff 20%, #f6f6f6 50%, #eeeeee 52%, #f4f4f4 100%);
+		background: linear-gradient(top, #ffffff 20%, #f6f6f6 50%, #eeeeee 52%, #f4f4f4 100%);
+		background-clip: padding-box;
+		box-shadow: 0 0 3px white inset, 0 1px 1px rgba(0, 0, 0, 0.1);
+		color: #444;
+		white-space: nowrap;
+		padding:0 0 0 8px;
+	}
+	.tipsdowntable tr{
+		height:25px;
+	}
+	.tipstdleft{
+		text-align:right;
+	}
+</style>
+
+<form class="prepform">
+	<input type="hidden" name="sourcetype" value="2"/>
+	<table class="tipsdowntable">
+		<tr class="<{*zxhide*}> origin_tr">
+			<td class="tipstdleft">请选择来源：</td>
+			<td>
+				<select class="chosen-select-nosearch" id="origin_select" name="origin_id" <{*style="min-height:200px"*}>>
+					<option value="">==请选择==</option>
+					<{foreach item=i key=k from=$origin_rs}>
+					<option value="<{$i.id}>" <{if $i.issight}>style="color:#FF0000;font-weight:bolder;"<{/if}>><{$i.oname}></option>
+					<{/foreach}>
+				</select>
+			</td>
+		</tr>
+		<tr class="<{*zxhide*}> subtr">
+			<td colspan="2">
+				<input type="button" id="prepsubmit" value="确认"/>
+			</td>
+		</tr>
+	</table>
+</form>

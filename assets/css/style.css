@@ -1,0 +1,52 @@
+﻿
+/*－－－top的CSS－－－*/
+
+.logo1 {
+    display: inline;
+    float: left;
+    margin-left: 30px;
+    margin-top: 5px;
+}
+.icon { float:left; margin-left:60px; display:block; height:50xp;}
+.icon ul {
+  font-size:12px; 
+}
+.icon ul li {
+    cursor: pointer; line-height:50px;
+    float: left;
+    height: 22px;
+
+   color:#FFF;
+}
+.icon ul li  a{ color:#FFF; font-size:12px;font-family: "微软雅黑"; display:block; padding:0 10px;}
+.icon ul li a:hover{
+	text-decoration:none; background-color:#e02222
+}
+.user{ float:right; margin-right:50px;}
+
+.user ul li{ float:left; line-height:50px; margin-left:30px; font-size:12px; color:#ccc;}
+.top{ height:50px; background:#212121 ;}
+.title{ float:left; margin:0 0 0 40px; line-height:40px; color:#FFF; font-size:12px; color:#CCC; line-height:50px;font-family: "微软雅黑"; font-weight:bold;}
+
+.leftsidebar_box{
+    font-family: "微软雅黑"; background-color: #3d3d3d;
+    height: 100% !important;
+    left: 0;
+    overflow: visible !important;
+    position: fixed;
+    width: 165px;
+    z-index: 999;}
+.leftsidebar_box dl{ color:#fff; border-bottom: 1px solid #5c5c5c !important;
+    color: #ffffff !important; margin-bottom:5px; border-bottom:5px; }
+.leftsidebar_box dl dt{ height:50px; line-height:50px; ;color:#fff; font-size:12px; text-align:left;padding-left:20px; }
+
+.leftsidebar_box .hover{ background-color:#e02222;}
+.leftsidebar_box .hover i{ color:#FFF;}
+.leftsidebar_box dl dd a.now{ color:#ff5f5f !important;}
+.leftsidebar_box dl dt i{ color: #969696; width:23px;}
+.leftsidebar_box dl dt b{ margin-left:5px;}
+.leftsidebar_box dl dd{ height:40px;line-height:40px;color:#000;font-size:12px;text-align:left; padding-left:40px; margin:5px 0; }
+.leftsidebar_box dl dd:hover{ background-color:#333; color:#FFF;  }
+.leftsidebar_box dl dd a{  text-decoration:none;color: #bdbdbd;}
+.leftsidebar_box dl dd:hover a{color: #FFF;}
+

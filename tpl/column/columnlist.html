@@ -1,0 +1,131 @@
+<{include file="header.html"}>
+</head>
+<body>
+<table width="100%" height="100%" cellspacing="1" cellpadding="0" class="tablesl">
+  <tr>
+    <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="46%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[栏目管理]-[栏目列表]</td>
+              </tr>
+            </table></td>
+            <td width="54%"><table border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr>
+                <td width="60"><table width="87%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td class="STYLE1"><div align="center">
+                      <input type="checkbox" name="checkAll" id="checkAll" />
+                    </div></td>
+                    <td class="STYLE1"><div align="center"><label for="checkAll">全选</label></div></td>
+                  </tr>
+                </table></td>
+                <td width="60"><table width="90%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td class="STYLE1"><div align="center"><a href="<{spUrl c=column a=createcolumn}>" style="display:block">添加</a></div></td>
+                    <td class="STYLE1"><div align="center"></div></td>
+                  </tr>
+                </table></td>
+                <td width="60"><table width="88%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <form action="<{spUrl c=column a=deletecolumn}>" method="POST" id="deleteForm">
+                    <td class="STYLE1"><div align="center"><input type="image" src="images/delete.gif" id="deleteAll"></div></td>
+                    <td class="STYLE1"><div align="center"></div></td>
+                  </tr>
+                </table></td>
+                 <td width="150"><table width="88%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td class="STYLE1"><div align="center"><input type="text" name="searchkeys" class="searchkeysval" value="<{$searchkeys}>"></div></td>
+                    <td class="STYLE1"><div align="top" style="margin-left:7px"><input type="submit" value="搜索" class="searchkeys"></div></td>
+                  </tr>
+                </table></td>
+              </tr>
+            </table></td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+        <td><table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#b5d6e6">
+          <tr>
+          	<td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"></td>
+            <td width="6%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">序号</span></div></td>
+            <td width="6%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">栏目id</span></div></td>
+            <td width="12%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">栏目名</span></div></td>
+            <td width="12%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">栏目标识</span></div></td>
+            <td width="12%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">列表</span></div></td>
+            <td width="5%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">排序</span></div></td>
+			<td width="32%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">操作</span></div></td>
+          </tr>
+          <{foreach item=i key=k from=$list_rs}>
+          <tr>
+          	<td height="20" bgcolor="#FFFFFF" align="center">
+            	<div align="center">
+             		<input type="checkbox" name="id[]" class="checkId" value="<{$i.object.sid}>" />
+            	</div>
+            </td>
+            <td height="20" bgcolor="#FFFFFF">
+            	<div align="center" class="STYLE1">
+              		<div align="center"><{$k+1}></div>
+            	</div>
+            </td>
+            <td height="20" bgcolor="#FFFFFF">
+            	<div align="center" class="STYLE1">
+              		<div align="center"><{$i.object.sid}></div>
+            	</div>
+            </td>
+            <td height="20" bgcolor="#FFFFFF"><div align="left" style="margin-left:10px">
+	            <span class="STYLE1">
+	            <{if $i.grade > 1}>|- <{/if}><{$i.object.sname}>
+	            </span>
+            	<{if !$i.object.frontdisplay}><span style="color:red">[后台管理关闭]</span><{/if}>
+            	<{if !$i.object.ishtml}><span style="color:red">[生成关闭]</span><{/if}>
+            	<{if $i.object.isentrance}><span style="color:red">[入口]</span><{/if}>
+            	<{if $i.object.isentranceline}><span style="color:red">[支线]</span><{/if}>
+            </div></td>
+            <td height="20" bgcolor="#FFFFFF"><div align="left" style="margin-left:10px"><span class="STYLE1"><{if $i.grade > 1}>&nbsp;&nbsp;<{/if}><{$i.object.mark}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div align="left" style="margin-left:10px"><span class="STYLE1"><{if $i.grade > 1}><{if $i.object.islist}>是 每页 <{$i.object.pagesize}> 条<{else}>否<{/if}><{else}>-<{/if}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div align="left" style="margin-left:10px"><span class="STYLE1"><{if $i.grade > 1}>&nbsp;&nbsp;<{/if}><{$i.object.columnorder}></span></div></td>
+            <td bgcolor="#FFFFFF">
+            	<table border="0">
+                	<tr>
+                    	<td align="center">
+                    		<{if $i.grade > 1}>&nbsp;&nbsp;<{/if}>
+                    		<a href="<{spUrl c=column a=createcolumn id=$i.object.sid}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>复制</a>
+                        	<a href="<{spUrl c=column a=updatecolumn id=$i.object.sid}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>编辑</a>
+                        	<{if $i.grade > 1 && $i.object.iscover}>
+                        	<a href="<{spUrl c=column a=coverconfig column_id=$i.object.sid}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>多图设置</a>
+                        	<{/if}>
+                        	<{if $i.grade > 1 && $i.object.is_extfield}>
+                        	<a href="<{spUrl c=column a=extgroup column_id=$i.object.sid}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>扩展字段</a>
+                        	<{/if}>
+                            <a href="#<{spUrl c=column a=deletecolumn id=$i.object.sid}>" class="delete"><img src="images/del.gif" width="16" height="16" align="absmiddle"/>删除</a>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+          </tr>
+          <{foreachelse}>
+			<tr>
+            	<td height="20" bgcolor="#FFFFFF" colspan="8"><div style="margin-left:7px; margin-top:10px">无匹配记录</div></td>
+			</tr>
+          <{/foreach}>
+          </form>
+        </table></td>
+        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</div>
+</body>
+<{include file="footer.html"}>

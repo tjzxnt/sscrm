@@ -1,0 +1,46 @@
+
+<script type="text/javascript">
+$(function(){
+	//从服务器获取数据校验规则
+	var validator = $.parseJSON('<{$validator}>');
+	var formobj = $(".formobj").length > 0 ? ".formobj" : ".form";
+	$(formobj).validate({
+		rules : validator ? validator['rules'] : "",
+		messages : validator ? validator['messages'] : "",
+		submitHandler: function(formobj) {
+			$(formobj.isAjax).attr('value', 1);	//告知服务器，客户端是通过Ajax提交的，服务端应该返回JSON
+			$(formobj).ajaxSubmit({
+				dataType:  'json',
+				beforeSubmit: 
+				function(formData, jqForm, options){
+					showBlockMsg(formobj, "");
+					return true;
+				},
+				success: 
+				function(json, status) {
+					hideBlockMsg(formobj);
+					if(json.result != 1){   
+						showBlockMsg(formobj, json.msg, 'error');
+						window.setTimeout(function() {
+							hideBlockMsg(formobj);					
+						}, 2000);
+						
+					}
+					else {
+						showBlockMsg(formobj, json.msg, 'ok');
+						window.setTimeout(function() {
+							window.location.href = json.url.replace(/&amp;/g,'&').replace(/&amp;/g,'&');
+						}, 2000);
+					}
+				},
+				error:
+				function(xml, status){
+					hideBlockMsg(formobj);
+					showErrorDialog(xml.responseText);
+				}
+			});
+			return false;
+		}
+	});
+});
+</script>

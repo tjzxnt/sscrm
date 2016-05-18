@@ -1,0 +1,317 @@
+<{include file="header.html"}>
+
+<{include file="library/accounting.html"}>
+
+<script>
+	$(function(){
+	$(".top").click(function(){
+			url = $(this).attr('href').substr(1);
+			showConfirmDialog({
+				title: "首页推荐确认",
+				message: "你确认要将此记录推荐至首页吗？",
+				callback: function(dialog) {
+					$.ajax({
+						url: url,
+						dataType: 'json',
+						success: 
+						function(json, status){
+							if(json.result == 0) {
+								showBlockMsg('.tablesl', json.msg, 'ok');
+							}else if(json.result == -1) {
+								showBlockMsg('.tablesl', json.msg, 'error');
+							}						
+							window.setTimeout(function() {
+								window.location.href = json.url;
+							}, 2000);
+						},
+						error:
+						function(xml,status){
+							showErrorDialog(xml.responseText);
+						}
+					});			
+				}
+			});		
+			return false;
+		});
+	})
+</script>
+</head>
+<body>
+<table width="100%" height="100%" cellspacing="1" cellpadding="0" class="tablesl">
+  <tr>
+    <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="46%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：
+                [<{$fname}>]-[<{$sname}>]<{if $pc_name}>-[<{$pc_name}>]<{/if}>
+                <{if $catoid}>
+                - <a href="<{spUrl c=articlescatos a=articlecatolist fid=$fid sid=$sid}>"><img src="images/back.png" width="14" height="14" align="top" /> 返回</a>
+                <{/if}>
+                </td>
+              </tr>
+            </table></td>
+            <td width="54%"><table border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr>
+                <td width="60"><table width="87%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td class="STYLE1"><div align="center">
+                      <input type="checkbox" name="checkAll" id="checkAll" />
+                    </div></td>
+                    <td class="STYLE1"><div align="center"><label for="checkAll">全选</label></div></td>
+                  </tr>
+                </table></td>
+                <td width="60"><table width="90%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td class="STYLE1"><div align="center"><a href="<{spUrl c=articles a=createarticles fid=$fid sid=$sid}><{$catourl}>" style="display:block">添加</a></div></td>
+                    <td class="STYLE1"><div align="center"></div></td>
+                  </tr>
+                </table></td>
+                <td width="60"><table width="88%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <form action="<{spUrl c=articles a=deletearticles}><{$catourl}>" method="POST" id="deleteForm">
+                    <td class="STYLE1"><div align="center"><input type="image" src="images/delete.gif" id="deleteAll"></div></td>
+                    <td class="STYLE1"><div align="center"></div></td>
+                  </tr>
+                </table></td>
+                 <td width="200"><table width="100%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+                  	<td class="STYLE1">
+	                    <div align="center">
+	                    	<{if $line_rs}>
+	                    	<select name="line_id" id="line_id" style="margin:0 3px">
+	                    		<option value="0">所有线路</option>
+	                    		<{foreach item=i key=k from=$line_rs}>
+	                    		<option value="<{$i.id}>" <{if $i.id == $line_id}>selected<{/if}>><{$i.name}></option>
+	                    		<{/foreach}>
+	                    	</select>
+	                    	<{/if}>
+	                    	<{if $iscato == '2' && $filter2}>
+	                    	<select name="pc_id" id="pc_id" style="margin:0 3px">
+	                    		<option value="0">所有分类</option>
+	                    		<{foreach item=i key=k from=$all_pc_rs}>
+	                    		<{if $i.grade == 1}>
+	                    		<optgroup label="<{$i.object.pc_name}>"></optgroup>
+	                    		<{else}>
+	                    		<option value="<{$i.object.pc_id}>" <{if $i.object.pc_id == $pc_id}>selected<{/if}>>&nbsp;|-&nbsp;<{$i.object.pc_name}></option>
+	                    		<{/if}>
+	                    		<{/foreach}>
+	                    	</select>
+	                    	<{elseif $iscato == '1'}>
+		                    	<{if $catoid}>
+		                    	<input type="hidden" id="pc_id" value="<{$catoid}>"/>
+		                    	<{else}>
+		                    	<select name="pc_id" id="pc_id" style="margin:0 3px">
+		                    		<option value="0">所有分类</option>
+		                    		<{foreach item=i key=k from=$all_pc_rs}>
+		                    		<option value="<{$i.pc_id}>" <{if $i.pc_id == $pc_id}>selected<{/if}>><{$i.pc_name}></option>
+		                    		<{/foreach}>
+		                    	</select>
+		                    	<{/if}>
+	                    	<{/if}>
+	                    </div>
+                    </td>
+                    <td class="STYLE1"><div align="center"><input type="text" name="searchkeys" class="searchkeysval" value="<{$searchkeys}>"></div></td>
+                    <td class="STYLE1"><div align="top" style="margin-left:7px"><input class="searchkeys" type="image" src="images/search.gif" value=""></div></td>
+                  </tr>
+                </table></td>
+              </tr>
+            </table></td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+        <td><table class="zx_data_list" width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#b5d6e6">
+          <thead>
+          <tr>
+            <td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+            </td>
+            <{if $order == '1'}>
+            <td width="5%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">排序</span></div></td>
+            <{/if}>
+            <td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">序号</span></div></td>
+            <{if $line_rs}>
+            <td width="5%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">所属线路</span></div></td>
+            <{/if}>
+            <{if $iscato == '1' && !$catoid}>
+            <td width="15%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">所属类别</span></div></td>
+            <{/if}>
+            <{if $iscato == '2' && !$filter2}>
+            <td width="12%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">所属类别</span></div></td>
+            <{/if}>
+            <{if $iscato == '2' && $filter2}>
+            <td width="12%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">所属类别</span></div></td>
+            <{/if}>
+            <{if $subcolumn}>
+            <td width="12%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">所属</span></div></td>
+            <{/if}>
+            <td width="23%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">标题名</span></div></td>
+            <{if $artstyle.isprice}>
+            <td width="10%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">价格<{if $smarty.session.sys_entrance.unit}> (单位：<{$smarty.session.sys_entrance.unit}>)<{/if}></span></div></td>
+            <{/if}>
+            <{if $ext_cfield}>
+            <{foreach item=i key=k from=$ext_cfield}>
+            <td width="5%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1"><{$i.field_name}></span></div></td>
+            <{/foreach}>
+            <{/if}>
+            <{if $ishits}>
+            <td width="5%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">点击数</span></div></td>
+            <{/if}>
+            <td width="8%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">新闻时间</span></div></td>
+			<td width="18%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">操作</span></div></td>			
+          </tr>
+          </thead>
+          <tbody>
+          <{foreach item=i key=k from=$articles_rs}>
+          <tr>
+            <td height="20" bgcolor="#FFFFFF">
+            	<div align="center">
+             		<input type="checkbox" name="id[]" class="checkId" value="<{$i.pid}>" />
+            	</div>
+            </td>
+            <{if $order == '1'}>
+            <td height="20" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1"><input name="order[]" type="text" value="<{$i.order}>" style="width:35px;"><input name="orderid[]" type="hidden" value="<{$i.pid}>"></span></div></td>
+            <{/if}>
+            <td height="20" bgcolor="#FFFFFF">
+            	<div align="center" class="STYLE1">
+              		<div align="center"><{$k+1}></div>
+            	</div>
+            </td>
+            <{if $line_rs}>
+            <td height="20" bgcolor="#FFFFFF">
+            	<div align="center">
+            		<{if $i.line_name}>
+            		<span class="STYLE1"><{$i.line_name}></span>
+            		<{else}>
+            		<span class="zx_red">未设置</span>
+            		<{/if}>
+            	</div>
+            </td>
+            <{/if}>
+            <{if $iscato == '1' && !$catoid}>
+            <td height="20" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1"><{$i.pc_name}></span></div></td>
+            <{/if}>
+            <{if $iscato == '2' && !$filter2}>
+            <td height="20" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1"><{$i.pc_name}></span></div></td>
+            <{/if}>
+            <{if $iscato == '2' && $filter2}>
+            <td height="20" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1"><{$i.filterstr}></span></div></td>
+            <{/if}>
+            <{if $subcolumn}>
+            <td height="20" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">
+            	<{if !$artstyle.subcolumntype}>
+            	<script src="../index.php?c=main&a=getsubcolumn&id=<{$i.pid}>"></script>
+            	<{elseif $artstyle.subcolumntype == 1}>
+            	<script src="../index.php?c=main&a=getsubcolumn_c&id=<{$i.pid}>"></script>
+            	<{/if}>
+            </span></div></td>
+            <{/if}>
+            <td height="20" bgcolor="#FFFFFF">
+            	<div class="listleft">
+           			<{$i.name}>
+           			<{if $i.ishide}>  <font color="Red">[隐藏]</font><{/if}>
+           			<{if $i.top}>  <font color="Red">[头条]</font><{/if}>
+           			<{if $i.specrecomd}>  <font color="Red">[特荐]</font><{/if}>
+           			<{if $i.stj_news}>  <font color="Red">[最新]</font><{/if}>
+           			<{if $i.stj_hot}>  <font color="Red">[热卖]</font><{/if}>
+           			<{if $i.stj_soldout}>  <font color="Red">[售罄]</font><{/if}>
+           			<{if $i.recomd}>  <font color="Red">[推荐]</font><{/if}>
+           			<{if $i.isindex}>  <font color="Red">[首页推荐]</font><{/if}>
+            	</div>
+            </td>
+            <{if $artstyle.isprice}>
+            <td height="20" bgcolor="#FFFFFF">
+            	<div align="center">
+           			<span class="account_txt"><{$i.price}></span>
+           			<{if $artstyle.isprice2 && $i.price2}>
+           			~
+           			<span class="account_txt"><{$i.price2}></span>
+           			<{/if}>
+            	</div>
+            </td>
+            <{/if}>
+            <{if $ext_cfield}>
+            <{foreach item=ii key=kk from=$ext_cfield}>
+            <td height="20" bgcolor="#FFFFFF">
+            	<div align="left">
+            		<span class="STYLE1" style="padding-left:20px">
+            			<{$i.extfield[$ii.field_mark]}>
+            		</span>
+            	</div>
+            </td>
+            <{/foreach}>
+            <{/if}>
+            <{if $ishits}>
+            <td height="20" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1"><{$i.hits}></span></div></td>
+            <{/if}>
+            <td height="20" bgcolor="#FFFFFF"><div align="center">
+            <{if $artstyle.isposttime == '2'}>
+            <{$i.posttime}>
+            <{else}>
+            <{$i.posttime|date_format:"%Y-%m-%d"}>
+            <{/if}>
+            </div></td>
+            <td bgcolor="#FFFFFF" align="left" style="padding-left:20px">
+            	<{if $sys_ishtml_zxadv}>
+            	<a href="#../index.php?c=main&a=onehtmlupdate&id=<{$i.pid}>" class="cstatus"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>更新静态</a>
+            	<{/if}>
+            	<{if $isrelate == 1}>
+            	<a href="<{spUrl c=articles a=relative id=$i.pid fid=$fid sid=$sid}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>关联新闻管理</a>
+            	<{/if}>
+            	<{if $artstyle.iscover && $cover_str}>
+            	<{$cover_str|replace:"__pid__":$i.pid}>
+            	<{/if}>
+            	<{if $sys_entrance_change}>
+            	<a href="<{spUrl c=articles a=entrancearticles id=$i.pid fid=$fid sid=$sid}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>更新入口</a>
+            	<{/if}>
+                <a href="<{spUrl c=articles a=updatearticles id=$i.pid fid=$fid sid=$sid}><{$catourl}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>编辑</a>
+                <a href="#<{spUrl c=articles a=deletearticles id=$i.pid fid=$fid sid=$sid}><{$catourl}>" class="delete"><img src="images/del.gif" width="16" height="16" align="absmiddle"/>删除</a>
+            </td>
+          </tr>
+          <{foreachelse}>
+			<tr>
+            	<td height="20" bgcolor="#FFFFFF" colspan="12"><div style="margin-left:7px; margin-top:10px">无匹配记录</div></td>
+			</tr>
+          <{/foreach}>
+          </tbody>
+          <tfoot>
+          <{if $articles_rs && $order == '1'}>
+           <tr height="50" bgcolor="#FFFFFF"><td colspan="12"><input type="button" id="ordersubmit" value="保存"><input type="hidden" name="isorder" id="isorder" value="0"></td></tr>
+          <{else}>
+          <tr height="50" bgcolor="#FFFFFF"><td colspan="12">&nbsp;</td></tr>
+          <{/if}>
+          <input type="hidden" name="fid" id="fid" value="<{$fid}>"/><input type="hidden" name="sid" id="sid" value="<{$sid}>"/>
+          </tfoot>
+          </form>
+        </table></td>
+        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+      </tr>
+    </table></td>
+  </tr>
+  
+  <tr>
+    <td height="35" background="images/tab_19.gif">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="35"><img src="images/tab_18.gif" width="12" height="35" /></td>
+        <td>
+        	<{include file="pager.html"}>
+		</td>
+        <td width="16"><img src="images/tab_20.gif" width="16" height="35" /></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</div>
+</body>
+<{include file="footer.html"}>

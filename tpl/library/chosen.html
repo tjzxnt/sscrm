@@ -1,0 +1,17 @@
+
+<link href="<{$web_root}>/css/chosen/chosen.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="<{$web_root}>/js/chosen.jquery.js"></script>
+<script>
+function chosen_create(device){
+	$(device).chosen({width:"200px", allow_single_deselect: true});
+}
+function chosen_init(){
+	$(".chosen-select").chosen({width:"200px", height:"1000px", allow_single_deselect: true});
+	$(".chosen-select-multiple").chosen({width:"293px", height:"1000px", allow_single_deselect: true});
+	$(".chosen-select-nosearch").chosen({width:"200px", height:"1000px", allow_single_deselect: true, disable_search_threshold: 1000});
+}
+$(function(){
+	chosen_init();
+});
+
+</script>

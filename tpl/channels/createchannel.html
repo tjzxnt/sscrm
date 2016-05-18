@@ -1,0 +1,189 @@
+<{include file="header.html"}>
+
+<{include file="library/chosen.html"}>
+
+<{include file="library/validator.html"}>
+
+<script>
+function get_type2($typeid, $default){
+	$.ajax({
+		   type: "POST",
+		   url: "<{spUrl c=apis a=get_channeltype2}>",
+		   data: "typeid=" + $typeid,
+		   dataType: 'json',
+		   beforeSend: function(){
+		   		showBlockMsg(".form", "");
+				return true;
+		   },
+		   success: function(json, textStatus){
+			  hideBlockMsg('.form');
+			  if(json.result == 1){
+				  $("#type2id").empty().html('<option value="">选择二级分类</option>');
+				  if(json.data_rs){
+					 $.each(json.data_rs, function(i, v){
+						 $selected = (v.id == $default ? "selected" : "");
+						 $("#type2id").append('<option value="' + v.id + '" ' + $selected + '>' + v.name + '</option>');
+					 });
+				  }
+			  }else{
+				  showBlockMsg(".form", json.msg, 'error');
+				  window.setTimeout(function() {
+					  hideBlockMsg(".form");
+				  }, 2000);
+			  }
+		   },
+			error: function(xml, status){
+				hideBlockMsg('.form');
+				showErrorDialog(xml.responseText);
+			}
+		});
+}
+$(function(){
+	$default = "<{$channel_rs.type2id}>"
+	$("#typeid").change(function(){
+		$typeid = $(this).val();
+		get_type2($typeid, $default);
+	});
+	<{if $channel_rs.typeid}>
+	get_type2("<{$channel_rs.typeid}>", "<{$channel_rs.type2id}>");
+	<{/if}>
+})
+</script>
+</head>
+<body>
+<table width="100%" height="100%" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="46%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[渠道管理]-[<{if $channel_rs}>编辑渠道<{else}>添加渠道<{/if}>]</td>
+              </tr>
+            </table></td>
+            <td width="54%"><table border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr>
+                <td width="60"><table width="90%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+					<td class="STYLE1"><div align="center"><a href="#nogo" onClick="javascript:history.go(-1)"><img src="images/back.png" width="14" height="14" align="top" /> 返回</a></div></td>
+                    <td class="STYLE1"><div align="center"></div></td>
+                  </tr>
+                </table></td>
+              </tr>
+            </table></td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td>
+	    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	      <tr>
+	        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+	        <td>
+	        	<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#b5d6e6">
+	        		<tr height="50" bgcolor="#FFFFFF">
+	        			<td>
+	        			<form class="form" method="post" action="<{$saveurl}>">
+	        				<input type="hidden" name="isAjax" value="0" />
+	        				<input type="hidden" name="channelid" value="<{$channel_rs.id}>"/>
+                            <fieldset>
+                                <legend><{if $channel_rs}>渠道修改<{else}>添加渠道<{/if}></legend>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>渠道机构</label> <input name="mechanism" type="text" id="mechanism" value="<{$channel_rs.mechanism}>"/>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>渠道来源人(签约人)</label>
+                                    <select name="from_id">
+                                    	<option value="">==请选择==</option>
+                                    	<{foreach item=i key=k from=$tuser_rs}>
+                                    	<option value="<{$i.id}>" <{if $i.id == $channel_rs.from_id}>selected<{/if}>><{$i.py}> - <{$i.realname}></option>
+                                    	<{/foreach}>
+                                    </select>
+                                </div>
+                                <div class="rowElem zxhide">
+                                    <label class="label"><span class="input_required">*</span>渠道联系人(CALL客)</label>
+                                    <select name="contact_id">
+                                    	<option value="">来自渠道来源人</option>
+                                    	<{foreach item=i key=k from=$contact_rs}>
+                                    	<option value="<{$i.id}>" <{if $i.id == $channel_rs.contact_id}>selected<{/if}>><{$i.py}> - <{$i.realname}></option>
+                                    	<{/foreach}>
+                                    </select>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>渠道维护人</label>
+                                    <{if $maintenance_self}>
+                                    <input type="hidden" name="maintenance_id" value="<{$smarty.session.sscrm_user.id}>"/>
+                                    <span class="viewtxt"><{$smarty.session.sscrm_user.realname}></span>
+                                    <{else}>
+                                    <select name="maintenance_id">
+                                    	<option value="">==请选择==</option>
+                                    	<{foreach item=i key=k from=$muser_rs}>
+                                    	<option value="<{$i.id}>" <{if $i.id == $channel_rs.maintenance_id}>selected<{/if}>><{$i.py}> - <{$i.realname}></option>
+                                    	<{/foreach}>
+                                    </select>
+                                    <{/if}>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>选择分类</label>
+                                    <select name="typeid" id="typeid">
+                                    	<option value="">来自渠道分类</option>
+                                    	<{foreach item=i key=k from=$type_rs}>
+                                    	<option value="<{$i.id}>" <{if $i.id == $channel_rs.typeid}>selected<{/if}>><{$i.name}></option>
+                                    	<{/foreach}>
+                                    </select>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">选择二级分类</label>
+                                    <select name="type2id" id="type2id">
+                                    	<option value="">选择二级分类</option>
+                                    	<{foreach item=i key=k from=$type2_rs}>
+                                    	<option value="<{$i.id}>" <{if $i.id == $channel_rs.type2id}>selected<{/if}>><{$i.name}></option>
+                                    	<{/foreach}>
+                                    </select>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>主联系人姓名</label>
+                                    <input name="main_contact" type="text" id="main_contact" value="<{$channel_rs.main_contact}>"/>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>主联系人电话</label>
+                                    <input name="main_tel" type="text" id="main_tel" value="<{$channel_rs.main_tel}>"/>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">备注</label>
+                                    <textarea name="remark" id="remark" style="height: 150px; width: 600px;"><{$channel_rs.remark}></textarea>
+                                </div>
+                                <div class="rowElem">
+                                	<label class="label">&nbsp;</label>
+                                    <button type="submit" id="submit-go">Submit</button>
+                                </div>
+                            </fieldset>
+                        </form>
+						</td>
+	        		</tr>
+	        	</table>
+	        </td>
+	        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+	      </tr>
+	    </table>
+    </td>
+  </tr>
+  <tr>
+    <td height="35" background="images/tab_19.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="35"><img src="images/tab_18.gif" width="12" height="35" /></td>
+        <td>&nbsp;</td>
+        <td width="16"><img src="images/tab_20.gif" width="16" height="35" /></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</div>
+</body>
+<{include file="footer.html"}>

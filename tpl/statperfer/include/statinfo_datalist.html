@@ -1,0 +1,307 @@
+
+<table class="zx_data_list" width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#b5d6e6">
+	<thead>
+		<tr>
+			<td width="1%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div align="center">
+					<span class="STYLE1">序号</span>
+				</div>
+			</td>
+			<td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div align="center">
+					<span class="STYLE1">合同编号</span>
+				</div>
+			</td>
+			<td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft zx_word_hidden">
+					<span class="STYLE1">客户名</span>
+				</div>
+			</td>
+			<td width="2%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft zx_word_hidden">
+					<span class="STYLE1">客户来源</span>
+				</div>
+			</td>
+			<td width="2%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft zx_word_hidden">
+					<span class="STYLE1">意向国家</span>
+				</div>
+			</td>
+			<td width="2%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft zx_word_hidden">
+					<span class="STYLE1">资料来源人</span>
+				</div>
+			</td>
+			<td width="2%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft zx_word_hidden">
+					<span class="STYLE1">介绍人</span>
+				</div>
+			</td>
+			<td width="2%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft zx_word_hidden">
+					<span class="STYLE1">CALL</span>
+				</div>
+			</td>
+			<td width="2%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft zx_word_hidden">
+					<span class="STYLE1">地推</span>
+				</div>
+			</td>
+			<td width="2%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft zx_word_hidden">
+					<span class="STYLE1">渠道签约人</span>
+				</div>
+			</td>
+			<td width="2%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft zx_word_hidden">
+					<span class="STYLE1">联系人</span>
+				</div>
+			</td>
+			<td width="2%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft zx_word_hidden">
+					<span class="STYLE1">维护人</span>
+				</div>
+			</td>
+			<td width="2%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft zx_word_hidden">
+					<span class="STYLE1">分销公司签约人</span>
+				</div>
+			</td>
+			<td width="2%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft zx_word_hidden">
+					<span class="STYLE1">联系人</span>
+				</div>
+			</td>
+			<td width="2%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft zx_word_hidden">
+					<span class="STYLE1">维护人</span>
+				</div>
+			</td>
+			<td width="2%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft zx_word_hidden">
+					<span class="STYLE1">成交人</span>
+				</div>
+			</td>
+			<td width="2%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft zx_word_hidden">
+					<span class="STYLE1">当地负责人</span>
+				</div>
+			</td>
+			<{*
+			<!--
+			<td width="2%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft zx_word_hidden">
+					<span class="STYLE1">跟团销售</span>
+				</div>
+			</td>
+			-->
+			*}>
+			<td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft zx_word_hidden">
+					<span class="STYLE1">到店时间</span>
+				</div>
+			</td>
+			<td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft zx_word_hidden">
+					<span class="STYLE1">全款时间</span>
+				</div>
+			</td>
+			<td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft zx_word_hidden">
+					<span class="STYLE1">最终成交额</span>
+				</div>
+			</td>
+			<td width="2%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft zx_word_hidden">
+					<span class="STYLE1">获得总比例</span>
+				</div>
+			</td>
+			<td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft zx_word_hidden">
+					<span class="STYLE1">获得总计</span>
+				</div>
+			</td>
+		</tr>
+	</thead>
+	<tbody>
+		<{foreach item=i key=k from=$clientstat_rs.rs}>
+		<tr>
+			<td height="20" bgcolor="#FFFFFF">
+				<div align="center" class="STYLE1">
+					<div align="center"><{$k+1}></div>
+					<span class="zxhide">id:<{$i.id}></span>
+				</div>
+			</td>
+			<td bgcolor="#FFFFFF" class="listleft"><{$i.bargain}></td>
+			<td bgcolor="#FFFFFF" class="listleft"><{$i.realname}></td>
+			<td bgcolor="#FFFFFF" class="listleft"><{$i.oname}></td>
+			<td bgcolor="#FFFFFF" class="listleft"><{$i.country}></td>
+			<td bgcolor="#FFFFFF" class="listleft">
+				<span class="<{if $i.awardit.datafrom}>zx_red zx_weight<{/if}>">
+					<{if $i.data_reward}>
+					<{$i.data_reward/10}>‰ 
+					<{else}>
+					-
+					<{/if}>
+				</span>
+			</td>
+			<td bgcolor="#FFFFFF" class="listleft">
+				<span class="<{if $i.awardit.references}>zx_red zx_weight<{/if}>">
+					<{if $i.references_reward}>
+					<{$i.references_reward/10}>‰
+					<{else}>
+					-
+					<{/if}>
+				</span>
+			</td>
+			<td bgcolor="#FFFFFF" class="listleft">
+				<span class="<{if $i.awardit.teler}>zx_red zx_weight<{/if}>">
+					<{if $i.teler_reward}>
+					<{$i.teler_reward/10}>‰ 
+					<{else}>
+					-
+					<{/if}>
+				</span>
+			</td>
+			<td bgcolor="#FFFFFF" class="listleft">
+				<span class="<{if $i.awardit.preader}>zx_red zx_weight<{/if}>">
+					<{if $i.preader_reward}>
+					<{$i.preader_reward/10}>‰ 
+					<{else}>
+					-
+					<{/if}>
+				</span>
+			</td>
+			<td bgcolor="#FFFFFF" class="listleft">
+				<span class="<{if $i.awardit.channelassign}>zx_red zx_weight<{/if}>">
+					<{if $i.channelassign_reward}>
+					<{$i.channelassign_reward/10}>‰ 
+					<{else}>
+					-
+					<{/if}>
+				</span>
+			</td>
+			<td bgcolor="#FFFFFF" class="listleft">
+				<span class="<{if $i.awardit.channelassign}>zx_red zx_weight<{/if}>">
+					<{if $i.channelcontact_reward}>
+					<{$i.channelcontact_reward/10}>‰ 
+					<{else}>
+					-
+					<{/if}>
+				</span>
+			</td>
+			<td bgcolor="#FFFFFF" class="listleft">
+				<span class="<{if $i.awardit.channelmain}>zx_red zx_weight<{/if}>">
+					<{if $i.channelmain_reward}>
+					<{$i.channelmain_reward/10}>‰ 
+					<{else}>
+					-
+					<{/if}>
+				</span>
+			</td>
+			<td bgcolor="#FFFFFF" class="listleft">
+				<span class="<{if $i.awardit.traderassign}>zx_red zx_weight<{/if}>">
+					<{if $i.traderassign_reward}>
+					<{$i.traderassign_reward/10}>‰ 
+					<{else}>
+					-
+					<{/if}>
+				</span>
+			</td>
+			<td bgcolor="#FFFFFF" class="listleft">
+				<span class="<{if $i.awardit.traderassign}>zx_red zx_weight<{/if}>">
+					<{if $i.tradercontact_reward}>
+					<{$i.tradercontact_reward/10}>‰ 
+					<{else}>
+					-
+					<{/if}>
+				</span>
+			</td>
+			<td bgcolor="#FFFFFF" class="listleft">
+				<span class="<{if $i.awardit.tradermain}>zx_red zx_weight<{/if}>">
+					<{if $i.tradermain_reward}>
+					<{$i.tradermain_reward/10}>‰ 
+					<{else}>
+					-
+					<{/if}>
+				</span>
+			</td>
+			<td bgcolor="#FFFFFF" class="listleft">
+				<span class="<{if $i.awardit.sale}>zx_red zx_weight<{/if}>">
+					<{if $i.sale_reward}>
+					<{$i.sale_reward/10}>‰ 
+					<{else}>
+					-
+					<{/if}>
+				</span>
+			</td>
+			<td bgcolor="#FFFFFF" class="listleft">
+				<span class="<{if $i.awardit.userabroad}>zx_red zx_weight<{/if}>">
+					<{if $i.userabroad_reward}>
+					<{$i.userabroad_reward/10}>‰ 
+					<{else}>
+					-
+					<{/if}>
+				</span>
+			</td>
+			<{*
+			<!--
+			<td bgcolor="#FFFFFF" class="listleft">
+				<span class="<{if $i.awardit.usertours}>zx_red zx_weight<{/if}>">
+					<{if $i.usertours_reward}>
+					<{$i.usertours_reward/10}>‰ 
+					<{else}>
+					-
+					<{/if}>
+				</span>
+			</td>
+			-->
+			*}>
+			<td bgcolor="#FFFFFF" class="listleft">
+				<{if $i.visit_time}>
+				<{$i.visit_time|date_format:"%Y-%m-%d"}>
+				<{else}>
+				-
+				<{/if}>
+			</td>
+			<td bgcolor="#FFFFFF" class="listleft">
+				<{if $i.fullpay_arrivaltime}>
+				<{$i.fullpay_arrivaltime|date_format:"%Y-%m-%d"}>
+				<{else}>
+				-
+				<{/if}>
+			</td>
+			<td bgcolor="#FFFFFF" class="listleft">
+				<span class="zx_red zx_weight account_txt"><{$i.payreal}></span>
+			</td>
+			<td bgcolor="#FFFFFF" class="listleft">
+				<span class="zx_red zx_weight"> <{$i.all_award/10}>‰ </span>
+			</td>
+			<td bgcolor="#FFFFFF" class="listleft">
+				<span class="zx_red zx_weight account_txt"> <{$i.all_pay}> </span>
+			</td>
+		</tr>
+		<{foreachelse}>
+		<tr>
+			<td height="30" bgcolor="#FFFFFF" colspan="23" align="center">无数据</td>
+		</tr>
+		<{/foreach}> 
+		<{if $clientstat_rs}>
+		<tr>
+			<td height="30" bgcolor="#FFFFFF" colspan="19" align="right">成交额统计：</td>
+			<td bgcolor="#FFFFFF" class="listleft">
+				<span class="zx_red zx_weight account_txt"><{$clientstat_rs.pay_total}></span>
+			</td>
+			<td height="30" bgcolor="#FFFFFF" align="right">收益统计：</td>
+			<td bgcolor="#FFFFFF" class="listleft">
+				<span class="zx_red zx_weight account_txt"><{$clientstat_rs.total}></span>
+			</td>
+		</tr>
+		<{/if}>
+	</tbody>
+	<tfoot>
+		<tr height="50" bgcolor="#FFFFFF">
+			<td colspan="23">&nbsp;</td>
+		</tr>
+	</tfoot>
+</table>

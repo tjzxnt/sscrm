@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title></title>
+<link rel="stylesheet" href="assets/css/reset.css" />
+<link rel="stylesheet" href="assets/css/style.css" />
+<link rel="stylesheet" href="<{$web_root}>/css/jquery.mCustomScrollbar.css" />
+<script type="text/javascript" src="<{$web_root}>/js/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="<{$web_root}>/js/jquery.mCustomScrollbar.concat.min.js"></script>
+<{if !$smarty.session.sscrm_user.user_identity.operate}>
+<style>html,body{-moz-user-select: none; -khtml-user-select: none; user-select: none;}</style>
+<script>
+$(document).bind("contextmenu",function(){return false;});
+$(document).bind("selectstart",function(){return false;});
+$(document).bind("cut copy", function(e) {
+    e.preventDefault();
+});
+</script>
+<{/if}>
+<script>
+$(function(){
+	$(window).load(function(){
+		$(".leftsidebar_box").mCustomScrollbar({
+			scrollButtons:{enable:true},
+			axis:"y",
+			theme:"light-thick",
+			autoExpandScrollbar:true,
+			advanced:{autoExpandHorizontalScroll:true}
+		});
+	});
+	$(".leftsidebar_box dl dt").click(function(){
+		$(this).siblings("dd").toggle(300);
+	})
+	$(".leftsidebar_box dl dd a").click(function(){
+		$(".leftsidebar_box dl dt").removeClass("hover");
+		$(this).closest("dl").find("dt").addClass("hover");
+		$(".leftsidebar_box dl dd a").removeClass("now");
+		$(this).addClass("now");
+	});
+})
+</script>
+<style>
+.leftsidebar_box dl dd{
+	display:none;
+}
+.leftsidebar_box dl dt{
+	cursor: pointer;
+}
+</style>
+<body>
+<div class="leftsidebar_box">
+	<{foreach item=i key=k from=$menu}>
+	<dl>
+		<dt><i class="iconfont"><{$i.icon}></i> <b><{$i.title}></b></dt>
+		<{foreach item=ii key=kk from=$i.menu}>
+		<dd>
+			<a href="<{$ii.url}>" target="center"><{$ii.submenu}></a>
+		</dd>
+		<{/foreach}>
+	</dl>
+	<{/foreach}>
+	<{if $column_rs}>
+	<dl>
+		<dt><i class="iconfont">&#xe61a;</i> <b>公告管理</b></dt>
+		<{foreach item=i key=k from=$column_rs}>
+		<dd>
+			<a href="<{spUrl c=articles a=articleslist fid=$i.pid sid=$i.sid}>" target="center"><{$i.sname}></a>
+		</dd>
+		<{/foreach}>
+	</dl>
+	<{/if}>
+</div>
+</body>
+</html>

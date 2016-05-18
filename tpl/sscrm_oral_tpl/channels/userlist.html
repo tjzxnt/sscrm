@@ -1,0 +1,113 @@
+<{include file="header.html"}>
+</head>
+<body>
+<table width="100%" height="100%" cellspacing="1" cellpadding="0" class="tablesl zxblockui">
+  <tr>
+    <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="46%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[渠道管理]-[我的渠道]-[<{$channel_rs.mechanism}>]-[渠道联系人列表]</td>
+              </tr>
+            </table></td>
+            <td width="54%">
+            <form method="GET">
+            <input type="hidden" name="c" value="channels"/>
+            <input type="hidden" name="a" value="userlist"/>
+            <input type="hidden" name="channelid" value="<{$channelid}>"/>
+            <table width border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr>
+              	<td width="60"><table width="90%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td class="STYLE1"><div align="center"><a href="<{spUrl c=channels a=createuser channelid=$channelid}>" style="display:block"><img src="images/add.gif" width="48" height="19" align="absmiddle" /></a></div></td>
+                    <td class="STYLE1"><div align="center"></div></td>
+                  </tr>
+                </table></td>
+                 <td width="250">
+	                 <table width="100%" border="0" cellpadding="0" cellspacing="0">
+	                  <tr>
+	                    <td class="STYLE1"><div align="center"><input type="text" name="searchkey" class="searchkeysval" value="<{$searchkey}>"></div></td>
+	                    <td class="STYLE1"><div align="top" style="margin-left:7px"><input type="image" value="" src="images/search.gif"></div></td>
+	                    <td width="20"></td>
+		              	<td class="STYLE1">
+		              		<a href="<{spUrl c=channels a=channellist}>"><img src="images/back.png" width="14" height="14" align="top" /> 返回</a>
+		              	</td>
+	                  </tr>
+	                </table>
+                </td>
+              </tr>
+            </table>
+            </form>
+            </td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+        <td><table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#b5d6e6">
+          <tr>
+          	<!--
+            <td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+            </td>
+            -->
+            <td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">序号</span></div></td>
+            <td width="15%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">联系人姓名</span></div></td>
+            <td width="15%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">联系人电话</span></div></td>
+            <td width="6%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">添加时间</span></div></td>
+            <{*
+			<td width="6%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">操作</span></div></td>
+			*}>			
+          </tr>
+          <{foreach item=i key=k from=$user_rs}>
+          <tr>
+            <td height="20" bgcolor="#FFFFFF">
+            	<div align="center" class="STYLE1">
+              		<div align="center"><{$k+1}></div>
+            	</div>
+            </td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.realname}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.telphone}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1"><{$i.createtime|date_format:"%Y-%m-%d %H:%M"}></span></div></td>
+            <{*
+            <td bgcolor="#FFFFFF" class="listleft">
+            	<a href="<{spUrl c=channels a=modifyactive channelid=$channelid id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>编辑</a>
+            	<a href="javascript:" zxhref="<{spUrl c=channels a=delact channelid=$channelid id=$i.id}>" class="general_post" zxalert="确认删除该活动吗"><img src="images/del.gif" width="16" height="16" align="absmiddle"/>删除</a>
+            </td>
+            *}>
+          </tr>
+          <{foreachelse}>
+			<tr>
+            	<td height="20" bgcolor="#FFFFFF" colspan="7"><div style="margin-left:7px; margin-top:10px">无匹配记录</div></td>
+			</tr>
+          <{/foreach}> 
+          <tr height="50" bgcolor="#FFFFFF"><td colspan="7">&nbsp;</td></tr>
+        </table></td>
+        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td height="35" background="images/tab_19.gif">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="35"><img src="images/tab_18.gif" width="12" height="35" /></td>
+        <td>
+        	<{include file="pager.html"}>
+		</td>
+        <td width="16"><img src="images/tab_20.gif" width="16" height="35" /></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</div>
+</body>
+<{include file="footer.html"}>

@@ -1,0 +1,27 @@
+<html>
+	<head>
+		<style type="text/css">
+		body{
+			margin:0;
+		}
+		</style>
+		<script type="text/javascript">
+		function toggleMenu(){
+			menu = parent.document.getElementById('middle');
+			oimg = document.getElementById('toggle_img');
+			if (menu.cols == "0, 6, *"){
+				menu.cols="165, 6, *";
+				oimg.src='images/main_55.gif';
+			}else{
+				menu.cols="0, 6, *";
+				oimg.src='images/main_55_1.gif';
+			}
+		}
+		</script>
+	</head>
+	<body onclick="toggleMenu()">
+		<table height="100%" cellspacing="0" cellpadding="0" style="background:#000">
+  			<tr><td><img src="images/main_55.gif" id="toggle_img" title="显示/隐藏菜单" style="cursor:pointer"/></td></tr>
+		</table>
+	</body>
+</html>

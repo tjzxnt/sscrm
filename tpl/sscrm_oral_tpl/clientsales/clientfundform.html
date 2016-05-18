@@ -1,0 +1,181 @@
+<{include file="header.html"}>
+
+<{include file="library/accounting.html"}>
+
+<{include file="library/validator.html"}>
+
+</head>
+<body>
+<table width="100%" height="100%" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="80%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[客户管理]-[我跟进的客户]-[<{$client_rs.realname}> / <{if $client_rs.sex == 1}>男<{elseif $client_rs.sex == 2}>女<{else}>未知<{/if}> / <{if $client_rs.telphone}><{$client_rs.telphone}><{else}>-<{/if}></span><{if $client_rs.isauto_touser}><span class="zx_red">(自动分配)</span><{/if}>]-[款项记录]</td>
+              </tr>
+            </table></td>
+            <td width="20%"><table border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr>
+                <td width="60"><table width="90%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+					<td class="STYLE1"><div align="center"><a href="#nogo" onClick="javascript:history.go(-1)"><img src="images/back.png" width="14" height="14" align="top" /> 返回</a></div></td>
+                    <td class="STYLE1"><div align="center"></div></td>
+                  </tr>
+                </table></td>
+              </tr>
+            </table></td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td>
+	    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	      <tr>
+	        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+	        <td>
+	        	<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#b5d6e6">
+	        		<tr height="50" bgcolor="#FFFFFF">
+	        			<td>
+		        			<div class="form">
+	                            <fieldset>
+	                                <legend>房源部分</legend>
+	                                <div class="rowElem">
+	                                    <label class="label"><span class="input_required">*</span>房源名</label> 
+	                                    <span class="viewtxt"><{$client_rs.listings}></span>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label"><span class="input_required">*</span>房源类型</label> 
+	                                    <span class="viewtxt"><{$client_rs.listingstype}></span>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label"><span class="input_required">*</span>房源面积</label> 
+	                                    <span class="viewtxt"><{$client_rs.listingsarea}></span>
+	                                </div>
+	                            </fieldset>
+	                            <fieldset>
+	                                <legend>服务费部分</legend>
+	                                <div class="rowElem">
+	                                    <label class="label"><span class="input_required">*</span>合同编号</label> 
+	                                    <span class="viewtxt"><{$client_rs.bargain}></span>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label"><span class="input_required">*</span>标准总价</label> 
+	                                    <span class="viewtxt account_txt"><{$client_rs.service_price_standard}></span>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label"><span class="input_required">*</span>服务费比例</label> 
+	                                    <span class="viewtxt"><{$client_rs.service_rate_standard}></span>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label"><span class="input_required">*</span>优惠后服务费比例</label> 
+	                                    <span class="viewtxt"><{$client_rs.service_rate_preferent}></span>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label"><span class="input_required">*</span>优惠金额</label> 
+	                                    <span class="viewtxt account_txt"><{$client_rs.service_price_preferential}></span>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label"><span class="input_required">*</span>实际总服务费</label> 
+	                                    <span class="viewtxt account_txt"><{$client_rs.service_price_real}></span>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label">优惠说明</label> 
+	                                    <span class="viewtxt"><{$client_rs.preferential_reason}></span>
+	                                </div>
+	                            </fieldset>
+	                        </div>
+	                        <form class="form formobj" method="post" action="<{$saveurl}>">
+	                        	<input type="hidden" name="isAjax" value="0" />
+	        					<input type="hidden" name="client_id" value="<{$client_id}>" />
+	                            <fieldset>
+	                                <legend>意向金</legend>
+	                                <div class="rowElem">
+	                                    <label class="label"><span class="input_required">*</span>应交数</label> 
+	                                   <input class="account_input" name="intent_price" type="text" id="intent_price" value="<{$client_rs.intent_price}>"/>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label"><span class="input_required">*</span>付款方式</label> 
+	                                    <input type="radio" name="intent_paytype" value="1" <{if $client_rs.intent_paytype eq '1' || !$client_rs.intent_paytype}>checked<{/if}>>刷卡
+	                                    <input type="radio" name="intent_paytype" value="2" <{if $client_rs.intent_paytype eq '2'}>checked<{/if}>>现金
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label"><span class="input_required">*</span>应交日期</label> 
+	                                    <input class="posttime" name="intent_payabletime" type="text" id="intent_payabletime" value="<{if $client_rs.intent_payabletime}><{$client_rs.intent_payabletime|date_format:'%Y-%m-%d'}><{/if}>" readonly/>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label"><span class="input_required">*</span>到账日期</label> 
+	                                    <input class="posttime" name="intent_arrivaltime" type="text" id="intent_arrivaltime" value="<{if $client_rs.intent_arrivaltime}><{$client_rs.intent_arrivaltime|date_format:'%Y-%m-%d'}><{/if}>" readonly/>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label"><span class="input_required">*</span>实交数</label> 
+	                                    <input class="account_input" name="intent_payreal" type="text" id="intent_payreal" value="<{$client_rs.intent_payreal}>"/>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label">欠款</label> 
+	                                    <input class="account_input" name="intent_overdraft" type="text" id="intent_overdraft" value="<{$client_rs.intent_overdraft}>"/>
+	                                </div>
+	                            </fieldset>
+	                            <fieldset>
+	                                <legend>服务费</legend>
+	                                <div class="rowElem">
+	                                    <label class="label">应交数</label> 
+	                                   <input class="account_input" name="service_price" type="text" id="service_price" value="<{$client_rs.service_price}>"/>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label">付款方式</label> 
+	                                    <input type="radio" name="service_paytype" value="1" <{if $client_rs.service_paytype eq '1' || !$client_rs.service_paytype}>checked<{/if}>>刷卡
+	                                    <input type="radio" name="service_paytype" value="2" <{if $client_rs.service_paytype eq '2'}>checked<{/if}>>现金
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label">应交日期</label> 
+	                                    <input class="posttime" name="service_payabletime" type="text" id="service_payabletime" value="<{if $client_rs.service_payabletime}><{$client_rs.service_payabletime|date_format:'%Y-%m-%d'}><{/if}>"/>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label">到账日期</label> 
+	                                    <input class="posttime" name="service_arrivaltime" type="text" id="service_arrivaltime" value="<{if $client_rs.service_arrivaltime}><{$client_rs.service_arrivaltime|date_format:'%Y-%m-%d'}><{/if}>"/>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label">实交数</label> 
+	                                    <input class="account_input" name="service_payreal" type="text" id="service_payreal" value="<{$client_rs.service_payreal}>"/>
+	                                </div>
+	                                <div class="rowElem">
+	                                    <label class="label">欠款</label> 
+	                                    <input class="account_input" name="service_overdraft" type="text" id="service_overdraft" value="<{$client_rs.service_overdraft}>"/>
+	                                </div>
+	                                <div class="rowElem">
+	                                	<label class="label">&nbsp;</label>
+	                                    <button type="submit" id="submit-go">Submit</button>
+	                                    <span class="formwarning">(两次款项等于总服务费时，该客户自动转为已交全款，该情况下保存后无法修改款项)</span>
+	                                </div>
+	                            </fieldset>
+	                        </form>
+						</td>
+	        		</tr>
+	        	</table>
+	        </td>
+	        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+	      </tr>
+	    </table>
+    </td>
+  </tr>
+  <tr>
+    <td height="35" background="images/tab_19.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="35"><img src="images/tab_18.gif" width="12" height="35" /></td>
+        <td>&nbsp;</td>
+        <td width="16"><img src="images/tab_20.gif" width="16" height="35" /></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</div>
+</body>
+<{include file="footer.html"}>

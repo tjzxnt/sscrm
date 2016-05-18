@@ -1,0 +1,199 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+<link rel="stylesheet" type="text/css" href="<{$web_root}>/css/admin.css" />
+<link rel="stylesheet" type="text/css" href="<{$web_root}>/css/ui-lightness/jquery-ui-1.8.2.custom.css" />
+<link rel="stylesheet" type="text/css" href="<{$web_root}>/css/jqtransform.css" type="text/css" />
+<link rel="stylesheet" type="text/css" href="<{$web_root}>/css/jquery.ui.timepicker.addon.css" type="text/css" />
+<link rel="stylesheet" type="text/css" href="<{$web_root}>/css/mycss.css" />
+<!-- script type="text/javascript" src="<{$web_root}>/js/jquery-1.4.2.min.js"></script -->
+<script type="text/javascript" src="<{$web_root}>/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="<{$web_root}>/js/jquery-ui-1.8.1.custom.min.js"></script>
+<script type="text/javascript" src="<{$web_root}>/js/jquery.form.js"></script>
+<script type="text/javascript" src="<{$web_root}>/js/jquery.blockUI.js"></script>
+<script type="text/javascript" src="<{$web_root}>/js/jquery.validate.js"></script>
+<script type="text/javascript" src="<{$web_root}>/js/jquery.validate.additional-methods.js"></script>
+<script type="text/javascript" src="<{$web_root}>/js/jquery.metadata.js"></script>
+<script type="text/javascript" src="<{$web_root}>/js/common.js"></script>
+<script type="text/javascript" src="<{$web_root}>/js/ui.datepicker-addon.js"></script>
+<script type="text/javascript" src="<{$web_root}>/js/ui.datepicker-zh-CN.js"></script>
+<script type="text/javascript" src="<{$web_root}>/js/jquery.jqtransform.js"></script>
+<script type="text/javascript" src="<{$web_root}>/libs/xheditor/xheditor-zh-cn.src.js"></script>
+<title><{$page_title}><{$app_config.website_name}></title>
+<script>
+	$(function(){
+		$('#checkAll').click(function(){
+			var value = $(this).attr('checked');
+			if(value){
+				$('.checkId').attr('checked', true);	
+			}else{
+				$('.checkId').attr('checked', false);	
+			}
+		})
+		
+		$(".delete").click(function(){
+			url = $(this).attr('href').substr(1);
+			showConfirmDialog({
+				title: "删除确认",
+				message: "你确认要删除此记录吗？",
+				callback: function(dialog) {
+					$.ajax({
+						url: url,
+						dataType: 'json',
+						success: 
+						function(json, status){
+							if(json.result == 0) {
+								showBlockMsg('.tablesl', json.msg, 'ok');
+							}else if(json.result == -1) {
+								showBlockMsg('.tablesl', json.msg, 'error');
+							}						
+							window.setTimeout(function() {
+								window.location.href = json.url;
+							}, 2000);
+						},
+						error:
+						function(xml,status){
+							showErrorDialog(xml.responseText);
+						}
+					});			
+				}
+			});		
+			return false;
+		});
+		
+		$(".cstatus").click(function(){
+			url = $(this).attr('href').substr(1);
+			showConfirmDialog({
+				title: "修改状态",
+				message: "你确认要修改此记录状态吗？",
+				callback: function(dialog) {
+					$.ajax({
+						url: url,
+						dataType: 'json',
+						success: 
+						function(json, status){
+							if(json.result == 0) {
+								showBlockMsg('.tablesl', json.msg, 'ok');
+								if(json.url){
+									window.setTimeout(function() {
+										window.location.href = json.url;
+									}, 2000);
+								}else{
+									window.setTimeout(function() {
+										window.location.reload();
+									}, 2000);
+								}
+							}else if(json.result == -1) {
+								showBlockMsg('.tablesl', json.msg, 'error');
+								window.setTimeout(function() {
+									hideBlockMsg('.tablesl');
+								}, 2000);
+							}						
+						},
+						error:
+						function(xml,status){
+							showErrorDialog(xml.responseText);
+						}
+					});			
+				}
+			});		
+			return false;
+		});
+		
+		$("#deleteAll").click(function(){
+			showConfirmDialog({
+				title: "删除确认",
+				message: "你确认要删除这些记录吗？",
+				callback: function(dialog) {
+					$('#deleteForm').ajaxSubmit({
+						dataType:  'json',
+						success: 
+						function(json, status) {
+							if(json.result == 0) {
+								showBlockMsg('.tablesl', json.msg, 'ok');
+							}else if(json.result == -1){
+								showBlockMsg('.tablesl', json.msg, 'error');
+							}else if(json.result == -2){
+								showBlockMsg('.tablesl', json.msg, 'error');
+								window.setTimeout(function() {
+									hideBlockMsg('.tablesl');
+								}, 1000);
+								return false;
+							}						
+							window.setTimeout(function() {
+								window.location.href = json.url;
+							}, 2000);
+						},
+						error:
+						function(xml, status){
+							showErrorDialog(xml.responseText);
+						}
+					});			
+				}
+			});		
+			return false;
+		});
+		
+		$('#ordersubmit').click(function(){
+			$('#deleteForm').attr('action','<{$ordersub}>');
+			$('#isorder').val('1');
+			$('#deleteForm').submit();
+		});
+		
+		$(".general_post").click(function(){
+			if(!confirm($(this).attr("zxalert"))) return false;
+			$.ajax({
+				type: "POST",
+				url: $(this).attr("zxhref"),
+				dataType: 'json',
+				beforeSend: function(){
+			 		showBlockMsg(".zxblockui", "");
+			 		return true;
+			 	},
+			 	success: function(json, textStatus){
+			   		hideBlockMsg('.zxblockui');
+					if(json.result != 1){   
+						showBlockMsg(".zxblockui", json.msg, 'error');
+						window.setTimeout(function() {
+							hideBlockMsg('.zxblockui');					
+						}, 2000);
+					}else {
+						showBlockMsg('.zxblockui',json.msg,'ok');
+						window.setTimeout(function() {
+							if(json.url){
+								window.location.href = json.url.replace(/&amp;/g,'&').replace(/&amp;/g,'&');
+							}else{
+								window.location.reload();
+							}
+							
+						}, 2000);
+					}
+				},
+				error: function(xml, status){
+					hideBlockMsg('.zxblockui');
+					showErrorDialog(xml.responseText);
+				}
+			});
+			return false;
+		})
+		
+		var now = new Date()
+		year = now.getFullYear();
+		$('.posttime').datepicker({
+			dateFormat: 'yy-mm-dd',
+			yearRange: year - 100 + ':' + year,
+			showStatus: true,
+			changeMonth: true,
+			changeYear: true 
+		});
+		$(".ui_timepicker").datetimepicker({
+            timeFormat: 'hh:mm',
+            stepHour: 1,
+            stepMinute: 1
+        })
+		$('.form').jqTransform({imgPath:"<{$web_root}>/images/jqtransform/"});
+	})
+</script>
+

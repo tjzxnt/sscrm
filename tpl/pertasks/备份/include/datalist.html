@@ -1,0 +1,240 @@
+<table class="zx_data_list" width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#b5d6e6">
+	<thead>
+		<tr>
+			<!--<td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"></td>-->
+			<td width="2%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div align="center">
+					<span class="STYLE1">序号</span>
+				</div>
+			</td>
+			<td width="8%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft">
+					<span class="STYLE1">姓名 / 性别</span>
+				</div>
+			</td>
+			<td width="10%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft">
+					<span class="STYLE1">计划合力成单(元)</span>
+				</div>
+			</td>
+			<td width="10%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft">
+					<span class="STYLE1">计划独立成单(元)</span>
+				</div>
+			</td>
+			<td width="10%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft">
+					<span class="STYLE1">计划总成单(元)</span>
+				</div>
+			</td>
+			<td width="10%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft">
+					<span class="STYLE1">实际合力成单(元)</span>
+				</div>
+			</td>
+			<td width="8%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft">
+					<span class="STYLE1">合力成单完成率</span>
+				</div>
+			</td>
+			<td width="10%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft">
+					<span class="STYLE1">实际独立成单(元)</span>
+				</div>
+			</td>
+			<td width="8%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft">
+					<span class="STYLE1">独立成单完成率</span>
+				</div>
+			</td>
+			<td width="10%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft">
+					<span class="STYLE1">实际总成单(元)</span>
+				</div>
+			</td>
+			<td width="8%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft">
+					<span class="STYLE1">总成单完成率</span>
+				</div>
+			</td>
+		</tr>
+	</thead>
+	<tbody>
+		<{if $task_config}>
+			<{foreach item=i key=k from=$user_data_rs}>
+			<tr>
+				<td height="20" bgcolor="#FFFFFF">
+					<div align="center" class="STYLE1">
+						<div align="center"><{$k+1}></div>
+					</div>
+				</td>
+				<td height="20" bgcolor="#FFFFFF">
+					<div class="listleft">
+						<span class="STYLE1"><{$i.realname}></span>
+						<{if $i.isdirector}><span class="zx_red zx_weight">[总监]</span><{/if}>
+					</div>
+				</td>
+				<td height="20" bgcolor="#FFFFFF">
+					<div class="listleft">
+						<span class="account_txt"><{$task_config.together[$i.id]}></span>
+					</div>
+				</td>
+				<td height="20" bgcolor="#FFFFFF">
+					<div class="listleft">
+						<span class="account_txt"><{$task_config.self[$i.id]}></span>
+					</div>
+				</td>
+				<td height="20" bgcolor="#FFFFFF">
+					<div class="listleft">
+						<span class="account_txt"><{$task_config.together[$i.id]+$task_config.self[$i.id]}></span>
+					</div>
+				</td>
+				<td height="20" bgcolor="#FFFFFF">
+					<div class="listleft">
+						<span class="account_txt"><{$i.analysis.together_total}></span>
+					</div>
+				</td>
+				<td height="20" bgcolor="#FFFFFF">
+					<div class="listleft">
+						<{if $task_config.together[$i.id] > 0}>
+						<span class="<{if $i.analysis.together_total >= $task_config.together[$i.id]}>zx_blue<{else}>zx_red<{/if}> zx_weight">
+							<{$i.analysis.together_total/$task_config.together[$i.id]*100|string_format:'%.1f'}> %
+						</span> 
+						<{else}>
+						 - 
+						<{/if}> 
+					</div>
+				</td>
+				<td height="20" bgcolor="#FFFFFF">
+					<div class="listleft">
+						<span class="account_txt"><{$i.analysis.self_total}></span>
+					</div>
+				</td>
+				<td height="20" bgcolor="#FFFFFF">
+					<div class="listleft">
+						<{if $task_config.self[$i.id] > 0}>
+						<span class="<{if $i.analysis.self_total >= $task_config.self[$i.id]}>zx_blue<{else}>zx_red<{/if}> zx_weight">
+							<{$i.analysis.self_total/$task_config.self[$i.id]*100|string_format:'%.1f'}> %
+						</span> 
+						<{else}>
+						 - 
+						<{/if}> 
+					</div>
+				</td>
+				<td height="20" bgcolor="#FFFFFF">
+					<div class="listleft">
+						<span class="account_txt"><{$i.analysis.total}></span>
+					</div>
+				</td>
+				<td height="20" bgcolor="#FFFFFF">
+					<div class="listleft">
+						<{assign var=task_total value=$task_config.together[$i.id]+$task_config.self[$i.id]}> 
+						<{if $task_total > 0}>
+						<span class="<{if $i.analysis.total >= $task_total}>zx_blue<{else}>zx_red<{/if}> zx_weight">
+							<{$i.analysis.total/$task_total*100|string_format:'%.1f'}> % 
+						</span>
+						<{else}>
+						- 
+						<{/if}> 
+					</div>
+				</td>
+			</tr>
+			<{foreachelse}>
+			<tr>
+				<td height="20" bgcolor="#FFFFFF" colspan="11">
+					<div style="margin-left: 7px; margin-top: 10px">无匹配记录</div>
+				</td>
+			</tr>
+			<{/foreach}> 
+			<{if $depart_task}>
+			<tr>
+				<td height="20" bgcolor="#FFFFFF" colspan="2">
+					<div class="listright zx_red zx_weight">
+						<span class="STYLE1"> 部门总任务： </span>
+					</div>
+				</td>
+				<td bgcolor="#FFFFFF">
+					<div class="listleft">
+						<span class="account_txt"> <{$task_config.together_total}> </span>
+					</div>
+				</td>
+				<td bgcolor="#FFFFFF">
+					<div class="listleft">
+						<span class="account_txt"> <{$task_config.self_total}> </span>
+					</div>
+				</td>
+				<td bgcolor="#FFFFFF">
+					<div class="listleft">
+						<span class="account_txt"> <{$task_config.together_total+$task_config.self_total}> </span>
+					</div>
+				</td>
+				<td bgcolor="#FFFFFF">
+					<div class="listleft">
+						<span class="account_txt"> <{$actual.together_total}> </span>
+					</div>
+				</td>
+				<td bgcolor="#FFFFFF">
+					<div class="listleft">
+						<span class="STYLE1">
+							<{if $task_config.together_total}>
+							<span class="<{if $actual.together_total >= $task_config.together_total}>zx_blue<{else}>zx_red<{/if}> zx_weight">
+								<{$actual.together_total/$task_config.together_total*100|string_format:'%.1f'}> % 
+							</span>
+							<{else}>
+							 - 
+							 <{/if}> 
+						</span>
+					</div>
+				</td>
+				<td bgcolor="#FFFFFF">
+					<div class="listleft">
+						<span class="account_txt"> <{$actual.self_total}> </span>
+					</div>
+				</td>
+				<td bgcolor="#FFFFFF">
+					<div class="listleft">
+						<span class="STYLE1">
+							<{if $task_config.self_total}>
+							<span class="<{if $actual.self_total >= $task_config.self_total}>zx_blue<{else}>zx_red<{/if}> zx_weight">
+							<{$actual.self_total/$task_config.self_total*100|string_format:'%.1f'}> %
+							</span>
+							<{else}>
+							 - 
+							<{/if}> 
+						</span>
+					</div>
+				</td>
+				<td bgcolor="#FFFFFF">
+					<div class="listleft">
+						<span class="account_txt"> <{$actual.total}> </span>
+					</div>
+				</td>
+				<td bgcolor="#FFFFFF">
+					<div class="listleft">
+						<span class="STYLE1">
+						<{if $task_config.all_total > 0}>
+						<span class="<{if $actual.total >= $actual_total}>zx_blue<{else}>zx_red<{/if}> zx_weight">
+						<{$actual.total/$task_config.all_total*100|string_format:'%.1f'}> % 
+						</span>
+						<{else}>
+						- 
+						<{/if}> 
+						</span>
+					</div>
+				</td>
+			</tr>
+			<{/if}>
+		<{else}>
+		<tr>
+			<td height="20" bgcolor="#FFFFFF" colspan="11">
+				<div class="zxcenter zx_font_normal zx_margin_top_small zx_margin_bottom_small">暂未制定当月计划</div>
+			</td>
+		</tr>
+		<{/if}>
+	</tbody>
+	<tfoot>
+		<tr height="50" bgcolor="#FFFFFF">
+			<td colspan="11">&nbsp;</td>
+		</tr>
+	</tfoot>
+</table>

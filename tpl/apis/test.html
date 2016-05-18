@@ -1,0 +1,95 @@
+<{include file="header.html"}>
+
+
+<link href="<{$web_root}>/js/FullCalendar/fullcalendar.min.css" rel="stylesheet" type="text/css"/>
+<link href="<{$web_root}>/js/FullCalendar/fullcalendar.ext.css" rel="stylesheet" type="text/css"/>
+<link href="<{$web_root}>/js/FullCalendar/fullcalendar.print.min.css" rel="stylesheet" type="text/css"/>
+<link href="<{$web_root}>/js/FullCalendar/jquery.ui.theme.smoothness.min.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="<{$web_root}>/js/FullCalendar/fullcalendar.js"></script>
+<script type="text/javascript" src="<{$web_root}>/js/FullCalendar/TodoCalendar.js"></script>
+<script type="text/javascript" src="<{$web_root}>/js/My97DatePicker/WdatePicker.js"></script>
+
+</head>
+<body>
+<table width="100%" height="100%" cellspacing="1" cellpadding="0" class="tablesl zxblockui">
+  <tr>
+    <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td>
+            <form method="GET">
+            <input type="hidden" name="c" value="apis"/>
+            <input type="hidden" name="a" value="test"/>
+            <table border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr>
+                 <td>
+	                 <table width="100%" border="0" cellpadding="0" cellspacing="0">
+	                  <tr>
+	                  	<td>
+		                  	<select name="status" id="status">
+	                  			<option value="">全部状态</option>
+	                  			<option value="doing" <{if $status == 'doing'}>selected<{/if}>>进行中</option>
+	                  			<option value="going" <{if $status == 'going'}>selected<{/if}>>进行中未过期</option>
+	                  			<option value="overdate" <{if $status == 'overdate'}>selected<{/if}>>进行中已过期</option>
+	                  			<option value="waiting" <{if $status == 'waiting'}>selected<{/if}>>未开始</option>
+	                  			<option value="finish" <{if $status == 'finish'}>selected<{/if}>>已完成</option>
+	                  		</select>
+                  		</td>
+	                  </tr>
+	                </table>
+                </td>
+              </tr>
+            </table>
+            </form>
+            </td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td><table class="fc-header" width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+        <td>
+        	
+        	<div class="row-fluid calendar_contains">
+                <div class="span10 calendar_left" id="calendar_left">
+                    <div id='calendar'></div>
+                </div>
+                
+            </div>
+        	<script type="text/javascript">
+			    $(function() {
+			        window.ATUserCalendar.init();
+			        /*
+			        window.ATGO.parameters({
+			            pageID: 0
+			        });
+			        */
+			    });
+			</script>
+        </td>
+        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td height="35" background="images/tab_19.gif">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="35"><img src="images/tab_18.gif" width="12" height="35" /></td>
+        <td>
+        	<{include file="pager.html"}>
+		</td>
+        <td width="16"><img src="images/tab_20.gif" width="16" height="35" /></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</div>
+</body>
+<{include file="footer.html"}>

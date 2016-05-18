@@ -1,0 +1,173 @@
+<{include file="header.html"}>
+
+<{include file="library/accounting.html"}>
+
+<script type="text/javascript" src="<{$web_root}>/js/My97DatePicker/WdatePicker.js"></script>
+
+<script>
+	$(function(){
+		$(".account_together").keyup(function(){
+			var together_total = 0;
+			$(".account_together").each(function(){
+				together_total += Number(accounting.unformat($(this).val()));
+			});
+			$(".account_together_total").val(accounting.formatNumber(together_total));
+		});
+		$(".account_seft").keyup(function(){
+			var self_total = 0;
+			$(".account_seft").each(function(){
+				self_total += Number(accounting.unformat($(this).val()));
+			});
+			$(".account_seft_total").val(accounting.formatNumber(self_total));
+		});
+	})
+</script>
+
+</head>
+<body>
+<table width="100%" height="100%" cellspacing="1" cellpadding="0" class="tablesl zxblockui">
+  <tr>
+    <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="46%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[制定任务]-[市场部任务]</td>
+              </tr>
+            </table></td>
+            <td width="54%">
+            	<form method="GET">
+	            <input type="hidden" name="c" value="pertasks"/>
+	            <input type="hidden" name="a" value="markettasklist"/>
+	            <table border="0" align="right" cellpadding="0" cellspacing="0">
+	              <tr>
+	                 <td width="150">
+		                 <table width="88%" border="0" cellpadding="0" cellspacing="0">
+		                    <td class="STYLE1"><div align="center"><input type="text" name="statdate" class="Wdate" value="<{$statdate}>" onclick="WdatePicker()" readonly/></div></td>
+		                    <td class="STYLE1"><div align="top" style="margin-left:7px"><input type="image" value="" src="images/search.gif"></div></td>
+		                  </tr>
+		                </table>
+	                </td>
+	              </tr>
+	            </table>
+	            </form>
+            </td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+  	<td>
+  		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+  			<tr>
+  				<td width="8" background="images/tab_12.gif">&nbsp;</td>
+  				<td class="zx_padding_top_small zx_padding_bottom_smid zxcenter">
+  					<span class="zx_font_mid">
+  						[市场部任务]-[<{$statdate}> 任务]
+  					</span>
+  					<{include file="pertasks/include/notice.html"}>
+  				</td>
+  				<td width="8" background="images/tab_12.gif">&nbsp;</td>
+  			</tr>
+  		</table>
+  	</td>
+  </tr>
+  <tr>
+    <td>
+    <form method="POST">
+    <input type="hidden" name="statdate" value="<{$statdate}>"/>
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+        <td><table class="zx_data_list" width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#b5d6e6">
+          <thead>
+          <tr>
+          	<!--
+            <td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+            </td>
+            -->
+            <td width="2%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">序号</span></div></td>
+            <td width="15%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">姓名 / 性别</span></div></td>
+            <td width="10%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">计划合力成单(元)</span></div></td>
+            <td width="10%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">计划独立成单(元)</span></div></td>
+            <td height="22" background="images/bg1.gif" bgcolor="#FFFFFF"></td>
+          </tr>
+          </thead>
+          <tbody>
+          <{foreach item=i key=k from=$user_data_rs}>
+          <tr>
+            <td height="20" bgcolor="#FFFFFF">
+            	<div align="center" class="STYLE1">
+              		<div align="center"><{$k+1}></div>
+            	</div>
+            </td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.realname}></span> <{if $i.isdirector}><span class="zx_red zx_weight">[总监]</span><{/if}></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">
+            	<input class="account_input account_together" name="together[<{$i.id}>]" type="text" value=""/>
+            	</span></div>
+            </td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">
+            	<input class="account_input account_seft" name="self[<{$i.id}>]" type="text" value=""/>
+            </span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">
+            </span></div></td>
+          </tr>
+          <{foreachelse}>
+			<tr>
+            	<td height="20" bgcolor="#FFFFFF" colspan="8"><div style="margin-left:7px; margin-top:10px">无匹配记录</div></td>
+			</tr>
+          <{/foreach}> 
+          <{if $user_data_rs}>
+          <tr>
+          	<td height="20" bgcolor="#FFFFFF" colspan="2">
+          		<div class="listright zx_red zx_weight"><span class="STYLE1">
+          			部门总任务：
+          		</span></div>
+          	</td>
+          	<td bgcolor="#FFFFFF">
+          		<div class="listleft"><span class="STYLE1">
+          			<input class="account_input account_together_total" name="together_total" type="text" value="" readonly/>
+          		</span></div>
+          	</td>
+          	<td bgcolor="#FFFFFF">
+          		<div class="listleft"><span class="STYLE1">
+          			<input class="account_input account_seft_total" name="self_total" type="text" value="" readonly/>
+          		</span></div>
+          	</td>
+          	<td>
+          		<div class="listleft"><span class="STYLE1">
+          			<input type="button" class="form_post" zxalert="确认提交市场部 <{$statdate}> 的销售任务吗?" form_post_url="<{$saveurl}>" value="确认提交"/>
+          		</span></div>
+          	</td>
+          </tr>
+          <{/if}>
+          </tbody>
+          <tfoot>
+          <tr height="50" bgcolor="#FFFFFF"><td colspan="8">&nbsp;</td></tr>
+          </tfoot>
+        </table></td>
+        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td height="35" background="images/tab_19.gif">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="35"><img src="images/tab_18.gif" width="12" height="35" /></td>
+        <td>
+        	<{include file="pager.html"}>
+		</td>
+        <td width="16"><img src="images/tab_20.gif" width="16" height="35" /></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</div>
+</body>
+<{include file="footer.html"}>

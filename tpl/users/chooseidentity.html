@@ -1,0 +1,140 @@
+<{include file="header.html"}>
+
+<{include file="library/chosen.html"}>
+
+<script>
+	function prepinit(){
+		$(".pusertr, .subtr").addClass("zxhide");
+		$("#identity_puserid").trigger("chosen:updated");
+		$("#identity_puserid").empty();
+	}
+	function prepfinish(){
+		$(".subtr").removeClass("zxhide");
+	}
+	$(function(){
+		$("#identity_attr").change(function(){
+			$.ajax({
+			   type: "POST",
+			   url: "<{$check_indentity}>",
+			   data: $(".windowform").serialize(),
+			   dataType: 'json',
+			   beforeSend: function(){
+			   		showBlockMsg(".tipsdowntable", "");
+					return true;
+			   },
+			   success: function(json, textStatus){
+					hideBlockMsg('.tipsdowntable');
+					prepinit();
+					if(json.result == 2){
+						if(json.userlist_rs){
+							var options_str = "<option value=\"\">==请选择==</option>";
+							$.each(json.userlist_rs,function(i, item){
+								options_str += "<option value=\"" + item.id + "\">" + item.realname + "</option>";
+							});
+							$("#identity_puserid").append(options_str);
+							$("#identity_puserid")[0].selectedIndex = 0;
+							$("#identity_puserid").trigger("chosen:updated");
+							$(".pusertr").removeClass("zxhide");
+						}
+						prepfinish();
+					}else if(json.result == 1){
+						
+					}else{
+						alert(json.msg);
+					}
+			   },
+				error: function(xml, status){
+					hideBlockMsg('.tipsdowntable');
+					showErrorDialog(xml.responseText);
+				}
+			});
+		})
+		$("#prepsubmit").click(function(){
+			$.ajax({
+			   type: "POST",
+			   url: "<{$saveurl}>",
+			   data: $(".windowform").serialize(),
+			   dataType: 'json',
+			   beforeSend: function(){
+			   		showBlockMsg(".tipsdowntable", "");
+					return true;
+			   },
+			   success: function(json, textStatus){
+					if(json.result == 1){
+						window.location.href = json.url.replace(/&amp;/g,'&').replace(/&amp;/g,'&');
+					}else{
+						alert(json.msg);
+						hideBlockMsg('.tipsdowntable');
+					}
+					prepfinish();
+			   },
+				error: function(xml, status){
+					hideBlockMsg('.tipsdowntable');
+					showErrorDialog(xml.responseText);
+				}
+			});
+		})
+	})
+</script>
+<style>
+	.chosen-results{
+		max-height:300px !important;
+	}
+	.input_chosen{
+		width:190px;
+		border:1px solid #aaa;
+		border-radius:5px;
+		height:23px;
+		line-height:24px;
+		background-color: #fff;
+		background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(20%, #ffffff), color-stop(50%, #f6f6f6), color-stop(52%, #eeeeee), color-stop(100%, #f4f4f4));
+		background: -webkit-linear-gradient(top, #ffffff 20%, #f6f6f6 50%, #eeeeee 52%, #f4f4f4 100%);
+		background: -moz-linear-gradient(top, #ffffff 20%, #f6f6f6 50%, #eeeeee 52%, #f4f4f4 100%);
+		background: -o-linear-gradient(top, #ffffff 20%, #f6f6f6 50%, #eeeeee 52%, #f4f4f4 100%);
+		background: linear-gradient(top, #ffffff 20%, #f6f6f6 50%, #eeeeee 52%, #f4f4f4 100%);
+		background-clip: padding-box;
+		box-shadow: 0 0 3px white inset, 0 1px 1px rgba(0, 0, 0, 0.1);
+		color: #444;
+		white-space: nowrap;
+		padding:0 0 0 8px;
+	}
+	.tipsdowntable tr{
+		height:25px;
+	}
+	.tipstdleft{
+		text-align:right;
+	}
+</style>
+</head>
+<body>
+<form class="windowform">
+	<input type="hidden" name="id" value="<{$id}>"/>
+	<table class="tipsdowntable">
+		<tr>
+			<td width="90" class="tipstdleft">请选择权限：</td>
+			<td>
+				<select class="chosen-select-nosearch" name="identity_attr" id="identity_attr">
+					<option value="">==请选择==</option>
+					<{foreach item=i key=k from=$identity_rs}>
+					<option value="<{$i.id}>"><{$i.iname}></option>
+					<{/foreach}>
+				</select>
+			</td>
+		</tr>
+		<tr class="zxhide pusertr">
+			<td class="tipstdleft">选择对接人：</td>
+			<td>
+				<select class="chosen-select" id="identity_puserid" name="identity_puserid">
+				</select>
+			</td>
+		</tr>
+		<tr class="zxhide subtr">
+			<td colspan="2">
+				<input type="button" id="prepsubmit" value="确认"/>
+			</td>
+		</tr>
+	</table>
+</form>
+
+</body>
+<{include file="footer_clean.html"}>

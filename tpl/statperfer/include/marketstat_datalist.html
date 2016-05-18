@@ -1,0 +1,252 @@
+<table <{if !$userinfo_rs}>class="zx_data_list"<{/if}> width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#b5d6e6">
+	<thead>
+		<tr>
+			<!--<td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"></td>-->
+			<td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div align="center">
+					<span class="STYLE1">序号</span>
+				</div>
+			</td>
+			<td width="6%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft">
+					<span class="STYLE1">会员姓名</span>
+				</div>
+			</td>
+			<td width="2%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div align="center">
+					<span class="STYLE1">性别</span>
+				</div>
+			</td>
+			<td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft">
+					<span class="STYLE1">账号名</span>
+				</div>
+			</td>
+			<td width="10%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft">
+					<span class="STYLE1">基本数据</span>
+				</div>
+			</td>
+			<td width="8%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft">
+					<span class="STYLE1">我的来源成单数</span>
+				</div>
+			</td>
+			<td width="10%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft">
+					<span class="STYLE1">我的来源成单金额</span>
+				</div>
+			</td>
+			<td width="8%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft">
+					<span class="STYLE1">我的成单数据</span>
+				</div>
+			</td>
+			<td width="10%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft">
+					<span class="STYLE1">我的成单额度数据</span>
+				</div>
+			</td>
+			<td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+				<div class="listleft">
+					<span class="STYLE1">操作</span>
+				</div>
+			</td>
+		</tr>
+	</thead>
+	<tbody>
+		<{foreach item=i key=k from=$user_rs}>
+		<tr>
+			<td height="20" bgcolor="#FFFFFF">
+				<div align="center" class="STYLE1">
+					<div align="center"><{$k+1}></div>
+				</div>
+			</td>
+			<td height="20" bgcolor="#FFFFFF">
+				<div class="listleft">
+					<span class="STYLE1"><{$i.realname}></span>
+					<{if $i.isdirector}><span class="zx_red zx_weight">[总监]</span><{/if}>
+				</div>
+			</td>
+			<td height="20" bgcolor="#FFFFFF">
+				<div align="center">
+					<span class="STYLE1">
+						<{if $i.sex == 1}>男<{elseif $i.sex == 2}>女<{else}>未知<{/if}>
+					</span>
+				</div>
+			</td>
+			<td height="20" bgcolor="#FFFFFF">
+				<div class="listleft">
+					<span class="STYLE1"><{$i.username}></span>
+				</div>
+			</td>
+			<td height="20" bgcolor="#FFFFFF">
+				<div class="listleft zx_height_auto">
+					渠道客户推荐数：<span class="<{if $i.client_channel.total > 0}>data_attention<{/if}>"><{$i.client_channel.total}></span>
+					<br /> 
+					渠道客户到访数：<span class="<{if $i.client_channel.total_visit > 0}>data_attention<{/if}>"><{$i.client_channel.total_visit}></span>
+					<br /> 
+					渠道活动数：<span class="<{if $i.channel_active.total > 0}>data_attention<{/if}>"><{$i.channel_active.total}></span>
+					<br /> 
+					<{*
+					<!-- 
+					我的电话邀约来访数：<span class="<{if $i.client_call_visit.total > 0}>data_attention<{/if}>"><{$i.client_call_visit.total}></span> 
+					<br />
+					我的地推邀约来访数：<span class="<{if $i.client_push_visit.total > 0}>data_attention<{/if}>"><{$i.client_push_visit.total}></span>
+					<br />
+					 -->
+					*}>
+					<{*
+					<!-- 
+		          	我的成交数：<{$i.client_deal.total}>
+		          	<br/>
+		          	我的成交额(标准总价)：<span class="account_txt"><{$i.client_deal.total_standard}></span>
+		          	<br/>
+		          	我的成交额(实收总价)：<span class="account_txt"><{$i.client_deal.total_real}></span>
+		          	<br/>
+					我的成交数(已全款)：<span class="<{if $i.client_account.total > 0}>data_attention<{/if}>"><{$i.client_account.total}></span>
+					<br />
+					我的成交额(已全款)：<span class="account_txt <{if $i.client_account.total_standard > 0}>data_attention<{/if}>"><{$i.client_account.total_standard}></span>
+					-->
+					*}> 
+					我的合作成交额(已全款)：<span class="account_txt <{if $i.origin_analysis.together_total > 0}>data_attention<{/if}>"><{$i.origin_analysis.together_total}></span>
+					<br /> 
+					我的独立成交额(已全款)：<span class="account_txt <{if $i.origin_analysis.self_total > 0}>data_attention<{/if}>"><{$i.origin_analysis.self_total}></span>
+					<br /> 
+					我的总成交额(已全款)：<span class="account_txt <{if $i.origin_analysis.total > 0}>data_attention<{/if}>"><{$i.origin_analysis.total}></span>
+					<{*
+					<!-- 
+		          	<br/>
+		          	我的成交数(未全款)：<{$i.client_noaccount.total}>
+		          	<br/>
+		          	我的成交额(未全款)(标准总价)：<span class="account_txt"><{$i.client_noaccount.total_standard}></span>
+		          	<br/>
+		          	我的成交额(未全款)(实收总价)：<span class="account_txt"><{$i.client_noaccount.total_real}></span>
+		          	-->
+					*}>
+				</div>
+			</td>
+			<td height="20" bgcolor="#FFFFFF">
+				<div class="listleft zx_height_auto">
+					<{*
+					<!-- 
+					我的电话邀约成单数：<span class="<{if $i.client_call_deal.total > 0}>data_attention<{/if}>"><{$i.client_call_deal.total}></span> 
+					<br />
+					我的地推邀约成单数：<span class="<{if $i.client_push_deal.total > 0}>data_attention<{/if}>"><{$i.client_push_deal.total}></span> 
+					<br />
+					我的分销公司成单数：<span class="<{if $i.client_trader_visit.total > 0}>data_attention<{/if}>"><{$i.client_trader_visit.total}></span>
+					<br />
+					-->
+					*}>
+					我的渠道成单数：<span class="account_txt <{if $i.client_channel_deal.total > 0}>data_attention<{/if}>"><{$i.client_channel_deal.total}></span> 
+					<br />
+					我的介绍成单数：<span class="<{if $i.client_intro_deal.total > 0}>data_attention<{/if}>"><{$i.client_intro_deal.total}></span>
+					<br />
+					我的资料成单数：<span class="<{if $i.client_datafrom_deal.total > 0}>data_attention<{/if}>"><{$i.client_datafrom_deal.total}></span>
+					<{*
+					<!-- 
+					<br />
+					我的分销公司来访数：<span class="<{if $i.client_trader_deal.total > 0}>data_attention<{/if}>"><{$i.client_trader_deal.total}></span>
+					 -->
+					*}>
+				</div>
+			</td>
+			<td height="20" bgcolor="#FFFFFF">
+				<div class="listleft zx_height_auto">
+					<{*
+					<!-- 
+					我的电话邀约成单额：<span class="account_txt <{if $i.client_call_deal.total_standard > 0}>data_attention<{/if}>"><{$i.client_call_deal.total_standard}></span>
+					<br /> 
+					我的地推邀约成单额：<span class="account_txt <{if $i.client_push_deal.total_standard > 0}>data_attention<{/if}>"><{$i.client_push_deal.total_standard}></span>
+					<br />
+					我的分销公司成单额：<span class="account_txt <{if $i.client_trader_visit.total_standard > 0}>data_attention<{/if}>"><{$i.client_trader_deal.total_standard}></span>
+					<br />
+					-->
+					*}> 
+					我的渠道成单额：<span class="account_txt <{if $i.client_channel_deal.total_standard > 0}>data_attention<{/if}>"><{$i.client_channel_deal.total_standard}></span>
+					<br /> 
+					我的介绍成单额：<span class="account_txt <{if $i.client_intro_deal.total_standard > 0}>data_attention<{/if}>"><{$i.client_intro_deal.total_standard}></span>
+					<br /> 
+					我的资料成单额：<span class="account_txt <{if $i.client_datafrom_deal.total_standard > 0}>data_attention<{/if}>"><{$i.client_datafrom_deal.total_standard}></span>
+				</div>
+			</td>
+			<td height="20" bgcolor="#FFFFFF">
+				<div class="listleft zx_height_auto">
+					<{*
+					<!-- 
+					电话邀约成单：<span class="<{if $i.sale_client_call_deal.total > 0}>data_attention<{/if}>"><{$i.sale_client_call_deal.total}></span> 
+					<br />
+					广宣到店成单：<span class="<{if $i.sale_client_publicity_deal.total > 0}>data_attention<{/if}>"><{$i.sale_client_publicity_deal.total}></span> 
+					<br />
+					地推邀约成单：<span class="<{if $i.sale_client_push_deal.total > 0}>data_attention<{/if}>"><{$i.sale_client_push_deal.total}></span> 
+					<br />
+					分销公司成单：<span class="<{if $i.sale_client_trader_deal.total > 0}>data_attention<{/if}>"><{$i.sale_client_trader_deal.total}></span>
+					<br /> 
+					-->
+					*}>
+					渠道活动成单：<span class="<{if $i.sale_client_channel_deal.total > 0}>data_attention<{/if}>"><{$i.sale_client_channel_deal.total}></span>
+					<br />
+					渠道直推成单：<span class="<{if $i.sale_client_channel_recom_deal.total > 0}>data_attention<{/if}>"><{$i.sale_client_channel_recom_deal.total}></span> 
+					<{*
+					<!-- 
+					<br />
+					同事介绍成单：<span class="<{if $i.sale_client_intro_deal.total > 0}>data_attention<{/if}>"><{$i.sale_client_intro_deal.total}></span> 
+					<br />
+					旅行社成单：<span class="<{if $i.sale_client_travel_deal.total > 0}>data_attention<{/if}>"><{$i.sale_client_travel_deal.total}></span>
+					 -->
+					*}>
+				</div>
+			</td>
+			<td height="20" bgcolor="#FFFFFF">
+				<div class="listleft zx_height_auto">
+					<{*
+					<!-- 
+					电话邀约成单：<span class="account_txt <{if $i.sale_client_call_deal.total_standard > 0}>data_attention<{/if}>"><{$i.sale_client_call_deal.total_standard}></span>
+					<br /> 
+					广宣到店成单：<span class="account_txt <{if $i.sale_client_publicity_deal.total_standard > 0}>data_attention<{/if}>"><{$i.sale_client_publicity_deal.total_standard}></span>
+					<br /> 
+					地推邀约成单：<span class="account_txt <{if $i.sale_client_push_deal.total_standard > 0}>data_attention<{/if}>"><{$i.sale_client_push_deal.total_standard}></span>
+					<br /> 
+					分销公司成单：<span class="account_txt <{if $i.sale_client_trader_deal.total_standard > 0}>data_attention<{/if}>"><{$i.sale_client_trader_deal.total_standard}></span>
+					<br />
+					-->
+					*}> 
+					渠道活动成单：<span class="account_txt <{if $i.sale_client_channel_deal.total_standard > 0}>data_attention<{/if}>"><{$i.sale_client_channel_deal.total_standard}></span>
+					<br /> 
+					渠道直推成单：<span class="account_txt <{if $i.sale_client_channel_recom_deal.total_standard > 0}>data_attention<{/if}>"><{$i.sale_client_channel_recom_deal.total_standard}></span>
+					<{*
+					<!-- 
+					<br />
+					同事介绍成单：<span class="account_txt <{if $i.sale_client_intro_deal.total_standard > 0}>data_attention<{/if}>"><{$i.sale_client_intro_deal.total_standard}></span>
+					<br /> 
+					旅行社成单：<span class="account_txt <{if $i.sale_client_travel_deal.total_standard > 0}>data_attention<{/if}>"><{$i.sale_client_travel_deal.total_standard}></span>
+					-->
+					*}>
+				</div>
+			</td>
+			<td bgcolor="#FFFFFF" class="listleft">
+				<{if $userinfo_rs}>
+					<{if $real_action == "mystatinfo"}>
+					-
+					<{else}>
+					<a class="zx_red zx_weight" href="<{spUrl c=statperfer a=marketstat statdate=$statdate}>">返回列表</a>
+					<{/if}>
+				<{else}>
+				<a class="zx_red zx_weight" href="<{spUrl c=statperfer a=marketuserinfo statdate=$statdate id=$i.id}>">查看详细</a>
+				<{/if}>
+			</td>
+		</tr>
+		<{foreachelse}>
+		<tr>
+			<td height="20" bgcolor="#FFFFFF" colspan="10">
+				<div style="margin-left: 7px; margin-top: 10px">无匹配记录</div>
+			</td>
+		</tr>
+		<{/foreach}>
+	</tbody>
+	<tfoot>
+		<tr height="50" bgcolor="#FFFFFF">
+			<td colspan="10">&nbsp;</td>
+		</tr>
+	</tfoot>
+</table>

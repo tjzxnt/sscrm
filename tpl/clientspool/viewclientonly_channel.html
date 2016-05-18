@@ -1,0 +1,143 @@
+<{include file="header.html"}>
+
+</head>
+<body>
+<table width="100%" height="100%" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="46%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[客户管理]-[公共客户池]-[查看客户]</td>
+              </tr>
+            </table></td>
+            <td width="54%"><table border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr>
+                <td width="60"><table width="90%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+					<td class="STYLE1"><div align="center"><a href="#nogo" onClick="javascript:history.go(-1)"><img src="images/back.png" width="14" height="14" align="top" /> 返回</a></div></td>
+                    <td class="STYLE1"><div align="center"></div></td>
+                  </tr>
+                </table></td>
+              </tr>
+            </table></td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td>
+	    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	      <tr>
+	        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+	        <td>
+	        	<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#b5d6e6">
+	        		<tr height="50" bgcolor="#FFFFFF">
+	        			<td>
+	        				<div class="form">
+                            <fieldset>
+                                <legend>渠道信息</legend>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>渠道机构</label> 
+                                    <span class="viewtxt"><{$client_rs.mechanism}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>渠道活动</label> 
+                                    <span class="viewtxt"><{$client_rs.channelact_name}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">渠道介绍人</label> 
+                                    <span class="viewtxt"><{$client_rs.realname_channel_user}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">渠道来源</label> 
+                                    <span class="viewtxt"><{$client_rs.realname_channel}></span>
+                                </div>
+                           	</fieldset>
+                           	<fieldset>
+                                <legend>客户资料</legend>
+                                <div class="rowElem">
+                                    <label class="label">客户姓名</label> 
+                                    <span class="viewtxt"><{$client_rs.realname}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">客户性别</label> 
+                                    <span class="viewtxt">
+									<{if $client_rs.sex eq '0' || !$client_rs}>未知<{/if}>
+									<{if $client_rs.sex eq '1'}>男<{/if}>
+									<{if $client_rs.sex eq '2'}>女<{/if}>
+									</span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">客户电话</label> 
+                                    <span class="viewtxt"><{$client_rs.telphone}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">证件号</label>
+                                    <span class="viewtxt"><{$client_rs.credential_name}> / <{$client_rs.cred_license}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">家庭住址</label> 
+                                    <span class="viewtxt"><{$client_rs.address}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">客户职业</label> 
+                                    <span class="viewtxt"><{$client_rs.profession}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">电子邮箱</label> 
+                                    <span class="viewtxt"><{$client_rs.email}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">微信号</label> 
+                                    <span class="viewtxt"><{$client_rs.wechat}></span>
+                                </div>
+                            </fieldset>
+                            <fieldset>
+                                <legend>业务相关基本信息</legend>
+                                <div class="rowElem">
+                                    <label class="label">意向国家</label> 
+                                    <span class="viewtxt"><{$client_rs.exp_country}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">客户需求</label> 
+                                   <span class="viewtxt"><{$client_rs.demand}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">其他反馈</label> 
+                                    <textarea rows="5" cols="50" readonly><{$client_rs.feedback}></textarea>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">首次到访时间</label> 
+                                    <span class="viewtxt"><{$client_rs.visit_time|date_format:'%Y-%m-%d %H:%M'}></span>
+                                </div>
+                            </fieldset>
+                            </div>
+						</td>
+	        		</tr>
+	        	</table>
+	        </td>
+	        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+	      </tr>
+	    </table>
+    </td>
+  </tr>
+  <tr>
+    <td height="35" background="images/tab_19.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="35"><img src="images/tab_18.gif" width="12" height="35" /></td>
+        <td>&nbsp;</td>
+        <td width="16"><img src="images/tab_20.gif" width="16" height="35" /></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</div>
+</body>
+<{include file="footer.html"}>

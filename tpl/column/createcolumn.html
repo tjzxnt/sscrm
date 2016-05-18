@@ -1,0 +1,371 @@
+<{include file="header.html"}>
+<script type="text/javascript">
+$(function(){
+	//从服务器获取数据校验规则
+	var validator = $.parseJSON('<{$validator}>');
+	$(".form").validate({
+		rules: validator['rules'],
+		messages: validator['messages'],
+		submitHandler: function(form) {
+			$(form.isAjax).attr('value', 1);	//告知服务器，客户端是通过Ajax提交的，服务端应该返回JSON
+			$(form).ajaxSubmit({
+				dataType:  'json',
+				beforeSubmit: 
+				function(formData, jqForm, options){
+					showBlockMsg(".form", "");
+					return true;
+				},
+				success: 
+				function(json, status) {
+					hideBlockMsg('.form');
+					if(json.result != 0){
+						showBlockMsg(".form", json.msg, 'error');
+						window.setTimeout(function() {
+							hideBlockMsg('.form');
+						}, 2000);
+					}
+					else {
+						showBlockMsg('.form', json.msg, 'ok');
+						window.setTimeout(function() {
+							window.location.href = json.url.replace(/&amp;/g,'&');
+						}, 2000);
+					}
+				},
+				error:
+				function(xml, status){
+					hideBlockMsg('.form');
+					showErrorDialog(xml.responseText);
+				}
+			});
+			return false;
+		}
+		/*
+		success: function(label) {
+			label.html("&nbsp;").addClass("success");
+		},
+		
+		errorPlacement: function(error, element) {
+			error.appendTo (element.parent());
+		}*/
+	});
+});
+</script>
+</head>
+<body>
+<div class="main">
+<div class="maintop"><{include file="top.html"}></div>
+<div class="mainleft">
+<{include file="left.html"}>
+</div>
+<div class="mainmiddle"></div>
+<div class="mainright">
+<table width="100%" height="100%" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="46%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[栏目管理]-[<{if $column_rs.sname!='' && $id}>栏目修改<{else}>栏目添加<{/if}>]</td>
+              </tr>
+            </table></td>
+            <td width="54%"><table border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr>
+                <td width="60"><table width="90%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+					<td class="STYLE1"><div align="center"><a href="<{spUrl c=column a=columnlist}>"><img src="images/back.png" width="14" height="14" align="top" /> 返回</a></div></td>
+                    <td class="STYLE1"><div align="center"></div></td>
+                  </tr>
+                </table></td>
+              </tr>
+            </table></td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td>
+	    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	      <tr>
+	        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+	        <td>
+	        	<table width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#b5d6e6">
+	        		<tr height="50" bgcolor="#FFFFFF">
+	        			<td>
+	        			<form class="form" method="post" action="<{$saveurl}>">
+                        <input type="hidden" name="isAjax" value="0" />
+                        <input type="hidden" name="id" value="<{$id}>"/>
+                            <fieldset>
+                                <legend><{if $column_rs.sname!='' && $id}>栏目修改<{else}>栏目添加<{/if}></legend>
+                                <fieldset> 
+                                <legend>栏目资料</legend>
+                                <div class="rowElem">
+                                    <label class="label">栏目名</label> <input name="sname" type="text" id="sname" value="<{$column_rs.sname}>" />
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">唯一标识</label> <input name="mark" type="text" id="mark" value="<{if $column_rs.mark}><{$column_rs.mark}><{/if}>"/>(若为空,则默认是栏目名全拼)
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">所属栏目</label> 
+                                    <{if $column_rs.sname && $column_rs.parentid == 0}>
+                                    <select disabled>
+                                    <option value="0">==根目录==</option>
+                                    </select>
+                                    <input type="hidden" name="parentid" id="parentid" value="0"/>
+                                    <{else}>
+                                    <select name="parentid" id="parentid">
+                                    <option value="0">==根目录==</option>
+                                    <{foreach item=i key=k from=$list_rs}>
+                                    <option value="<{$i.sid}>" <{if $column_rs.parentid == $i.sid}>selected<{/if}>><{$i.sname}><{if !$i.frontdisplay}>[已关闭]<{/if}></option>
+                                    <{/foreach}>
+                                    </select>
+                                    <{/if}>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">引入入口</label> 
+                                    <input type="radio" name="isentrance" value="0" <{if $column_rs.isentrance neq "1"}>checked<{/if}>/>关闭
+                                    <input type="radio" name="isentrance" value="1" <{if $column_rs.isentrance eq "1"}>checked<{/if}>/>开启
+                                    <input type="checkbox" name="isentranceline" value="1" <{if $column_rs.isentranceline eq "1"}>checked<{/if}>/>启用入口线路
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">栏目关键词</label> <input name="keywords" type="text" id="keywords" value="<{$column_rs.keywords}>" />
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">栏目描述</label> <input name="description" type="text" id="description" value="<{$column_rs.description}>" />
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">栏目介绍</label> 
+                                    <textarea name="cinfo" id="cinfo" style="width:300px; height:150px"><{$column_rs.cinfo}></textarea>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">meta标题描述</label> <input type="radio" name="ismetatitle" value="0" <{if $column_rs.ismetatitle neq "1"}>checked<{/if}>>关闭 <input type="radio" name="ismetatitle" value="1" <{if $column_rs.ismetatitle eq "1"}>checked<{/if}>>开启
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">meta描述</label> <input type="radio" name="ismeta" value="0" <{if $column_rs.ismeta neq "1"}>checked<{/if}>>关闭 <input type="radio" name="ismeta" value="1" <{if $column_rs.ismeta eq "1"}>checked<{/if}>>开启
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">副标题</label> <input type="radio" name="fname" value="0" <{if $column_rs.fname neq "1"}>checked<{/if}>>关闭 <input type="radio" name="fname" value="1" <{if $column_rs.fname eq "1"}>checked<{/if}>>开启
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">排序</label> <input type="radio" name="order" value="0" <{if $column_rs.order neq "1"}>checked<{/if}>>关闭 <input type="radio" name="order" value="1" <{if $column_rs.order eq "1"}>checked<{/if}>>开启
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">是否是列表</label> <input type="radio" name="islist" value="0" <{if $column_rs.islist eq "0"}>checked<{/if}>>否 <input type="radio" name="islist" value="1" <{if $column_rs.islist neq "0"}>checked<{/if}>>是
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">每页显示条数</label> <input name="pagesize" type="text" id="pagesize" value="<{$column_rs.pagesize}>" />
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">多图封面</label> <input type="radio" name="iscover" value="0" <{if $column_rs.iscover neq "1"}>checked<{/if}>>关闭 <input type="radio" name="iscover" value="1" <{if $column_rs.iscover eq "1"}>checked<{/if}>>开启
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">单图</label> <input type="radio" name="ispic" value="0" <{if $column_rs.ispic neq "1"}>checked<{/if}>>关闭 <input type="radio" name="ispic" value="1" <{if $column_rs.ispic eq "1"}>checked<{/if}>>开启
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">单图2</label> <input type="radio" name="ispic2" value="0" <{if $column_rs.ispic2 neq "1"}>checked<{/if}>>关闭 <input type="radio" name="ispic2" value="1" <{if $column_rs.ispic2 eq "1"}>checked<{/if}>>开启
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">单图3</label> <input type="radio" name="ispic3" value="0" <{if $column_rs.ispic3 neq "1"}>checked<{/if}>>关闭 <input type="radio" name="ispic3" value="1" <{if $column_rs.ispic3 eq "1"}>checked<{/if}>>开启
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">缩略图宽(单图)</label> <input name="thumb_width" type="text" id="thumb_width" value="<{$column_rs.thumb_width}>" />
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">缩略图高(单图)</label> <input name="thumb_height" type="text" id="thumb_height" value="<{$column_rs.thumb_height}>" />
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">文章作者</label> <input type="radio" name="iseditor" value="0" <{if $column_rs.iseditor neq "1"}>checked<{/if}>>关闭 <input type="radio" name="iseditor" value="1" <{if $column_rs.iseditor eq "1"}>checked<{/if}>>开启
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">文章来源</label> <input type="radio" name="isfrom" value="0" <{if $column_rs.isfrom neq "1"}>checked<{/if}>>关闭 <input type="radio" name="isfrom" value="1" <{if $column_rs.isfrom eq "1"}>checked<{/if}>>开启
+                                </div>
+                                 <div class="rowElem">
+                                    <label class="label">是否视频</label> <input type="radio" name="isflv" value="0" <{if $column_rs.isflv neq "1"}>checked<{/if}>>关闭 <input type="radio" name="isflv" value="1" <{if $column_rs.isflv eq "1"}>checked<{/if}>>开启
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">是否附件(压缩包)</label> <input type="radio" name="ispackage" value="0" <{if $column_rs.ispackage neq "1"}>checked<{/if}>>关闭 <input type="radio" name="ispackage" value="1" <{if $column_rs.ispackage eq "1"}>checked<{/if}>>开启
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">头条</label> <input type="radio" name="istop" value="0" <{if $column_rs.istop neq "1"}>checked<{/if}>>关闭 <input type="radio" name="istop" value="1" <{if $column_rs.istop eq "1"}>checked<{/if}>>开启
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">推荐</label> <input type="radio" name="isrecomd" value="0" <{if $column_rs.isrecomd neq "1"}>checked<{/if}>>关闭 <input type="radio" name="isrecomd" value="1" <{if $column_rs.isrecomd eq "1"}>checked<{/if}>>开启
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">单纯属性</label> 
+                                    <input type="checkbox" name="isspecrecomd" value="1" <{if $column_rs.isspecrecomd eq "1"}>checked<{/if}>>特荐
+                                    <input type="checkbox" name="stj_news" value="1" <{if $column_rs.stj_news eq "1"}>checked<{/if}>>新品
+                                    <input type="checkbox" name="stj_hot" value="1" <{if $column_rs.stj_hot eq "1"}>checked<{/if}>>热卖
+                                    <input type="checkbox" name="stj_soldout" value="1" <{if $column_rs.stj_soldout eq "1"}>checked<{/if}>>售罄
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">首页推荐</label> <input type="radio" name="isindex" value="0" <{if $column_rs.isindex neq "1"}>checked<{/if}>>关闭 <input type="radio" name="isindex" value="1" <{if $column_rs.isindex eq "1"}>checked<{/if}>>开启
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">是否可隐藏</label> <input type="radio" name="iscanhide" value="0" <{if $column_rs.iscanhide neq "1"}>checked<{/if}>>关闭 <input type="radio" name="iscanhide" value="1" <{if $column_rs.iscanhide eq "1"}>checked<{/if}>>开启
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">是否关联</label> <input type="radio" name="isrelate" value="0" <{if $column_rs.isrelate neq "1"}>checked<{/if}>>关闭 <input type="radio" name="isrelate" value="1" <{if $column_rs.isrelate eq "1"}>checked<{/if}>>开启
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">关联栏目id</label> <input name="relatestr" type="text" id="relatestr" value="<{$column_rs.relatestr}>" />
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"></label> (可填写多个栏目id,用英文逗号分隔. eg 1,2,3)
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">从属栏目类型</label> 
+                                    <select name="subcolumntype">
+                                    	<option value="0" <{if !$column_rs.subcolumntype}>selected<{/if}>>新闻</option>
+                                    	<option value="1" <{if $column_rs.subcolumntype}>selected<{/if}>>栏目</option>
+                                    </select>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">从属栏目id</label> <input name="subcolumn" type="text" id="subcolumn" value="<{$column_rs.subcolumn}>" />
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"></label> (从属栏目类型为新闻时，填写二级栏目。从属栏目为栏目时，填写一级栏目,用英文逗号分隔. eg 1,2,3)
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">tag标签</label> <input type="radio" name="istag" value="0" <{if $column_rs.istag neq "1"}>checked<{/if}>>关闭 <input type="radio" name="istag" value="1" <{if $column_rs.istag eq "1"}>checked<{/if}>>开启
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">点击数</label> <input type="radio" name="ishits" value="0" <{if $column_rs.ishits neq "1"}>checked<{/if}>>关闭 <input type="radio" name="ishits" value="1" <{if $column_rs.ishits eq "1"}>checked<{/if}>>开启
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">是否有价格</label> <input type="radio" name="isprice" value="0" <{if $column_rs.isprice neq "1"}>checked<{/if}>>关闭 <input type="radio" name="isprice" value="1" <{if $column_rs.isprice eq "1"}>checked<{/if}>>开启
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">是否有价格2</label> <input type="radio" name="isprice2" value="0" <{if $column_rs.isprice2 neq "1"}>checked<{/if}>>关闭 <input type="radio" name="isprice2" value="1" <{if $column_rs.isprice2 eq "1"}>checked<{/if}>>开启
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">简述</label> <input type="radio" name="isshort" value="0" <{if $column_rs.isshort neq "1"}>checked<{/if}>>关闭 <input type="radio" name="isshort" value="1" <{if $column_rs.isshort eq "1"}>checked<{/if}>>开启
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">描述</label> <input type="radio" name="isdescription" value="0" <{if $column_rs.isdescription eq "0"}>checked<{/if}>>关闭 <input type="radio" name="isdescription" value="1" <{if $column_rs.isdescription neq "0"}>checked<{/if}>>开启
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">链接</label> <input type="radio" name="islink" value="0" <{if $column_rs.islink neq "1"}>checked<{/if}>>关闭 <input type="radio" name="islink" value="1" <{if $column_rs.islink eq "1"}>checked<{/if}>>开启
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">链接图片</label> <input type="radio" name="islinkpic" value="0" <{if $column_rs.islinkpic neq "1"}>checked<{/if}>>关闭 <input type="radio" name="islinkpic" value="1" <{if $column_rs.islinkpic eq "1"}>checked<{/if}>>开启
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">添加时间</label> 
+                                    <input type="radio" name="isposttime" value="0" <{if !$column_rs.isposttime}>checked<{/if}>>关闭 
+                                    <input type="radio" name="isposttime" value="1" <{if $column_rs.isposttime == '1'}>checked<{/if}>>开启
+                                    <input type="radio" name="isposttime" value="2" <{if $column_rs.isposttime == '2'}>checked<{/if}>>详细时间
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">一级分类</label> 
+                                    <input type="radio" name="iscato" value="0" <{if !$column_rs.iscato}>checked<{/if}>>关闭 
+                                    <input type="radio" name="iscato" value="1" <{if $column_rs.iscato == "1"}>checked<{/if}>>开启
+                                    <input type="radio" name="iscato" value="2" <{if $column_rs.iscato == "2"}>checked<{/if}>>作为入口
+                                    <input type="checkbox" name="iscatostitle" value="1" <{if $column_rs.iscatostitle eq "1"}>checked<{/if}>/>副标题
+                                    <input type="checkbox" name="iscatopic" value="1" <{if $column_rs.iscatopic eq "1"}>checked<{/if}>/>图片
+                                    <input type="checkbox" name="iscatodesc" value="1" <{if $column_rs.iscatodesc eq "1"}>checked<{/if}>/>简述
+                                    <input type="checkbox" name="iscatoinfo" value="1" <{if $column_rs.iscatoinfo eq "1"}>checked<{/if}>/>详细
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">分类缩略图宽(单图)</label> <input name="cato_thumb_width" type="text" id="cato_thumb_width" value="<{$column_rs.cato_thumb_width}>" />
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">分类缩略图高(单图)</label> <input name="cato_thumb_height" type="text" id="cato_thumb_height" value="<{$column_rs.cato_thumb_height}>" />
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">二级分类</label> <input type="radio" name="iscato2" value="0" <{if $column_rs.iscato2 neq "1"}>checked<{/if}>>关闭 <input type="radio" name="iscato2" value="1" <{if $column_rs.iscato2 eq "1"}>checked<{/if}>>开启
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">二级分类筛选</label> <input type="radio" name="isfilter2" value="0" <{if $column_rs.isfilter2 neq "1"}>checked<{/if}>>关闭 <input type="radio" name="isfilter2" value="1" <{if $column_rs.isfilter2 eq "1"}>checked<{/if}>>开启
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">是否生成</label> <input type="radio" name="ishtml" value="0" <{if $column_rs.ishtml neq "1"}>checked<{/if}>>关闭 <input type="radio" name="ishtml" value="1" <{if $column_rs.ishtml eq "1"}>checked<{/if}>>开启
+                                    &nbsp;&nbsp;
+                                    (生成静态或生成网站地图)
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">后台列表显示</label> <input type="radio" name="frontdisplay" value="0" <{if $column_rs.frontdisplay eq "0"}>checked<{/if}>>关闭 <input type="radio" name="frontdisplay" value="1" <{if $column_rs.frontdisplay neq "0"}>checked<{/if}>>开启
+                                    &nbsp;&nbsp; (不影响前台访问)
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">开启配置</label> <input type="radio" name="is_config" value="0" <{if $column_rs.is_config neq "1"}>checked<{/if}>>关闭 <input type="radio" name="is_config" value="1" <{if $column_rs.is_config eq "1"}>checked<{/if}>>开启
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">简单扩展</label> <input name="extinput" type="text" id="extinput" value="<{$column_rs.extinput}>"  style="width:600px"/>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"></label> (eg text,薪金范围|textarea,职位介绍|stext,富文本内容|radio,性别,男@#女|checkbox,兴趣爱好,足球@#篮球@#排球)
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">字段扩展</label> 
+                                    <input type="radio" name="is_extfield" value="0" <{if $column_rs.is_extfield neq "1"}>checked<{/if}>>关闭 <input type="radio" name="is_extfield" value="1" <{if $column_rs.is_extfield eq "1"}>checked<{/if}>>开启
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">列表模板路径</label> <input name="displaylist" type="text" id="displaylist" value="{tplpath}/<{$column_rs.displaylist}>" />
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"></label> (列表页默认模板为项目目录下tpl/main/clist.html,如果不为空,如填写newlist.html,则模板为项目目录下tpl/customfolder/如填写newlist.html)
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">详细页模板路径</label> <input name="displaydetail" type="text" id="displaydetail" value="{tplpath}/<{$column_rs.displaydetail}>" />
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"></label> (详细页默认模板为项目目录下tpl/main/cdetail.html,如果不为空,如填写newdetail.html,则模板为项目目录下tpl/customfolder/newdetail.html)
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">其他1</label> <input name="freeother" type="text" id="freeother" value="<{$column_rs.freeother}>" />
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">其他2</label> <input name="freeother2" type="text" id="freeother2" value="<{$column_rs.freeother2}>" />
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">其他3</label> <input name="freeother3" type="text" id="freeother3" value="<{$column_rs.freeother3}>" />
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">栏目链接</label> <input name="outlink" type="text" id="outlink" value="<{$column_rs.outlink}>" />
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">关联项</label> <input name="linkfield" type="text" id="linkfield" value="<{$column_rs.linkfield}>" />
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">备注</label> 
+                                    <textarea name="remark" id="remark" style="width:600px; height:120px"><{$column_rs.remark}></textarea>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">排序</label> <input name="columnorder" type="text" id="columnorder" value="<{$column_rs.columnorder}>" />
+                                </div>
+                                </fieldset>
+                                <div class="rowElem">
+                                	<label class="label">&nbsp;</label>
+                                    <button type="submit" id="submit-go">Submit</button>
+                                </div>
+                            </fieldset>
+                        </form>
+						</td>
+	        		</tr>
+	        	</table>
+	        </td>
+	        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+	      </tr>
+	    </table>
+    </td>
+  </tr>
+  <tr>
+    <td height="35" background="images/tab_19.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="35"><img src="images/tab_18.gif" width="12" height="35" /></td>
+        <td>&nbsp;</td>
+        <td width="16"><img src="images/tab_20.gif" width="16" height="35" /></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</div>
+</div>
+</body>
+</html>

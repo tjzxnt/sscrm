@@ -1,0 +1,140 @@
+<{include file="header.html"}>
+
+<{include file="library/accounting.html"}>
+
+<{include file="library/validator.html"}>
+
+<script>
+$(function(){
+	
+})
+</script>
+</head>
+<body>
+<table width="100%" height="100%" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="80%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[客户管理]-[我跟进的客户]-[<{$client_rs.realname}> / <{if $client_rs.sex == 1}>男<{elseif $client_rs.sex == 2}>女<{else}>未知<{/if}> / <{if $client_rs.telphone}><{$client_rs.telphone}><{else}>-<{/if}></span><{if $client_rs.isauto_touser}><span class="zx_red">(自动分配)</span><{/if}>]-[查看客户订单]</td>
+              </tr>
+            </table></td>
+            <td width="20%"><table border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr>
+                <td width="60"><table width="90%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+					<td class="STYLE1"><div align="center"><a href="#nogo" onClick="javascript:history.go(-1)"><img src="images/back.png" width="14" height="14" align="top" /> 返回</a></div></td>
+                    <td class="STYLE1"><div align="center"></div></td>
+                  </tr>
+                </table></td>
+              </tr>
+            </table></td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td>
+	    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	      <tr>
+	        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+	        <td>
+	        	<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#b5d6e6">
+	        		<tr height="50" bgcolor="#FFFFFF">
+	        			<td>
+	        			<form class="form">
+	        				<fieldset>
+                                <legend>业务相关基本信息</legend>
+                                <div class="rowElem">
+                                    <label class="label">意向国家</label> 
+                                    <span class="viewtxt"><{$client_rs.exp_country}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">客户需求</label> 
+                                   <span class="viewtxt"><{$client_rs.demand}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">其他反馈</label> 
+                                    <textarea rows="5" cols="50" readonly><{$client_rs.feedback}></textarea>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">首次到访时间</label> 
+                                    <span class="viewtxt"><{$client_rs.visit_time|date_format:'%Y-%m-%d %H:%M'}></span>
+                                </div>
+                            </fieldset>
+                            <fieldset>
+                                <legend>房源部分</legend>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>房源名</label> 
+                                    <span class="viewtxt"><{$client_rs.listings}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>房源类型</label> 
+                                    <span class="viewtxt"><{$client_rs.listingstype}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>房源面积</label> 
+                                    <span class="viewtxt"><{$client_rs.listingsarea}></span>
+                                </div>
+                            </fieldset>
+                            <fieldset>
+                                <legend>服务费部分</legend>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>合同编号</label> 
+                                    <span class="viewtxt"><{$client_rs.bargain}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>标准总价</label> 
+                                    <span class="viewtxt account_txt"><{$client_rs.service_price_standard}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>服务费比例</label> 
+                                    <span class="viewtxt"><{$client_rs.service_rate_standard}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>优惠后服务费比例</label> 
+                                    <span class="viewtxt"><{$client_rs.service_rate_preferent}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>优惠金额</label> 
+                                    <span class="viewtxt account_txt"><{$client_rs.service_price_preferential}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>实际总服务费</label> 
+                                    <span class="viewtxt account_txt"><{$client_rs.service_price_real}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">优惠说明</label> 
+                                    <span class="viewtxt"><{$client_rs.preferential_reason}></span>
+                                </div>
+                            </fieldset>
+                        </form>
+						</td>
+	        		</tr>
+	        	</table>
+	        </td>
+	        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+	      </tr>
+	    </table>
+    </td>
+  </tr>
+  <tr>
+    <td height="35" background="images/tab_19.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="35"><img src="images/tab_18.gif" width="12" height="35" /></td>
+        <td>&nbsp;</td>
+        <td width="16"><img src="images/tab_20.gif" width="16" height="35" /></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</div>
+</body>
+<{include file="footer.html"}>

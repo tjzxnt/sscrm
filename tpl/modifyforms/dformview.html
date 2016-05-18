@@ -1,0 +1,118 @@
+<{include file="header.html"}>
+
+<{include file="library/chosen.html"}>
+
+<{include file="library/validator.html"}>
+
+</head>
+<body>
+<table width="100%" height="100%" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="46%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[ERP修改单]-[查看修改单]</td>
+              </tr>
+            </table></td>
+            <td width="54%"><table border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr>
+                <td width="60"><table width="90%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+					<td class="STYLE1"><div align="center"><a href="#nogo" onClick="javascript:history.go(-1)"><img src="images/back.png" width="14" height="14" align="top" /> 返回</a></div></td>
+                    <td class="STYLE1"><div align="center"></div></td>
+                  </tr>
+                </table></td>
+              </tr>
+            </table></td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td>
+	    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	      <tr>
+	        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+	        <td>
+	        	<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#b5d6e6">
+	        		<tr height="50" bgcolor="#FFFFFF">
+	        			<td>
+	        			<form class="form" method="post" action="">
+	        				<input type="hidden" name="isAjax" value="0" />
+	        				<input type="hidden" name="id" value="<{$id}>"/>
+                            <fieldset>
+                                <legend>修改单创建信息</legend>
+                                <div>
+                                	<label class="label">创建人</label> 
+                                	<span class="viewtxt"><{$form_rs.from_realname}></span>
+                                </div>
+                                <div>
+                                	<label class="label">修改单标题</label> 
+                                	<span class="viewtxt"><{$form_rs.title}></span>
+                                </div>
+                                <div>
+                                	<label class="label">修改单内容</label> 
+                                	<textarea  style="height: 150px; width: 600px;" readonly><{$form_rs.content}></textarea>
+                                </div>
+                                <div>
+                                	<label class="label">创建ip</label> 
+                                	<span class="viewtxt"><{$form_rs.create_ip}></span>
+                                </div>
+                                <div>
+                                	<label class="label">创建时间</label> 
+                                	<span class="viewtxt"><{$form_rs.createtime|date_format:"%Y-%m-%d %H:%M"}></span>
+                                </div>
+                            </fieldset>
+                            <fieldset>
+                            	<legend>修改单完成信息</legend>
+                            	<div>
+                                	<label class="label">处理人</label> 
+                                	<span class="viewtxt"><{$form_rs.finish_realname}></span>
+                                </div>
+                                <div>
+                                	<label class="label">如何处理</label> 
+                                	<textarea  style="height: 150px; width: 600px;" readonly><{$form_rs.remark}></textarea>
+                                </div>
+                                <div>
+                                	<label class="label">处理ip</label> 
+                                	<span class="viewtxt"><{$form_rs.finish_ip}></span>
+                                </div>
+                                <div>
+                                	<label class="label">完成时间</label> 
+                                	<span class="viewtxt"><{if $form_rs.finishtime}><{$form_rs.finishtime|date_format:"%Y-%m-%d %H:%M"}><{/if}></span>
+                                </div>
+                                <div class="rowElem">
+                                	<label class="label">&nbsp;</label>
+                                    <a href="javascript:" onClick="javascript:history.go(-1)"><button type="button">返回</button></a>
+                                </div>
+                            </fieldset>
+                        </form>
+						</td>
+	        		</tr>
+	        	</table>
+	        </td>
+	        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+	      </tr>
+	    </table>
+    </td>
+  </tr>
+  <tr>
+    <td height="35" background="images/tab_19.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="35"><img src="images/tab_18.gif" width="12" height="35" /></td>
+        <td>&nbsp;</td>
+        <td width="16"><img src="images/tab_20.gif" width="16" height="35" /></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</div>
+</body>
+<{include file="footer.html"}>

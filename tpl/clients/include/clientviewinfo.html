@@ -1,0 +1,51 @@
+<fieldset>
+	<legend>客户资料</legend>
+	<{if $client_rs.comname}>
+	<div class="rowElem">
+		<label class="label">客户姓名</label> 
+		<span class="viewtxt"><{$client_rs.comname}></span>
+	</div>
+	<{/if}>
+	<div class="rowElem">
+		<label class="label">客户姓名</label> 
+		<span class="viewtxt"><{$client_rs.realname}></span>
+	</div>
+	<div class="rowElem">
+		<label class="label">客户性别</label> 
+		<span class="viewtxt"> 
+			<{if $client_rs.sex eq '0' || !$client_rs}>未知<{/if}>
+			<{if $client_rs.sex eq '1'}>男<{/if}>
+			<{if $client_rs.sex eq '2'}>女<{/if}>
+		</span>
+	</div>
+	<div class="rowElem">
+		<label class="label">电话所在地</label> 
+		<span class="viewtxt"><{$client_rs.tel_location}></span>
+	</div>
+	<div class="rowElem">
+		<label class="label">客户电话</label> 
+		<span class="viewtxt"><{$client_rs.telphone}></span>
+	</div>
+	<div class="rowElem">
+		<label class="label">证件号</label> 
+		<span class="viewtxt">
+			<{$client_rs.credential_name}> / <{$client_rs.cred_license}>
+		</span>
+	</div>
+	<div class="rowElem">
+		<label class="label">家庭住址</label> 
+		<span class="viewtxt"><{$client_rs.address}></span>
+	</div>
+	<div class="rowElem">
+		<label class="label">客户职业</label> 
+		<span class="viewtxt"><{$client_rs.profession}></span>
+	</div>
+	<div class="rowElem">
+		<label class="label">电子邮箱</label> 
+		<span class="viewtxt"><{$client_rs.email}></span>
+	</div>
+	<div class="rowElem">
+		<label class="label">微信号</label> 
+		<span class="viewtxt"><{$client_rs.wechat}></span>
+	</div>
+</fieldset>

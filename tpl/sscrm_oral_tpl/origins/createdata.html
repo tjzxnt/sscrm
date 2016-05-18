@@ -1,0 +1,132 @@
+<{include file="header.html"}>
+
+<{include file="library/chosen.html"}>
+
+<{include file="library/validator.html"}>
+
+</head>
+<body>
+<table width="100%" height="100%" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="46%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[客户来源管理]-[我的客户来源]-[<{if $origin_rs}>编辑客户来源<{else}>添加客户来源<{/if}>]</td>
+              </tr>
+            </table></td>
+            <td width="54%"><table border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr>
+                <td width="60"><table width="90%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+					<td class="STYLE1"><div align="center"><a href="#nogo" onClick="javascript:history.go(-1)"><img src="images/back.png" width="14" height="14" align="top" /> 返回</a></div></td>
+                    <td class="STYLE1"><div align="center"></div></td>
+                  </tr>
+                </table></td>
+              </tr>
+            </table></td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td>
+	    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	      <tr>
+	        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+	        <td>
+	        	<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#b5d6e6">
+	        		<tr height="50" bgcolor="#FFFFFF">
+	        			<td>
+	        			<form class="form" method="post" action="<{$saveurl}>">
+	        				<input type="hidden" name="isAjax" value="0" />
+	        				<input type="hidden" name="id" value="<{$id}>"/>
+                            <fieldset>
+                                <legend><{if $origin_rs}>编辑客户源<{else}>添加客户源<{/if}></legend>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>客户姓名</label> <input name="realname" type="text" id="realname" value="<{$origin_rs.realname}>"/>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">客户性别</label> 
+									<input type="radio" class="radio" name="sex" value="0" <{if $origin_rs.sex eq '0' || !$origin_rs}>checked<{/if}> /><label>未知</label>
+									<input type="radio" class="radio" name="sex" value="1" <{if $origin_rs.sex eq '1'}>checked<{/if}> /><label>男</label>
+									<input type="radio" class="radio" name="sex" value="2" <{if $origin_rs.sex eq '2'}>checked<{/if}> /><label>女</label>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>客户电话</label> <input name="telphone" type="text" id="telphone" value="<{$origin_rs.telphone}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">意向国家</label> <input name="exp_country" type="text" id="exp_country" value="<{$origin_rs.exp_country}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">客户要求</label> <input class="longinput" name="demand" type="text" id="demand" value="<{$origin_rs.demand}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">家庭住址</label> <input name="address" type="text" id="address" value="<{$origin_rs.address}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">客户职业</label> <input name="profession" type="text" id="profession" value="<{$origin_rs.profession}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">证件类型</label>
+                                    <select name="cred_id">
+                                    	<{foreach item=i key=k from=$cred_rs}>
+                                    	<option value="<{$i.id}>" <{if $origin_rs.cred_id == $i.id}>selected<{/if}>><{$i.cname}></option>
+                                    	<{/foreach}>
+                                    </select>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">证件号</label> <input name="cred_license" type="text" id="cred_license" value="<{$origin_rs.cred_license}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">电子邮箱</label> <input name="email" type="text" id="email" value="<{$origin_rs.email}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">微信号</label> <input name="wechat" type="text" id="wechat" value="<{$origin_rs.wechat}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><{if !$origin_rs}><span class="input_required">*</span><{/if}>来源描述<{if !$origin_rs}><br/>(添加后不能修改)<{/if}></label>
+                                    <{if $origin_rs}>
+                                    <span class="viewtxt"><{$origin_rs.reason}></span> 
+                                    <{else}>
+                                    <input name="reason" class="longinput" type="text" id="reason" value="<{$origin_rs.reason}>">
+                                    <{/if}>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">备注</label> 
+                                    <textarea name="data_remark" rows="5" cols="50"><{$origin_rs.data_remark}></textarea>
+                                </div>
+                                <div class="rowElem">
+                                	<label class="label">&nbsp;</label>
+                                    <button type="submit" id="submit-go">Submit</button>
+                                </div>
+                            </fieldset>
+                        </form>
+						</td>
+	        		</tr>
+	        	</table>
+	        </td>
+	        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+	      </tr>
+	    </table>
+    </td>
+  </tr>
+  <tr>
+    <td height="35" background="images/tab_19.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="35"><img src="images/tab_18.gif" width="12" height="35" /></td>
+        <td>&nbsp;</td>
+        <td width="16"><img src="images/tab_20.gif" width="16" height="35" /></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</div>
+</body>
+<{include file="footer.html"}>

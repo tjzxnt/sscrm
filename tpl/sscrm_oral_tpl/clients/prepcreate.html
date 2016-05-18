@@ -1,0 +1,150 @@
+<{include file="header.html"}>
+
+<{include file="library/chosen.html"}>
+
+<script>
+	function prepinit(){
+		$(".channeltr, .origin_tr, .subtr").addClass("zxhide");
+	}
+	function prepfinish(){
+		$(".subtr").removeClass("zxhide");
+	}
+	function personinit(){
+		prepinit();
+		$(".origin_person_tr").removeClass("zxhide");
+	}
+	function unpersoninit(){
+		prepinit();
+		$(".origin_unperson_tr").removeClass("zxhide");
+	}
+	function datainit(){
+		$("#channel_select, #origin_select")[0].selectedIndex = 0;
+		$("#channel_select, #origin_select").trigger("chosen:updated");
+	}
+	function not_allow_channel(){
+		$("#sourcetype")[0].selectedIndex = 2;
+		$("#sourcetype").trigger("chosen:updated");
+		$(".sourcetypetr").addClass("zxhide");
+		$(".origin_tr").removeClass("zxhide");
+		prepfinish();
+	}
+	$(function(){
+		$("#sourcetype").change(function(){
+			/*datainit();*/
+			if($(this).val() == "1"){ //渠道
+				prepinit();
+				$(".channeltr").removeClass("zxhide");
+				prepfinish();
+			}else if($(this).val() == "2"){ //非渠道来源
+				prepinit();
+				$(".origin_tr").removeClass("zxhide");
+				prepfinish();
+			}else{ //初始
+				prepinit();
+			}
+		})
+		$("#prepsubmit").click(function(){
+			$.ajax({
+			   type: "POST",
+			   url: "<{$saveurl}>",
+			   data: $(".prepform").serialize(),
+			   dataType: 'json',
+			   beforeSend: function(){
+			   		showBlockMsg(".tipsdowntable", "");
+					return true;
+			   },
+			   success: function(json, textStatus){
+					if(json.result == 1){
+						window.location.href = json.url.replace(/&amp;/g,'&').replace(/&amp;/g,'&');
+					}else{
+						alert(json.msg);
+						hideBlockMsg('.tipsdowntable');
+					}
+					prepfinish();
+			   },
+				error: function(xml, status){
+					hideBlockMsg('.tipsdowntable');
+					showErrorDialog(xml.responseText);
+				}
+			});
+		})
+		<{if !$isallow_channel}>
+		not_allow_channel();
+		<{/if}>
+	})
+</script>
+<style>
+	.chosen-results{
+		max-height:300px !important;
+	}
+	.input_chosen{
+		width:190px;
+		border:1px solid #aaa;
+		border-radius:5px;
+		height:23px;
+		line-height:24px;
+		background-color: #fff;
+		background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(20%, #ffffff), color-stop(50%, #f6f6f6), color-stop(52%, #eeeeee), color-stop(100%, #f4f4f4));
+		background: -webkit-linear-gradient(top, #ffffff 20%, #f6f6f6 50%, #eeeeee 52%, #f4f4f4 100%);
+		background: -moz-linear-gradient(top, #ffffff 20%, #f6f6f6 50%, #eeeeee 52%, #f4f4f4 100%);
+		background: -o-linear-gradient(top, #ffffff 20%, #f6f6f6 50%, #eeeeee 52%, #f4f4f4 100%);
+		background: linear-gradient(top, #ffffff 20%, #f6f6f6 50%, #eeeeee 52%, #f4f4f4 100%);
+		background-clip: padding-box;
+		box-shadow: 0 0 3px white inset, 0 1px 1px rgba(0, 0, 0, 0.1);
+		color: #444;
+		white-space: nowrap;
+		padding:0 0 0 8px;
+	}
+	.tipsdowntable tr{
+		height:25px;
+	}
+	.tipstdleft{
+		text-align:right;
+	}
+</style>
+</head>
+<body>
+<form class="prepform">
+	<table class="tipsdowntable">
+		<tr class="sourcetypetr">
+			<td width="90" class="tipstdleft">来源于渠道：</td>
+			<td>
+				<select class="chosen-select-nosearch" name="sourcetype" id="sourcetype">
+					<option value="">==请选择==</option>
+					<option value="1">是</option>
+					<option value="2">否</option>
+				</select>
+			</td>
+		</tr>
+		<tr class="zxhide channeltr">
+			<td class="tipstdleft">选择渠道：</td>
+			<td>
+				<select class="chosen-select" id="channel_select" name="channelid">
+					<option value="">==请选择==</option>
+					<{foreach item=i key=k from=$channel_rs}>
+					<option value="<{$i.id}>"><{$i.mechanism}></option>
+					<{/foreach}>
+				</select>
+			</td>
+		</tr>
+		<tr class="zxhide origin_tr">
+			<td class="tipstdleft">请选择来源：</td>
+			<td>
+				<select class="chosen-select-nosearch" id="origin_select" name="origin_id" style="min-height:200px">
+					<option value="">==请选择==</option>
+					<{foreach item=i key=k from=$origin_rs}>
+					<option value="<{$i.id}>"><{$i.oname}></option>
+					<{/foreach}>
+				</select>
+			</td>
+		</tr>
+		<tr class="zxhide subtr">
+			<td colspan="2">
+				<input type="button" id="prepsubmit" value="确认"/>
+			</td>
+		</tr>
+	</table>
+</form>
+
+</body>
+<{include file="footer_clean.html"}>

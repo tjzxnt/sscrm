@@ -1,0 +1,85 @@
+<{include file="header.html"}>
+
+<script>
+$(function(){
+	$(".form_simple input[type=submit]").click(function() {
+		var form_simple = $(".form_simple");
+		var form_simple_submit = form_simple.find("input[type=submit]"); 
+		$.ajax({
+			type : form_simple.attr("method"),
+			url : form_simple.attr("action"),
+			data : form_simple.serialize(),
+			dataType : 'json',
+			beforeSend : function() {
+				form_simple_submit.attr("disabled", true);
+				form_simple_submit.val(form_simple_submit.attr("submiting"));
+				$(".ex").html("<div class='zxcenter zx_padding_top_smid'><img src='<{$web_root}>/images/ajax_loading.gif'/></div>");
+			},
+			success : function(json, textStatus) {
+				$(".ex").html(json.html);
+				form_simple_submit.attr("disabled", false);
+				form_simple_submit.val(form_simple_submit.attr("submited"));
+			},
+			error : function(xml, status) {
+				alert("未知错误");
+				form_simple_submit.attr("disabled", false);
+				form_simple_submit.val(form_simple_submit.attr("submited"));
+				console.log(xml.responseText);
+			}
+		});
+		return false;
+	});
+})
+</script>
+
+<style>
+.ex h5{ font-size:18px;}
+.ex p{ font-size:14px;}
+/*
+.c-input{ width:90px; height:24px;border:#CCC solid 1px;}
+.c-select{ width:90px; height:26px;border:#CCC solid 1px;}
+.op_exrate { float:left; margin-right:10px;}
+.exchange{ float:left; border:#CCC solid 1px;}
+.f-ex{ color:#333; font-size:18px; text-align:center;  padding:6px;}
+*/
+</style>
+<body>
+	<form class="form_simple" action="index.php" method="post">
+		<input type="hidden" name="c" value="main"/>
+		<input type="hidden" name="a" value="exchange"/>
+		<input type="text" name="fromcash" value=""/>
+		<select name="from">
+			<{foreach item=i key=k from=$cashdata}>
+			<option value="<{$k}>"><{$i}></option>
+			<{/foreach}>
+		</select>
+		兑
+		<select name="to">
+			<{foreach item=i key=k from=$cashdata}>
+			<option value="<{$k}>"><{$i}></option>
+			<{/foreach}>
+		</select>
+		<input type="submit" value="转换" submiting="转换中" submited="转换"/>
+		<div class="ex">
+		</div>
+	</form>
+<!--
+<div class="op_exrate">
+                    <input type="text" maxlength="13" value="1" class="c-input">
+</div>
+<div class="op_exrate">
+<select name="country" class="c-select">
+  <option>美元</option>
+   <option>欧元</option>
+    <option>澳币</option>
+     <option>加元</option>
+
+</select>
+
+
+</div>
+<div class="exchange"><i class="iconfont f-ex">&#xe653;</i></div>
+<div>1美元=6.4632人民币元</div>
+</div>-->
+</body>
+</HTML>

@@ -1,0 +1,165 @@
+<{include file="header.html"}>
+
+<{include file="library/accounting.html"}>
+
+<script type="text/javascript" src="<{$web_root}>/js/My97DatePicker/WdatePicker.js"></script>
+
+</head>
+<body>
+<table width="100%" height="100%" cellspacing="1" cellpadding="0" class="tablesl zxblockui">
+  <tr>
+    <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="46%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[渠道管理]-[我的部门渠道]-[<{$channel_rs.mechanism}>]-[客户查看]</td>
+              </tr>
+            </table></td>
+            <td width="54%">
+            <form method="GET">
+            <input type="hidden" name="c" value="channeldeparts"/>
+            <input type="hidden" name="a" value="clientlist"/>
+            <input type="hidden" name="channel_id" value="<{$channel_id}>"/>
+            <table border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr>
+                 <td>
+	                 <table width="100%" border="0" cellpadding="0" cellspacing="0">
+	                  <tr>
+	                  	<td class="STYLE1">
+	                  		来访时间从
+	                  		<input type="text" name="starttime" class="posttime" value="<{$starttime}>">
+	                  		至
+	                  		<input type="text" name="endtime" class="posttime" value="<{$endtime}>">
+	                  	</td>
+	                  	<td>&nbsp;</td>
+	                  	<td class="STYLE1">
+	                  		全款时间：
+	                  	</td>
+	                  	<td class="STYLE1"><div align="center"><input type="text" name="statdate" class="Wdate" value="<{$statdate}>" onclick="WdatePicker()" readonly/></div></td>
+	                  	<td>&nbsp;</td>
+	                    <td class="STYLE1">
+	                    	<select name="user_sales_id">
+	                  			<option>==请选择置业顾问==</option>
+	                  			<{foreach item=i key=k from=$user_rs}>
+	                  			<option value="<{$i.id}>" <{if $i.id == $user_sales_id}>selected<{/if}>><{$i.py}> - <{$i.realname}></option>
+	                  			<{/foreach}>
+	                  		</select>
+	                    </td>
+	                    <td class="STYLE1"><div align="top" style="margin-left:7px"><input type="image" value="" src="images/search.gif"></div></td>
+	                    <td>&nbsp;</td>
+	                    <td><a href="<{spUrl c=channeldeparts a=channellist}>"><img src="images/back.png" width="14" height="14" align="top" /> 返回</a></td>
+	                  </tr>
+	                </table>
+                </td>
+              </tr>
+            </table>
+            </form>
+            </td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+        <td><table class="zx_data_list" width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#b5d6e6">
+          <thead>
+          <tr>
+          	<!--
+            <td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+            </td>
+            -->
+            <td width="2%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">序号</span></div></td>
+            <td width="10%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">客户姓名 / 性别 / 电话</span></div></td>
+            <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">客户来源</span></div></td>
+            <td width="10%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">渠道活动</span></div></td>
+            <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">置业顾问</span></div></td>
+            <td width="10%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">国家 / 需求</span></div></td>
+            <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">来访时间</span></div></td>
+            <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">款项状态</span></div></td>
+            <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">房款金额</span></div></td>
+            <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">全款时间</span></div></td>
+            <td width="8%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">操作</span></div></td>
+          </tr>
+          </thead>
+          <tbody>
+          <{foreach item=i key=k from=$client_rs}>
+          <tr>
+            <td height="20" bgcolor="#FFFFFF">
+            	<div align="center" class="STYLE1">
+              		<div align="center"><{$k+1}></div>
+            	</div>
+            </td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.realname}> / <{if $i.sex == 1}>男<{elseif $i.sex == 2}>女<{else}>未知<{/if}> / <{if $i.telphone}><{$i.telphone}><{else}>-<{/if}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.oname}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft">
+            	<span class="STYLE1">
+            		<{$i.mechanism}>
+            		<{if $i.channel_act_name}>
+            			[<{$i.channel_act_name}>]
+            		<{/if}>
+            	</span>
+            </div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.realname_sale}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{if $i.ctname}><{$i.ctname}><{else}>-<{/if}> / <{if $i.demand}><{$i.demand}><{else}>-<{/if}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{if $i.visit_time}><{$i.visit_time|date_format:"%Y-%m-%d"}><{else}>-<{/if}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft">
+            <{if $i.ispay eq '0'}>
+            <span class="zx_red">跟进中</span>
+            <{elseif $i.ispay eq '1'}>
+            <span class="zx_brown">付款流程中</span>
+            <{elseif $i.ispay eq '2'}>
+            <span class="zx_green">已可结佣</span>
+            <{else}>
+            <span class="zx_gray">未成交</span>
+            <{/if}>
+            </div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft">
+            	<{if $i.service_price_standard}>
+            	<span class="STYLE1 account_txt"><{$i.service_price_standard}></span>
+            	<{else}>
+            	<span class="STYLE1">-</span>
+            	<{/if}></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{if $i.fullpay_arrivaltime}><{$i.fullpay_arrivaltime|date_format:"%Y-%m-%d"}><{else}>-<{/if}></span></div></td>
+            <td bgcolor="#FFFFFF" class="listleft">
+            	<a href="<{spUrl c=channeldeparts a=viewclient channel_id=$channel_id id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>查看</a>
+            	<a href="<{spUrl c=channeldeparts a=clientrecordlist channel_id=$channel_id client_id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>回访反馈</a>
+            </td>
+          </tr>
+          <{foreachelse}>
+			<tr>
+            	<td height="20" bgcolor="#FFFFFF" colspan="11"><div style="margin-left:7px; margin-top:10px">无匹配记录</div></td>
+			</tr>
+          <{/foreach}> 
+          </tbody>
+          <tfoot>
+          <tr height="50" bgcolor="#FFFFFF"><td colspan="11">&nbsp;</td></tr>
+          </tfoot>
+        </table></td>
+        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td height="35" background="images/tab_19.gif">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="35"><img src="images/tab_18.gif" width="12" height="35" /></td>
+        <td>
+        	<{include file="pager.html"}>
+		</td>
+        <td width="16"><img src="images/tab_20.gif" width="16" height="35" /></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</div>
+</body>
+<{include file="footer.html"}>

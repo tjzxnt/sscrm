@@ -1,0 +1,308 @@
+<{include file="header.html"}>
+
+<{include file="library/chosen.html"}>
+
+<{include file="library/validator.html"}>
+
+</head>
+<body>
+<table width="100%" height="100%" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="46%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[客户管理]-[我添加的客户]-[编辑客户]</td>
+              </tr>
+            </table></td>
+            <td width="54%"><table border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr>
+                <td width="60"><table width="90%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+					<td class="STYLE1"><div align="center"><a href="#nogo" onClick="javascript:history.go(-1)"><img src="images/back.png" width="14" height="14" align="top" /> 返回</a></div></td>
+                    <td class="STYLE1"><div align="center"></div></td>
+                  </tr>
+                </table></td>
+              </tr>
+            </table></td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td>
+	    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	      <tr>
+	        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+	        <td>
+	        	<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#b5d6e6">
+	        		<tr height="50" bgcolor="#FFFFFF">
+	        			<td>
+	        			<form class="form" method="post" action="<{$saveurl}>">
+	        				<input type="hidden" name="isAjax" value="0" />
+	        				<input type="hidden" name="id" value="<{$id}>"/>
+	        				<input type="hidden" name="sourcetype" value="<{$sourcetype}>"/>
+	        				<input type="hidden" name="channel_id" value="<{$channel_id}>"/>
+	        				<input type="hidden" name="channelact_id" value="<{$channelact_id}>"/>
+	        				<input type="hidden" name="channelact_time" value="<{$origin_data_time}>"/>
+	        				<input type="hidden" name="origin_id" value="<{$origin_id}>"/>
+	        				<input type="hidden" name="origin_data_id" value="<{$origin_data_id}>"/>
+	        				<input type="hidden" name="origin_data_time" value="<{$origin_data_time}>"/>
+	        				<{if $fromtype == "channel"}>
+                            <fieldset>
+                                <legend>渠道信息</legend>
+                                <div class="rowElem">
+                                    <label class="label">渠道来源</label> 
+                                    <span class="viewtxt"><{$client_rs.mechanism_data}> - <{$client_rs.channel_actname_data}> - <{$client_rs.channel_acttime_data}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">渠道专员</label> 
+                                    <span class="viewtxt"><{$client_rs.channel_username}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">置业顾问</label>
+                                    <{* client_rs[inuse] = 0 *}>
+                                    <{if $client_rs.isauto_touser}>
+                                    <span class="viewtxt zx_red">自动分配</span>
+                                    <{else}>
+                                    <span class="viewtxt"><{$client_rs.to_user_data}></span>
+                                    <{/if}>
+                                </div>
+                           	</fieldset>
+                           	<fieldset>
+                                <legend>客户资料</legend>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>客户姓名</label> 
+                                    <input name="realname" type="text" id="realname" value="<{$client_rs.realname}>"/>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">客户性别</label> 
+									<input type="radio" class="radio" name="sex" value="0" <{if $client_rs.sex eq '0' || !$client_rs}>checked<{/if}> /><label>未知</label>
+									<input type="radio" class="radio" name="sex" value="1" <{if $client_rs.sex eq '1'}>checked<{/if}> /><label>男</label>
+									<input type="radio" class="radio" name="sex" value="2" <{if $client_rs.sex eq '2'}>checked<{/if}> /><label>女</label>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>客户电话</label> <input name="telphone" type="text" id="telphone" value="<{$client_rs.telphone}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">证件类型</label>
+                                    <select name="cred_id">
+                                    	<{foreach item=i key=k from=$cred_rs}>
+                                    	<option value="<{$i.id}>" <{if $client_rs.cred_id == $i.id}>selected<{/if}>><{$i.cname}></option>
+                                    	<{/foreach}>
+                                    </select>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">证件号</label> <input name="cred_license" type="text" id="cred_license" value="<{$client_rs.cred_license}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">家庭住址</label> <input name="address" type="text" id="address" value="<{$client_rs.address}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">客户职业</label> <input name="profession" type="text" id="profession" value="<{$client_rs.profession}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">电子邮箱</label> <input name="email" type="text" id="email" value="<{$client_rs.email}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">微信号</label> <input name="wechat" type="text" id="wechat" value="<{$client_rs.wechat}>">
+                                </div>
+                            </fieldset>
+                            <fieldset>
+                                <legend>业务相关基本信息</legend>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>意向国家</label> <input name="exp_country" type="text" id="exp_country" value="<{$client_rs.exp_country}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>客户需求</label> <input class="longinput" name="demand" type="text" id="demand" value="<{$client_rs.demand}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>首次到访时间</label> 
+                                    <input class="ui_timepicker" name="visit_time" type="text" id="visit_time" value="<{if $client_rs.visit_time}><{$client_rs.visit_time|date_format:'%Y-%m-%d %H:%M'}><{else}><{$smarty.now|date_format:'%Y-%m-%d %H:%M'}><{/if}>" readonly/>
+                                </div>
+                                <div class="rowElem">
+                                	<label class="label">&nbsp;</label>
+                                    <button type="submit" id="submit-go">Submit</button>
+                                </div>
+                            </fieldset>
+                            <{elseif $fromtype == "person"}>
+                            <fieldset>
+                                <legend>来源信息</legend>
+                                <div class="rowElem">
+                                    <label class="label">所属来源</label> 
+                                    <span class="viewtxt"><{$org_rs.oname}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">来源录入者</label> 
+                                    <span class="viewtxt"><{$client_rs.origin_create_name_data}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">置业顾问</label> 
+                                    <{if $client_rs.isauto_touser}>
+                                    <span class="viewtxt zx_red">自动分配</span>
+                                    <{else}>
+                                    <span class="viewtxt"><{$client_rs.to_user_data}></span>
+                                    <{/if}>
+                                </div>
+                           	</fieldset>
+                           	<fieldset>
+                                <legend>客户资料</legend>
+                                <div class="rowElem">
+                                    <label class="label">客户姓名</label> 
+                                    <span class="viewtxt"><{$client_rs.realname}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">客户性别</label> 
+                                    <span class="viewtxt"><{if $client_rs.sex eq '1'}>男<{elseif $client_rs.sex eq '2'}>女<{else}>未知<{/if}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">客户电话</label> 
+                                    <span class="viewtxt"><{$client_rs.telphone}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">证件类型</label>
+                                    <select name="cred_id">
+                                    	<{foreach item=i key=k from=$cred_rs}>
+                                    	<option value="<{$i.id}>" <{if $client_rs.cred_id == $i.id}>selected<{/if}>><{$i.cname}></option>
+                                    	<{/foreach}>
+                                    </select>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">证件号</label> <input name="cred_license" type="text" id="cred_license" value="<{$client_rs.cred_license}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">家庭住址</label> <input name="address" type="text" id="address" value="<{$client_rs.address}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">客户职业</label> <input name="profession" type="text" id="profession" value="<{$client_rs.profession}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">电子邮箱</label> <input name="email" type="text" id="email" value="<{$client_rs.email}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">微信号</label> <input name="wechat" type="text" id="wechat" value="<{$client_rs.wechat}>">
+                                </div>
+                            </fieldset>
+                           	<fieldset>
+                                <legend>业务相关基本信息</legend>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>意向国家</label> <input name="exp_country" type="text" id="exp_country" value="<{$client_rs.exp_country}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>客户需求</label> <input class="longinput" name="demand" type="text" id="demand" value="<{$client_rs.demand}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>首次到访时间</label> 
+                                    <input class="ui_timepicker" name="visit_time" type="text" id="visit_time" value="<{if $client_rs.visit_time}><{$client_rs.visit_time|date_format:'%Y-%m-%d %H:%M'}><{else}><{$smarty.now|date_format:'%Y-%m-%d %H:%M'}><{/if}>" readonly/>
+                                </div>
+                                <div class="rowElem">
+                                	<label class="label">&nbsp;</label>
+                                    <button type="submit" id="submit-go">Submit</button>
+                                </div>
+                            </fieldset>
+                            <{else}>
+                            <fieldset>
+                                <legend>来源信息</legend>
+                                <div class="rowElem">
+                                    <label class="label">所属来源</label> 
+                                    <span class="viewtxt">其它来源 - <{$org_rs.oname}></span>
+                                </div>
+                                <{foreach item=i key=k from=$ext_field_rs}>
+                                <div class="rowElem">
+                                    <label class="label"><{$i.fieldname}></label>
+                                    <{if $i.type == "text"}>
+                                    <input name="<{$i.field}>" type="text" id="<{$i.field}>" value="<{$client_rs[$i.field]}>"/>
+                                    <{/if}>
+                                </div>
+                                <{/foreach}>
+                                <div class="rowElem">
+                                    <label class="label">置业顾问</label> 
+                                    <span class="viewtxt zx_red">自动分配</span>
+                                </div>
+                           	</fieldset>
+                           	<fieldset>
+                                <legend>客户资料</legend>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>客户姓名</label> 
+                                    <input name="realname" type="text" id="realname" value="<{$client_rs.realname}>"/>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">客户性别</label> 
+									<input type="radio" class="radio" name="sex" value="0" <{if $client_rs.sex eq '0' || !$client_rs}>checked<{/if}> /><label>未知</label>
+									<input type="radio" class="radio" name="sex" value="1" <{if $client_rs.sex eq '1'}>checked<{/if}> /><label>男</label>
+									<input type="radio" class="radio" name="sex" value="2" <{if $client_rs.sex eq '2'}>checked<{/if}> /><label>女</label>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>客户电话</label> <input name="telphone" type="text" id="telphone" value="<{$client_rs.telphone}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">证件类型</label>
+                                    <select name="cred_id">
+                                    	<{foreach item=i key=k from=$cred_rs}>
+                                    	<option value="<{$i.id}>" <{if $client_rs.cred_id == $i.id}>selected<{/if}>><{$i.cname}></option>
+                                    	<{/foreach}>
+                                    </select>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">证件号</label> <input name="cred_license" type="text" id="cred_license" value="<{$client_rs.cred_license}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">家庭住址</label> <input name="address" type="text" id="address" value="<{$client_rs.address}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">客户职业</label> <input name="profession" type="text" id="profession" value="<{$client_rs.profession}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">电子邮箱</label> <input name="email" type="text" id="email" value="<{$client_rs.email}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">微信号</label> <input name="wechat" type="text" id="wechat" value="<{$client_rs.wechat}>">
+                                </div>
+                            </fieldset>
+                           	<fieldset>
+                                <legend>业务相关基本信息</legend>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>意向国家</label> <input name="exp_country" type="text" id="exp_country" value="<{$client_rs.exp_country}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>客户需求</label> <input class="longinput" name="demand" type="text" id="demand" value="<{$client_rs.demand}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>首次到访时间</label> 
+                                    <input class="ui_timepicker" name="visit_time" type="text" id="visit_time" value="<{if $client_rs.visit_time}><{$client_rs.visit_time|date_format:'%Y-%m-%d %H:%M'}><{else}><{$smarty.now|date_format:'%Y-%m-%d %H:%M'}><{/if}>" readonly/>
+                                </div>
+                                <div class="rowElem">
+                                	<label class="label">&nbsp;</label>
+                                    <button type="submit" id="submit-go">Submit</button>
+                                </div>
+                            </fieldset>
+                            <{/if}>
+                        </form>
+						</td>
+	        		</tr>
+	        	</table>
+	        </td>
+	        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+	      </tr>
+	    </table>
+    </td>
+  </tr>
+  <tr>
+    <td height="35" background="images/tab_19.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="35"><img src="images/tab_18.gif" width="12" height="35" /></td>
+        <td>&nbsp;</td>
+        <td width="16"><img src="images/tab_20.gif" width="16" height="35" /></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</div>
+</body>
+<{include file="footer.html"}>

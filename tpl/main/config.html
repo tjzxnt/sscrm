@@ -1,0 +1,147 @@
+<{include file="header.html"}>
+
+<script type="text/javascript">
+$(function(){
+	$('.editor').xheditor({
+		upLinkUrl:"<{$web_root}>/upload.php?type=backstage",
+		upLinkExt:"zip,rar,txt",
+		upImgUrl:"<{$web_root}>/upload.php?type=backstage",
+		upImgExt:"jpg,jpeg,gif,png",
+		upFlashUrl:"<{$web_root}>upload.php?type=backstage",
+		upFlashExt:"swf",
+		upMediaUrl:"<{$web_root}>upload.php?type=backstage",
+		upMediaExt:"wmv,avi,wma,mp3,mid"
+	});	
+	
+	var validator = $.parseJSON('<{$validator}>');
+	$(".form").validate({
+		rules: "",
+		messages: "",
+		submitHandler: function(form) {
+			$(form.isAjax).attr('value', 1);	//告知服务器，客户端是通过Ajax提交的，服务端应该返回JSON
+			$(form).ajaxSubmit({
+				dataType:  'json',
+				beforeSubmit: 
+				function(formData, jqForm, options){
+					showBlockMsg(".form", "");
+					return true;
+				},
+				success: 
+				function(json, status) {
+					hideBlockMsg('.form');
+					if(json.result != 1){
+						showBlockMsg(".form", json.msg, 'error');
+						window.setTimeout(function() {
+							hideBlockMsg('.form');
+						}, 2000);
+					}
+					else {
+						showBlockMsg('.form', json.msg, 'ok');
+						window.setTimeout(function() {
+							window.location.href = json.url.replace(/&amp;/g,'&').replace(/&amp;/g,'&');
+						}, 2000);
+					}
+				},
+				error:
+				function(xml, status){
+					hideBlockMsg('.form');
+					showErrorDialog(xml.responseText);
+				}
+			});
+			return false;
+		}
+	});
+})
+</script>
+</head>
+<body>
+<table width="100%" height="100%" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="46%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[网站设置]-[网站配置]</td>
+              </tr>
+            </table></td>
+            <td width="54%"><table border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr>
+                <td width="60"><table width="90%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+					<td class="STYLE1"><div align="center"><a href="#nogo" onClick="javascript:history.go(-1)"><img src="images/back.png" width="14" height="14" align="top" /> 返回</a></div></td>
+                    <td class="STYLE1"><div align="center"></div></td>
+                  </tr>
+                </table></td>
+              </tr>
+            </table></td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td>
+	    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	      <tr>
+	        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+	        <td>
+	        	<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#b5d6e6">
+	        		<tr height="50" bgcolor="#FFFFFF">
+	        			<td>
+	        			<form class="form" method="post" action="<{spUrl c=main a=config}>">
+	        				<input type="hidden" name="isAjax" value="0" />
+                            <fieldset>
+                                <legend>网站信息</legend>
+                                <div class="rowElem">
+                                    <label class="label">网站名称</label> <input type="text" name="website_name" value="<{$app_config.website_name}>">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">网站描述</label> <textarea name="website_decscrption" rows="3" cols="50"><{$app_config.website_decscrption}></textarea>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">关键字</label> <textarea name="website_keyword" rows="3" cols="50"><{$app_config.website_keyword}></textarea>
+                                </div>
+                           		<div class="rowElem">
+                                    <label class="label">版权信息</label> <textarea id="copyright_info" class="editor" name="copyright_info" style="height:150px; width:600px"><{$app_config.copyright_info}></textarea>
+                                </div>
+                            </fieldset>
+                            <fieldset>
+                                <legend>超时配置</legend>
+                                <div class="rowElem">
+	                                <label class="label">渠道未成单超时天数(暂无用)</label>
+	                                <input type="text" name="channel_overdate" value="<{$app_config.channel_overdate}>">
+                                </div>
+                                <div class="rowElem">
+	                                <label class="label">客户未成单超时天数</label>
+	                                <input type="text" name="client_overdate" value="<{$app_config.client_overdate}>">
+                                </div>
+                            </fieldset>
+                            <button type="submit" id="submit-go">Submit</button>
+                        </form>
+						</td>
+	        		</tr>
+	        	</table>
+	        </td>
+	        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+	      </tr>
+	    </table>
+    </td>
+  </tr>
+  <tr>
+    <td height="35" background="images/tab_19.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="35"><img src="images/tab_18.gif" width="12" height="35" /></td>
+        <td>&nbsp;</td>
+        <td width="16"><img src="images/tab_20.gif" width="16" height="35" /></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</div>
+</body>
+<{include file="footer.html"}>

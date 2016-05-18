@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title><{$page_title}><{$app_config.website_name}></title>
+</head>
+<link rel="stylesheet" href="<{$web_root}>/css/bootstrap.min.css">
+<link rel="stylesheet" href="<{$web_root}>/assets/css/reset.css"/>
+<link rel="stylesheet" href="<{$web_root}>/assets/css/style.css"/>
+<script type="text/javascript" src="<{$web_root}>/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="<{$web_root}>/js/bootstrap.3.2.0.min.js"></script>
+<script type="text/javascript" src="<{$web_root}>/js/jquery.toaster.js"></script>
+<{if !$smarty.session.sscrm_user.user_identity.operate}>
+<style>html,body{-moz-user-select: none; -khtml-user-select: none; user-select: none;}</style>
+<script>
+$(document).bind("contextmenu",function(){return false;});
+$(document).bind("selectstart",function(){return false;});
+$(document).bind("cut copy", function(e) {
+    e.preventDefault();
+});
+</script>
+<{/if}>
+<style>
+#toaster{width:auto !important;}
+</style>
+<script>
+function getNotice(args){
+	$url = "<{spUrl c=notices a=alertnotice}>";
+	if(args){
+		$url += "&"+args;
+	}
+	$.ajax({
+	   type: "POST",
+	   url: $url,
+	   dataType: 'json',
+	   success: function(json, textStatus){
+			if(json.result == 1){
+				$.toaster({ priority : 'info', title : '提示', message : json.html});
+			}
+			if(json.hmtime == '18:00')
+				alert("当前时间18:00，服务器可能会随时关闭，若需要继续使用请通知技术部");
+	   },
+		error: function(xml, status){
+			//alert(xml.responseText);
+		}
+	});
+}
+function getCheckOver(){
+	$url = "<{spUrl c=notices a=checkovertime}>";
+	$.ajax({
+	   type: "POST",
+	   url: $url,
+	   dataType: 'json',
+	   success: function(json, textStatus){
+		   
+	   },
+		error: function(xml, status){
+			//alert(xml.responseText);
+		}
+	});
+}
+$(function(){
+	setInterval(function() {
+		getNotice();
+	}, 1 * 60e3);
+	setInterval(function() {
+		getCheckOver();
+	}, 60 * 60e3);
+	getNotice("overtime=1");
+	$(".topback").click(function(){
+		parent.frames["center"].history.back();
+	})
+	$(".clearleft").click(function(){
+		window.parent.frames["leftFrame"].$(".leftsidebar_box dl dt.hover").removeClass("hover");
+		window.parent.frames["leftFrame"].$(".leftsidebar_box dl dd a.now").removeClass("now");
+	})
+})
+
+</script>
+<body>
+	<div class="top">
+		<div class="logo1">
+			<img src="assets/img/logo1.png">
+		</div>
+	<!--	<div class="title"><{$app_config.website_name}></div>-->
+		<div class="icon">
+			<ul>
+				<li><a href="<{spUrl c=main a=welcome}>" class="clearleft" target="center"><i class="iconfont">&#xe607; </i>首页</a></li>
+				<li><a href="javascript:" class="topback"><i class="iconfont">&#xe618; </i>后退</a></li>
+				<li><a href="#nogo" onclick="history.go(1)"><i class="iconfont">&#xe617; </i>前进</a></li>
+				<li><a href="#nogo" onclick="window.top.frames[3].location.reload();"><i class="iconfont">&#xe60d; </i>刷新</a></li>
+				<li><a href="<{spUrl c=main a=logout}>" target="_parent"><i class="iconfont">&#xe60b; </i>退出</a></li>
+				<li><a href="<{spUrl c=basic a=mypwd}>" target="center"><i class="iconfont">&#xe619; </i>修改个人资料</a></i></li>
+				<li style="padding-left:30px;">
+					<script language="javascript">   
+					    $(function(){   
+					        //setInterval("$('#currentTime').text(new Date().toLocalsString());",1000);
+					        nowtime = <{$smarty.now}>;
+					        setInterval(function(){
+					        	nowtime++;
+					            $("#currentTime").text(new Date(nowtime * 1000).toLocaleString());   
+					        },1000);
+					    });   
+					</script>
+					当前时间：<span id="currentTime"></span>
+				</li>
+			</ul>
+		</div>
+		<div class="user">
+			<ul>
+				<li><i>当前用户：</i> <b><{$smarty.session.sscrm_user.realname}></b></li>
+				<li><i>职位：</i><b><{$smarty.session.sscrm_user.dname}></b></li>
+			</ul>
+		</div>
+	</div>
+</body>
+</html>

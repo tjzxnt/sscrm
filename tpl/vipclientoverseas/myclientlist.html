@@ -1,0 +1,155 @@
+<{include file="header.html"}>
+
+<{include file="library/tipswindown.html"}>
+</head>
+<body>
+<table width="100%" height="100%" cellspacing="1" cellpadding="0" class="tablesl zxblockui">
+  <tr>
+    <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="46%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[大客户管理]-[我的海外客户]</td>
+              </tr>
+            </table></td>
+            <td width="54%">
+            <form method="GET">
+            <input type="hidden" name="c" value="vipclientoverseas"/>
+            <input type="hidden" name="a" value="myclientlist"/>
+            <table border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr>
+                 <td width="150">
+	                 <table width="88%" border="0" cellpadding="0" cellspacing="0">
+	                  <tr>
+	                  	<!-- 
+	                  	<td class="STYLE1"><div align="center">
+	                    	<select name="process_id" style="margin:0 2px;">
+		                    	<option value="">客户状态</option>
+		                    	<{foreach item=i key=k from=$process_rs}>
+		                    	<option value="<{$i.id}>" <{if $i.id == $process_id}>selected<{/if}>><{$i.pname}></option>
+		                    	<{/foreach}>
+		                    </select>
+	                    </div></td>
+	                     -->
+	                    <td class="STYLE1"><div align="center"><input type="text" name="searchkey" class="searchkeysval" value="<{$searchkey}>"></div></td>
+	                    <td class="STYLE1"><div align="top" style="margin-left:7px"><input type="image" value="" src="images/search.gif"></div></td>
+	                  </tr>
+	                </table>
+                </td>
+              </tr>
+            </table>
+            </form>
+            </td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+        <td><table class="zx_data_list" width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#b5d6e6">
+          <thead>
+          <tr>
+          	<!--
+            <td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF">
+            </td>
+            -->
+            <td width="2%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">序号</span></div></td>
+            <td width="8%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">公司名</span></div></td>
+            <td width="8%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">客户姓名 / 性别 / 电话</span></div></td>
+            <td width="8%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">意向国家 / 房源</span></div></td>
+            <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">创建人</span></div></td>
+            <td width="5%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">客户状态</span></div></td>
+            <td width="5%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">分配时间</span></div></td>
+            <td width="5%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">已可结佣？</span></div></td>
+			<td width="18%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">操作</span></div></td>
+          </tr>
+          </thead>
+          <tbody>
+          <{foreach item=i key=k from=$client_rs}>
+          <tr>
+            <td height="20" bgcolor="#FFFFFF">
+            	<div align="center" class="STYLE1">
+              		<div align="center"><{$k+1}></div>
+            	</div>
+            </td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.comname}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.realname}> / <{if $i.sex == 1}>男<{elseif $i.sex == 2}>女<{else}>未知<{/if}> / <{if $i.telphone}><{$i.telphone}><{else}>-<{/if}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.exp_country}> / <{if $i.listings}><{$i.listings}><{else}>-<{/if}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.realname_sales}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div align="center">
+            <{$i.pname}>
+            </div></td>
+            <td height="20" bgcolor="#FFFFFF"><div align="center">
+            <{$i.to_overseas_time|date_format:"%Y-%m-%d %H:%M"}>
+            </div></td>
+            <td height="20" bgcolor="#FFFFFF"><div align="center">
+            <{if $i.ispay == 2}>
+            <span class="zx_brown">是</span>
+            <{else}>
+            <span class="zx_red">否</span>
+            <{/if}>
+            </div></td>
+            <td bgcolor="#FFFFFF" class="listleft">
+            	<a href="<{spUrl c=vipclientoverseas a=viewmyoverseasclient id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>查看</a>
+            	<a href="<{spUrl c=vipclientoverseas a=clientrecordlist client_id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>回访反馈</a>
+            	<{if $i.isform}>
+            	<a href="<{spUrl c=vipclientoverseas a=clientpayview client_id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>查看订单</a>
+            	<{/if}>
+            	<a href="<{spUrl c=vipclientoverseas a=clientorderfundlist client_id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>款项记录</a>
+            	<{*
+            	<!-- 
+            	<{if $i.ishouse_create}>
+            	<a href="<{spUrl c=clientoverseas a=clienthousefundview client_id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>查看海外房款</a>
+	            	<{if $i.process_id == 3}>
+	            		<a href="<{spUrl c=clientoverseas a=clientfundviewlist client_id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>房款明细查看</a>
+	            	<{else}>
+	            		<a href="<{spUrl c=clientoverseas a=clientfundlist client_id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>房款明细查看/更新</a>
+	            	<{/if}>
+	            	<{if $i.allow_finish && $i.process_id == 2}>
+	            		<a href="<{spUrl c=clientoverseas a=clientfinish client_id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>该客户已完成？</a>
+	            	<{/if}>
+            	<{else}>
+            	<a href="<{spUrl c=clientoverseas a=clienthousefundform client_id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>登记海外房款</a>
+            	<{/if}>
+            	 -->
+            	*}>
+            </td>
+          </tr>
+          <{foreachelse}>
+			<tr>
+            	<td height="20" bgcolor="#FFFFFF" colspan="9"><div style="margin-left:7px; margin-top:10px">无匹配记录</div></td>
+			</tr>
+          <{/foreach}> 
+          </tbody>
+          <tfoot>
+          <tr height="50" bgcolor="#FFFFFF"><td colspan="9">&nbsp;</td></tr>
+          </tfoot>
+        </table></td>
+        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td height="35" background="images/tab_19.gif">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="35"><img src="images/tab_18.gif" width="12" height="35" /></td>
+        <td>
+        	<{include file="pager.html"}>
+		</td>
+        <td width="16"><img src="images/tab_20.gif" width="16" height="35" /></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</div>
+</body>
+<{include file="footer.html"}>

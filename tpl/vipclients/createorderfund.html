@@ -1,0 +1,137 @@
+<{include file="header.html"}>
+
+<{include file="library/accounting.html"}>
+
+<{include file="library/validator.html"}>
+
+<script>
+	function calculator1(){
+	   $real_pay = accounting.unformat($("#pay_standard").val());
+	   $("#pay_real").val(Math.round($real_pay));
+	   $("#pay_overdraft").val(0);
+	}
+	function calculator2(){
+		$overdraft_pay = accounting.unformat($("#pay_standard").val()) - accounting.unformat($("#pay_real").val());
+		$("#pay_overdraft").val(Math.round($overdraft_pay));
+	}
+	function calculator3(){
+		$real_pay = accounting.unformat($("#pay_standard").val()) - accounting.unformat($("#pay_overdraft").val());
+		$("#pay_real").val(Math.round($real_pay));
+	}
+	$(function(){
+		$("#pay_standard").keyup(function(){
+			calculator1();
+		}).bind("paste", function(e){
+			e.preventDefault();
+		})
+		$("#pay_real").keyup(function(){
+			calculator2();
+		}).bind("paste", function(e){
+			e.preventDefault();
+		});
+		$("#pay_overdraft").keyup(function(){
+			calculator3();
+		}).bind("paste", function(e){
+			e.preventDefault();
+		});
+	});
+</script>
+
+</head>
+<body>
+<table width="100%" height="100%" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="80%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[大客户管理]-[我添加的客户]-[<{$client_rs.comname}>]-[房款查看/更新]</td>
+              </tr>
+            </table></td>
+            <td width="20%"><table border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr>
+                <td width="60"><table width="90%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+					<td class="STYLE1"><div align="center"><a href="#nogo" onClick="javascript:history.go(-1)"><img src="images/back.png" width="14" height="14" align="top" /> 返回</a></div></td>
+                    <td class="STYLE1"><div align="center"></div></td>
+                  </tr>
+                </table></td>
+              </tr>
+            </table></td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td>
+	    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	      <tr>
+	        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+	        <td>
+	        	<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#b5d6e6">
+	        		<tr height="50" bgcolor="#FFFFFF">
+	        			<td>
+	        			<form class="form" method="post" action="<{$saveurl}>">
+	        				<input type="hidden" name="isAjax" value="0" />
+	        				<input type="hidden" name="client_id" value="<{$client_id}>" />
+                            <fieldset>
+                                <legend>订单款项</legend>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>款项类型</label> 
+                                    <input type="text" name="fund_type" id="fund_type" value="<{$client_rs.fund_type}>"/>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>应交数</label> 
+                                    <input class="account_input" name="pay_standard" type="text" id="pay_standard" value="<{$client_rs.pay_standard}>"/>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>应交日期</label> 
+                                    <input class="posttime" name="payabletime" type="text" id="payabletime" value="<{if $client_rs.payabletime}><{$client_rs.payabletime|date_format:'%Y-%m-%d'}><{/if}>"/>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>到账日期</label> 
+                                    <input class="posttime" name="arrivaltime" type="text" id="arrivaltime" value="<{if $client_rs.arrivaltime}><{$client_rs.arrivaltime|date_format:'%Y-%m-%d'}><{/if}>"/>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>实交数</label> 
+                                    <input class="account_input" name="pay_real" type="text" id="pay_real" value="<{$client_rs.pay_real}>"/>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">欠款</label> 
+                                    <input class="account_input" name="pay_overdraft" type="text" id="pay_overdraft" value="<{$client_rs.pay_overdraft}>"/>
+                                </div>
+                                <div class="rowElem">
+                                	<label class="label">&nbsp;</label>
+                                    <button type="submit" id="submit-go">Submit</button>
+                                    <span class="formwarning">(请在到账后填写此单, 保存后无法修改)</span>
+                                </div>
+                            </fieldset>
+                        </form>
+						</td>
+	        		</tr>
+	        	</table>
+	        </td>
+	        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+	      </tr>
+	    </table>
+    </td>
+  </tr>
+  <tr>
+    <td height="35" background="images/tab_19.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="35"><img src="images/tab_18.gif" width="12" height="35" /></td>
+        <td>&nbsp;</td>
+        <td width="16"><img src="images/tab_20.gif" width="16" height="35" /></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</div>
+</body>
+<{include file="footer.html"}>
