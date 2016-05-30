@@ -2,10 +2,10 @@
 $exchange_config = array (
   'toUSD' => 
   array (
-    'exchange' => '0.1533',
-    'time' => 1463535071,
-    'formattime' => '2016-05-18 09:31:11',
-    'userid' => '35',
+    'exchange' => '0.1524',
+    'time' => 1464251264,
+    'formattime' => '2016-05-26 16:27:44',
+    'userid' => '33',
   ),
   'toEUR' => 
   array (

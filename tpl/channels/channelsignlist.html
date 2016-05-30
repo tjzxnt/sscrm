@@ -5,7 +5,7 @@
   <tr>
     <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
-        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td width="12" height="40"><img src="images/tab_03.gif" width="12" height="30" /></td>
         <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td width="46%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -84,17 +84,22 @@
             <td width="9%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">渠道机构</span></div></td>
             <td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">级别</span></div></td>
             <td width="8%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">渠道类型</span></div></td>
-            <td width="8%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">主联系人</span></div></td>
-            <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">未签约天数</span></div></td>
-            <td width="10%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">有效期</span></div></td>
-            <{*
-            <td width="6%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">指定接待</span></div></td>
-            *}>
+            <td width="8%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">对接人</span></div></td>
             <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">创建人</span></div></td>
             <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">签约人</span></div></td>
             <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">维护人</span></div></td>
-            <td width="6%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">添加时间</span></div></td>
+            <td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">维护天数</span></div></td>
+            <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">未签约天数</span></div></td>
+            <{*
+            <td width="10%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">有效期</span></div></td>
+            *}>
+            <{*
+            <td width="6%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">指定接待</span></div></td>
+            *}>
+            <td width="6%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">创建时间</span></div></td>
+            <{*
             <td width="6%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">最近沟通时间</span></div></td>
+            *}>
             <{*
 			<td width="12%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">操作</span></div></td>
 			*}>
@@ -117,6 +122,10 @@
             	<{/if}>
             </span></div></td>
             <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.main_contact}> / <{$i.main_tel}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.c_realname}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.f_realname}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.m_realname}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1"><{php}>echo max(ceil((time()-$this->_tpl_vars['i']['maintenance_time'])/(24*3600)), 0);<{/php}></span></div></td>
             <td height="20" bgcolor="#FFFFFF"><div align="center">
             	<{if $i.issign}>
             	<span class="STYLE1 zx_brown">已签约</span>
@@ -124,6 +133,7 @@
             	<span class="STYLE1"><{$i.overdate}></span>
             	<{/if}>
             </div></td>
+            <{*
             <td height="20" bgcolor="#FFFFFF"><div align="center">
             	<{if $i.issign}>
             	<{$i.sign_startdate}>
@@ -133,14 +143,15 @@
             	-
             	<{/if}>
             </div></td>
+            *}>
             <{*
             <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.to_sale_name}></span></div></td>
             *}>
-            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.c_realname}></span></div></td>
-            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.f_realname}></span></div></td>
-            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.m_realname}></span></div></td>
+            
             <td height="20" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1"><{$i.createtime|date_format:"%Y-%m-%d %H:%M"}></span></div></td>
+            <{*
             <td height="20" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1"><{if $i.recordtime}><{$i.recordtime|date_format:"%Y-%m-%d %H:%M"}><{else}>-<{/if}></span></div></td>
+            *}>
             <{*
             <td bgcolor="#FFFFFF" class="listleft">
             	<a href="<{spUrl c=channels a=channelrecordlist channelid=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>沟通记录</a>

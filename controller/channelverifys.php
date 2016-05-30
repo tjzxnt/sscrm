@@ -43,6 +43,17 @@ class channelverifys extends spController {
 			$condition .= " and crm_channel.from_id = $from_id";
 			$this->from_id = $from_id;
 		}
+		if($isovertime = intval($postdate['isovertime'])){
+			switch ($isovertime){
+				case "1":
+					$condition .= " and crm_channel.isoverdate = 0";
+					break;
+				case "2":
+					$condition .= " and crm_channel.isoverdate = 1";
+					break;
+			}
+			$this->isovertime = $isovertime;
+		}
 		$sort = 'crm_channel.createtime desc';
 		if($postdate['sort'].'a' !== 'a'){
 			switch ($postdate['sort']){
@@ -59,7 +70,7 @@ class channelverifys extends spController {
 				break;
 			}
 		}
-		if($channel_rs = $obj_channel->join("crm_user as cuser", "cuser.id = crm_channel.create_id")->join("crm_user as fuser", "fuser.id = crm_channel.from_id")->join("crm_user as muser", "muser.id = crm_channel.maintenance_id")->join("crm_user", "crm_user.id = crm_channel.maintenance_id")->spPager($page, 20)->findAll($condition, $sort, "crm_channel.*, cuser.realname as c_realname, fuser.realname as f_realname, muser.realname as m_realname, IF(crm_channel.issign > 0, 0, datediff(curdate(), IF(crm_channel.sign_enddate > '0000-00-00', crm_channel.sign_enddate, FROM_UNIXTIME(crm_channel.createtime, '%Y-%m-%d')))) as overdate")){
+		if($channel_rs = $obj_channel->join("crm_channel_level")->join("crm_user as cuser", "cuser.id = crm_channel.create_id")->join("crm_user as fuser", "fuser.id = crm_channel.from_id")->join("crm_user as muser", "muser.id = crm_channel.maintenance_id")->join("crm_user", "crm_user.id = crm_channel.maintenance_id")->spPager($page, 20)->findAll($condition, $sort, "crm_channel.*, crm_channel_level.name as level_name, cuser.realname as c_realname, fuser.realname as f_realname, muser.realname as m_realname, IF(crm_channel.issign > 0, 0, datediff(curdate(), IF(crm_channel.sign_enddate > '0000-00-00', crm_channel.sign_enddate, FROM_UNIXTIME(crm_channel.createtime, '%Y-%m-%d')))) as overdate")){
 			foreach($channel_rs as $key => $val){
 				if($val["typeid"])
 					$channel_rs[$key]["typename"] = $obj_type->getname($val["typeid"]);
@@ -72,7 +83,7 @@ class channelverifys extends spController {
 		$this->type_rs = $obj_type->getlist();
 		$this->searchkey = $postdate['searchkey'];
 		$this->user_rs = $user_rs;
-		$this->url = spUrl('channelverifys', 'verifychannellist', array("searchkey"=>$this->searchkey, "typeid"=>$this->typeid, "from_id"=>$from_id, "main_id"=>$main_id, "sort"=>$this->sort,"inuse"=>$this->inuse));
+		$this->url = spUrl('channelverifys', 'verifychannellist', array("searchkey"=>$this->searchkey, "typeid"=>$this->typeid, "isovertime"=>$this->isovertime, "from_id"=>$from_id, "main_id"=>$main_id, "sort"=>$this->sort,"inuse"=>$this->inuse));
 	}
 	
 	public function verifychannelinfo(){

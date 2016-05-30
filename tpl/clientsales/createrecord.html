@@ -10,13 +10,13 @@
   <tr>
     <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
-        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td width="12" height="40"><img src="images/tab_03.gif" width="12" height="30" /></td>
         <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td width="80%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
               <tr>
                 <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
-                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[客户管理]-[我跟进的客户]-[<{$client_rs.realname}> / <{if $client_rs.sex == 1}>男<{elseif $client_rs.sex == 2}>女<{else}>未知<{/if}> / <{if $client_rs.telphone}><{$client_rs.telphone}><{else}>-<{/if}></span><{if $client_rs.isauto_touser}><span class="zx_red">(自动分配)</span><{/if}>]-[回访反馈]</td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[客户管理]-[我跟进的客户]-[<{$client_rs.realname}> / <{if $client_rs.sex == 1}>男<{elseif $client_rs.sex == 2}>女<{else}>未知<{/if}> / <{if $client_rs.telphone}><{$client_rs.telphone}><{else}>-<{/if}></span><{if $client_rs.isauto_touser}><span class="zx_red">(自动分配)</span><{/if}>]-[跟踪记录]</td>
               </tr>
             </table></td>
             <td width="20%"><table border="0" align="right" cellpadding="0" cellspacing="0">
@@ -126,7 +126,7 @@
                                 <legend>回访反馈记录</legend>
                                 <div class="rowElem">
                                     <label class="label"><span class="input_required">*</span>问题反馈</label> 
-                                    <textarea name="content" rows="5" cols="50"><{$record_rs.content}></textarea>
+                                    <textarea name="content" rows="30" cols="100"><{$record_rs.content}></textarea>
                                 </div>
                                 <{*
                                 <div class="rowElem">

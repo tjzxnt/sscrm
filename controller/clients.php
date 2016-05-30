@@ -170,8 +170,6 @@ class clients extends spController {
 							break;
 						}
 					}
-					if(spClass("vipclient")->find(array("telphone"=>$data['telphone'])))
-						throw new Exception("该电话号码已在大客户中存在，无法再次录入系统");
 					if($obj_client->find(array("telphone"=>$data['telphone'])))
 						throw new Exception("该电话号码已存在，无法再次录入系统");
 					if($ext_field_rs){
@@ -241,6 +239,8 @@ class clients extends spController {
 					if($origin_rs["isowner"]){
 						if(!$data["user_owner_id"] = intval($postdate["user_owner_id"]))
 							throw new Exception("请选择客户来源人");
+						if($data["user_owner_id"] == $_SESSION["sscrm_user"]["id"])
+							throw new Exception("客户来源人不能选择自己");
 						if(!$user_own_rs = $obj_user->getCommonUserinfo($data["user_owner_id"]))
 							throw new Exception("客户来源不正确，找不到该客户来源");
 						if($origin_rs["isowndepart"]){
@@ -304,11 +304,21 @@ class clients extends spController {
 					$obj_client->getDb()->beginTrans();
 					if($this->ass_rs){
 						$obj_int = spClass("client_intention");
-						$ass_field = $this->ass_rs["fields"];
-						if(!$data[$ass_field])
-							throw new Exception($this->ass_rs["fieldnull"]);
-						if(!$int_rs = $obj_int->checkintention($this->ass_rs["type"], $data[$ass_field], $data['telphone']))
-							throw new Exception($this->ass_rs["checkerror"]);
+						if($this->ass_rs["fields"] == "SEARCHBYTEL"){
+							$int_temp_rs = $obj_int->getintention($this->ass_rs["type"], $data["telphone"]);
+							$ass_field = intval($int_temp_rs["create_id"]);
+						}else
+							$ass_field = $this->ass_rs["fields"];
+						if(!$ass_field){
+							if($this->ass_rs["ismustass"])
+								throw new Exception($this->ass_rs["fieldnull"]);
+						}
+						eval("\$ass_createid = $ass_field;");
+						if(!$int_rs = $obj_int->checkintention($this->ass_rs["type"], $ass_createid, $data)){
+							if($this->ass_rs["ismustass"])
+								throw new Exception($this->ass_rs["checkerror"].$data[$ass_field]);
+						}
+						//throw new Exception("技术部调试中，请稍后".$ass_createid."x");
 					}
 					if(!$id = $obj_client->create($data))
 						throw new Exception("未知错误，添加失败");
@@ -345,8 +355,17 @@ class clients extends spController {
 					exit();
 				}
 			}
-			if($origin_rs["isowner"])
-				$this->user_group_rs = $obj_user->getlistGroupDepart($origin_rs["isowndepart"], $origin_rs["need_attr_str"]);
+			
+			
+			if($origin_rs["isowner"]){
+				$groupdepart_condition = "crm_user.id <> {$_SESSION["sscrm_user"]["id"]}";
+				if($origin_rs["isowndepart"])
+					$groupdepart_condition .= " and crm_user.depart_id in({$origin_rs["isowndepart"]})";
+				if($origin_rs["need_attr_str"])
+					$groupdepart_condition .= " and find_in_set('{$origin_rs["need_attr_str"]}', crm_user.identity_attr)";
+				$this->user_group_rs = $obj_user->getUserGroupDepart_prep($groupdepart_condition);
+				unset($groupdepart_condition);
+			}
 			if($origin_rs["isacter"])
 				$this->user_pread_group_rs = $obj_user->getlistGroupDepart(2, "preadclient");
 			if($origin_rs["isteluser"])

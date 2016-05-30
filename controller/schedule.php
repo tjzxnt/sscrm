@@ -97,7 +97,7 @@ class schedule extends spController {
 				throw new Exception("参数丢失");
 			$obj_plan = spClass("client_plan");
 			$obj_user = spClass("user");
-			if(!$plan_rs = $obj_plan->find(array("id"=>$id)))
+			if(!$plan_rs = $obj_plan->join("crm_user")->find(array("crm_client_plan.id"=>$id), null, "crm_client_plan.*, crm_user.realname"))
 				throw new Exception("找不到该日程，可能已被删除");
 			$user_rs = $obj_user->find("find_in_set(id, '{$plan_rs["main_id"]}')", null, "group_concat(realname) as realname_main");
 			$plan_rs["receiveUser"] = $user_rs["realname_main"];

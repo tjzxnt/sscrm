@@ -5,6 +5,10 @@
 		<td class="content"><{$plan_rs.starttime|date_format:"%Y-%m-%d %H:%M"}> ~ <{$plan_rs.endtime|date_format:"%Y-%m-%d %H:%M"}></td>
 	</tr>
 	<tr>
+		<td class="title">创建人：</td>
+		<td class="content"><{$plan_rs.realname}></td>
+	</tr>
+	<tr>
 		<td class="title">参与人：</td>
 		<td class="content"><{$plan_rs.receiveUser}></td>
 	</tr>
@@ -69,6 +73,7 @@
 				</script>
 	           	<{/if}>
 	           	<{if $plan_rs.create_id == $smarty.session.sscrm_user.id && $plan_rs.typeid eq '1'}>
+	           	<a href="<{spUrl c=schedule a=modifyplan id=$plan_rs.id}>" class="zx_margin_left_smid zx_weight zx_underline zx_italic zx_font_normal">修改</a>
            		<a href="javascript:" class="isdel zx_red zx_margin_left_smid zx_weight zx_underline zx_italic zx_font_normal">立即删除</a>
            		<script>
 				$(function(){

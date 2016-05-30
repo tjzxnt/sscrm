@@ -41,18 +41,8 @@
 					'minlength' => 2,
 					'maxlength' => 100
 				),
-				'realname' => array(
-					'required' => true,
-					'minlength' => 2,
-					'maxlength' => 20
-				),
-				'tel_location' => array(
-					'maxlength' => 10
-				),
-				'telphone' => array(
-					'required' => true,
-					'minlength' => 8,
-					'maxlength' => 14
+				"visit_time" => array(
+					"required" => true
 				),
 				'exp_country' => array(
 					'minlength' => 2,
@@ -72,18 +62,8 @@
 					'minlength' => '公司名不能少于2个字符',
 					'maxlength' => '公司名不能大于20字符'
 				),
-				'realname' => array(
-					'required' => '客户名不能为空',
-					'minlength' => '客户名不能少于2个字符',
-					'maxlength' => '客户名不能大于20字符'
-				),
-				'tel_location' => array(
-					'maxlength' => '电话所在地不能超过10字符'
-				),
-				'telphone' => array(
-					'required' => '客户电话不能为空',
-					'minlength' => '请输入8~14位客户电话',
-					'maxlength' => '请输入8~14位客户电话'
+				"visit_time" => array(
+					"required" => '首次面资时间必填'
 				),
 				'exp_country' => array(
 					'minlength' => '意向国家不能少于2个字符',
@@ -299,7 +279,7 @@
 		}
 
 		public function getMyClientById($client_id){
-			$rs = $this->join("crm_credential")->find(array("crm_vip_client.id"=>$client_id, "crm_vip_client.create_id"=>$_SESSION["sscrm_user"]["id"]), null, "crm_vip_client.*, crm_credential.cname as credential_name");
+			$rs = $this->join("crm_vip_client_manage", "crm_vip_client_manage.vip_client_id = crm_vip_client.id and crm_vip_client_manage.ismain = 1")->find(array("crm_vip_client.id"=>$client_id, "crm_vip_client.create_id"=>$_SESSION["sscrm_user"]["id"]), null, "crm_vip_client.*, crm_vip_client_manage.realname, crm_vip_client_manage.sex, crm_vip_client_manage.managepost, crm_vip_client_manage.tel_location, crm_vip_client_manage.telphone, crm_vip_client_manage.email, crm_vip_client_manage.wechat");
 			if($rs["exp_country_id"]){
 				$obj_country = spClass("country");
 				$rs["exp_country"] = $obj_country->getname($rs["exp_country_id"]);
@@ -308,7 +288,7 @@
 		}
 		
 		public function getClientById($client_id){
-			$rs = $this->join("crm_credential")->find(array("crm_vip_client.id"=>$client_id), null, "crm_vip_client.*, crm_credential.cname as credential_name");
+			$rs = $this->join("crm_vip_client_manage", "crm_vip_client_manage.vip_client_id = crm_vip_client.id and crm_vip_client_manage.ismain = 1")->find(array("crm_vip_client.id"=>$client_id), null, "crm_vip_client.*, crm_vip_client_manage.realname, crm_vip_client_manage.sex, crm_vip_client_manage.managepost, crm_vip_client_manage.tel_location, crm_vip_client_manage.telphone, crm_vip_client_manage.email, crm_vip_client_manage.wechat");
 			if($rs["exp_country_id"]){
 				$obj_country = spClass("country");
 				$rs["exp_country"] = $obj_country->getname($rs["exp_country_id"]);
@@ -318,12 +298,40 @@
 		
 		public function getOverSeasClientById($client_id){
 			//$rs = $this->join("crm_credential")->join("crm_user as sale_user", "sale_user.id = crm_client.user_sales_id")->join("crm_user as over_user", "over_user.id = crm_client.user_overseas_id", "left")->find(array("crm_client.id"=>$client_id), null, "crm_client.*, crm_credential.cname as credential_name, sale_user.realname as realname_sale");
-			$rs = $this->join("crm_credential")->join("crm_user")->find(array("crm_vip_client.id"=>$client_id, "is_protocol"=>1), null, "crm_vip_client.*, crm_credential.cname as credential_name, crm_user.realname as realname_sale");
+			$rs = $this->join("crm_vip_client_manage", "crm_vip_client_manage.vip_client_id = crm_vip_client.id and crm_vip_client_manage.ismain = 1")->join("crm_user")->find(array("crm_vip_client.id"=>$client_id, "is_protocol"=>1), null, "crm_vip_client.*, crm_vip_client_manage.realname, crm_vip_client_manage.sex, crm_vip_client_manage.managepost, crm_vip_client_manage.tel_location, crm_vip_client_manage.telphone, crm_vip_client_manage.email, crm_vip_client_manage.wechat, crm_user.realname as realname_sale");
 			if($rs["exp_country_id"]){
 				$obj_country = spClass("country");
 				$rs["exp_country"] = $obj_country->getname($rs["exp_country_id"]);
 			}
 			return $rs;
+		}
+		
+		//回访超时,插入记录
+		public function record_overtime(){
+			$sql = "SELECT * FROM
+					(
+						SELECT crm_vip_client.id, crm_vip_client.create_id, IF(maxrecord.acttime, maxrecord.acttime, crm_vip_client.createtime) as recordtime FROM crm_vip_client
+						LEFT JOIN
+						(
+							SELECT crm_vip_client_record.client_id, MAX(crm_vip_client_record.acttime) as acttime FROM crm_vip_client_record GROUP BY crm_vip_client_record.client_id
+						) as maxrecord
+						ON
+						maxrecord.client_id = crm_vip_client.id
+						where crm_vip_client.is_protocol = 0
+						order by crm_vip_client.id asc
+					) as client_vip_recordtime
+					where client_vip_recordtime.id not in(
+						SELECT client_id FROM crm_vip_client_overtime WHERE endtime = 0
+					)
+					and
+					client_vip_recordtime.recordtime <=  unix_timestamp(now()) -  60*60*24*3
+					";
+			if($overtime_rs = $this->findSql($sql)){
+				$obj_overtime = spClass("vipclient_overtime");
+				foreach($overtime_rs as $val){
+					$obj_overtime->addovertime($val);
+				}
+			}
 		}
 	}
 ?>

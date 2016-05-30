@@ -7,7 +7,7 @@
   <tr>
     <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
-        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td width="12" height="40"><img src="images/tab_03.gif" width="12" height="30" /></td>
         <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td width="46%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -27,7 +27,7 @@
 	                  <tr>
 	                  	<td width="60"><table width="90%" border="0" cellpadding="0" cellspacing="0">
 		                  <tr>
-		                    <td class="STYLE1"><div align="center"><a href="#" class="tipwindow" tiptitle="添加客户" tipurl="<{spUrl c=vipclients a=prepcreate}>" tipwidth="300" tipheight="100" style="display:block"><img src="images/add.gif" width="48" height="19" align="absmiddle" /></a></div></td>
+		                    <td class="STYLE1"><div align="center"><a href="#" class="tipwindow" tiptitle="添加客户" tipurl="<{spUrl c=vipclients a=prepcreate}>" tipwidth="300" tipheight="100" style="display:block"><img src="images/add.gif" width="65" height="19" align="absmiddle" /></a></div></td>
 		                    <td class="STYLE1"><div align="center"></div></td>
 		                  </tr>
 		                </table></td>
@@ -103,15 +103,20 @@
             -->
             <td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">序号</span></div></td>
             <td width="8%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">公司名</span></div></td>
-            <td width="8%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">客户姓名 / 性别 / 电话</span></div></td>
+            <td width="8%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">对接人姓名 / 性别 / 电话</span></div></td>
             <td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">级别<img src="images/edt.gif" width="16" height="16" align="absmiddle"/></span></div></td>
-            <td width="10%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">客户来源</span></div></td>
+            <td width="6%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">客户来源</span></div></td>
+            <{*
             <td width="6%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">所属渠道</span></div></td>
-            <td width="6%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">国家 / 需求</span></div></td>
+            *}>
+            <td width="6%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">国家 / 项目推荐</span></div></td>
             <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">款项状态</span></div></td>
             <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">客户状态</span></div></td>
-            <td width="5%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">添加时间</span></div></td>
-			<td width="12%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">操作</span></div></td>			
+            <td width="5%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">创建时间</span></div></td>
+            <td width="5%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">首次面资时间</span></div></td>
+            <td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">跟进天数</span></div></td>
+            <td width="5%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">已面资轮数<img src="images/edt.gif" width="16" height="16" align="absmiddle"/></span></div></td>
+			<td width="18%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">操作</span></div></td>			
           </tr>
           </thead>
           <tbody>
@@ -122,11 +127,13 @@
               		<div align="center"><{$k+1}></div>
             	</div>
             </td>
-            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.comname}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1 <{if $i.fromtime > 0}>zx_red<{/if}>"><{$i.comname}></span></div></td>
             <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{if $i.realname}><{$i.realname}> / <{if $i.sex == 1}>男<{elseif $i.sex == 2}>女<{else}>未知<{/if}> / <{if $i.telphone}><{$i.telphone}><{else}>-<{/if}><{else}>-<{/if}><{if $i.process_id == 2}><span class="zx_brown">(已于 <{$i.to_overseas_time|date_format:"%Y-%m-%d %H:%M"}> 转到海外部 [<{$i.realname_overseas}>])</span><{/if}></span></div></td>
             <td height="20" bgcolor="#FFFFFF"><div class="listleft"><a href="<{spUrl c=vipclients a=modify_level client_id=$i.id}>" class="zxblock td_edit"><{$i.level_name}><img src="images/edt.gif" width="16" height="16" align="absmiddle"/></a></div></td>
             <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.oname}></span></div></td>
+            <{*
             <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{if $i.mechanism}><{$i.mechanism}><{else}>-<{/if}></span></div></td>
+            *}>
             <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{if $i.ctname}><{$i.ctname}><{else}>-<{/if}> / <{if $i.demand}><{$i.demand}><{else}>-<{/if}></span></div></td>
             <td height="20" bgcolor="#FFFFFF"><div align="center">
             <{if $i.ispay eq '0'}>
@@ -143,13 +150,18 @@
             <{$i.pname}>
             </div></td>
             <td height="20" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1"><{$i.createtime|date_format:"%Y-%m-%d %H:%M"}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1"><{$i.visit_time|date_format:"%Y-%m-%d %H:%M"}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1"><{if $i.visit_time}><{php}>echo max(ceil((time()-$this->_tpl_vars['i']['visit_time'])/(24*3600)), 0);<{/php}><{else}>-<{/if}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><a href="<{spUrl c=vipclients a=modify_round client_id=$i.id}>" class="zxblock td_edit"><{$i.rounds}><img src="images/edt.gif" width="16" height="16" align="absmiddle"/></a></div></td>
             <td bgcolor="#FFFFFF" class="listleft">
             	<{if $i.is_protocol}>
             	<a href="<{spUrl c=vipclients a=viewclient id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>查看</a>
             	<{else}>
             	<a href="<{spUrl c=vipclients a=modify id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>查看/更新</a>
             	<{/if}>
-            	<a href="<{spUrl c=vipclients a=clientrecordlist client_id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>回访反馈(<span <{if $i.record_count eq '0'}>class="zx_red zx_weight"<{/if}>><{$i.record_count}></span>)</a>
+            	<a href="<{spUrl c=vipclients a=managelist client_id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>对接人管理</a>
+            	<a href="<{spUrl c=vipclients a=clientrecordlist client_id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>跟踪记录(<span <{if $i.record_count eq '0'}>class="zx_red zx_weight"<{/if}>><{$i.record_count}></span>)</a>
+            	<a href="<{spUrl c=vipclients a=odlist id=$i.id}>" <{if $i.fromtime > 0}>class="zx_red"<{/if}>><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>查看过期(<{$i.overtime_count}>)</a>
             	<{if $i.ispay eq '0'}>
 	            	<{if !$i.is_protocol && $i.exp_country_id && $i.demand && $i.visit_time}>
 	            	<a href="<{spUrl c=vipclients a=protocolform client_id=$i.id}>" onclick="return confirm('确定添加协议吗?添加后不可修改')"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>添加协议</a>
@@ -169,12 +181,12 @@
           </tr>
           <{foreachelse}>
 			<tr>
-            	<td height="20" bgcolor="#FFFFFF" colspan="11"><div style="margin-left:7px; margin-top:10px">无匹配记录</div></td>
+            	<td height="20" bgcolor="#FFFFFF" colspan="13"><div style="margin-left:7px; margin-top:10px">无匹配记录</div></td>
 			</tr>
           <{/foreach}> 
           </tbody>
           <tfoot>
-          <tr height="50" bgcolor="#FFFFFF"><td colspan="11">&nbsp;</td></tr>
+          <tr height="50" bgcolor="#FFFFFF"><td colspan="13">&nbsp;</td></tr>
           </tfoot>
         </table></td>
         <td width="8" background="images/tab_15.gif">&nbsp;</td>

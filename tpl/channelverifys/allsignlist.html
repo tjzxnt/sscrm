@@ -5,7 +5,7 @@
   <tr>
     <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
-        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td width="12" height="40"><img src="images/tab_03.gif" width="12" height="30" /></td>
         <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td width="46%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -93,7 +93,7 @@
             	</div>
             </td>
             <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.realname}></span></div></td>
-            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.mechanism}> / <{$i.main_contact}> <{if $showtel && $$i.main_tel}><{$i.main_tel}><{/if}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><a href="<{$clisturl}>&searchkey=<{$i.main_tel}>" <{if !$clisturl}>onclick="return false"<{/if}>><span class="STYLE1"><{$i.mechanism}> / <{$i.main_contact}> <{if $showtel && $i.main_tel}><{$i.main_tel}><{/if}></span></a></div></td>
             <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.cc_realname}></span></div></td>
             <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.cm_realname}></span></div></td>
             <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">

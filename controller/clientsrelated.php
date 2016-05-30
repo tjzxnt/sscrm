@@ -24,6 +24,7 @@ class clientsrelated extends spController {
 		$obj_record = spClass("client_record");
 		$obj_level = spClass("client_level");
 		$obj_comactive = spClass('comactive');
+		$obj_int = spClass("client_intention");
 		$postdate = $this->spArgs();
 		$page = intval(max($postdate['page'], 1));
 		$user_id = $_SESSION["sscrm_user"]["id"];
@@ -68,7 +69,7 @@ class clientsrelated extends spController {
 			$condition .= " and crm_client.comactive_id = {$comactive_id}";
 			$this->comactive_id = $comactive_id;
 		}
-		if($client_rs = $obj_client->join("crm_client_level")->join("crm_user", "crm_user.id = crm_client.user_sales_id")->join("crm_client_process", "crm_client_process.id = crm_client.process_id")->spPager($page, 20)->findAll($condition, 'crm_client.createtime desc', "crm_client.*, crm_client_level.name as level_name, crm_user.realname as realname_sale, crm_client_process.pname")){
+		if($client_rs = $obj_client->join("crm_client_seehouse")->join("crm_client_level")->join("crm_user", "crm_user.id = crm_client.user_sales_id")->join("crm_client_process", "crm_client_process.id = crm_client.process_id")->spPager($page, 20)->findAll($condition, 'crm_client.createtime desc', "crm_client.*, crm_client_seehouse.see_status, crm_client_level.name as level_name, crm_user.realname as realname_sale, crm_client_process.pname")){
 			foreach($client_rs as $key => $val){
 				if($val["sourcetype"] == 1){
 					$client_rs[$key]["oname"] = "渠道来源";
@@ -80,6 +81,9 @@ class clientsrelated extends spController {
 					$client_rs[$key]["ctname"] = $obj_country->getname($val["exp_country_id"]);
 				}
 				$client_rs[$key]["record_count"] = $obj_record->getCountById($val["id"]);
+				if($int_rs = $obj_int->find(array("client_id"=>$val["id"]), null, "createtime")){
+					$client_rs[$key]["int_createtime"] = $int_rs["createtime"];
+				}
 			}
 			$this->client_rs = $client_rs;
 		}

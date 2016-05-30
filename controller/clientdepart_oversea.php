@@ -9,6 +9,8 @@ class clientdepart_oversea extends spController {
 			//if(!in_array("oversea_viewallclient", $_SESSION["sscrm_user"]["auth_mark"]))
 			if($_SESSION["sscrm_user"]["depart_id"] != 4 || !$_SESSION["sscrm_user"]["isdirector"])
 				throw new Exception("您无权查看该页面");
+			$this->controller = "clientdepart_oversea";
+			$this->clisturl = spUrl($this->controller, "clientlist");
 		}catch(Exception $e){
 			$backurl = spUrl("main", "welcome");
 			$this->redirect($backurl, $e->getMessage());
@@ -30,30 +32,14 @@ class clientdepart_oversea extends spController {
 		$obj_department = spClass('department');
 		$obj_sep = spClass('department_sep');
 		$obj_comactive = spClass('comactive');
+		$obj_int = spClass("client_intention");
+		$obj_intrecord = spClass("client_intention_record");
 		$postdate = $this->spArgs();
 		$page = intval(max($postdate['page'], 1));
 		$user_id = $_SESSION["sscrm_user"]["id"];
 		$depart_id = 3;
 		$condition = $user_condition = "crm_user.depart_id = $depart_id";
-		try {
-			$depart_rs = $obj_department->getinfoById($depart_id);
-			$extcondition = "";
-			if($depart_rs["is_sep"]){
-				if(!$sep_id = $_SESSION["sscrm_user"]["depart_sep_id"])
-					throw new Exception("您尚未分配到".$depart_rs["dname"]."下的所在组，请尝试重新登录");
-				if(!$sep_rs = $obj_sep->find(array("depart_id"=>$depart_id, "id"=>$sep_id)))
-					throw new Exception("您所在的组不正确，请尝试重新登录");
-				$this->sep_name = "(".$sep_rs["sep_name"].")";
-				$extcondition = " and crm_user.depart_sep_id = $sep_id";
-			}
-		}catch(Exception $e){
-			$this->redirect(spUrl("main", "welcome"), $e->getMessage());
-			exit();
-		}
-		if($extcondition){
-			$user_condition .= $extcondition;
-			$condition .= $extcondition;
-		}
+		$condition .= " and crm_client.isdel = 0";
 		$user_rs = $obj_user->getUser_prep($user_condition);
 		/*
 		$relative_array = $obj_user->get_relative_array();
@@ -110,6 +96,17 @@ class clientdepart_oversea extends spController {
 			$condition .= " and crm_client.comactive_id = {$comactive_id}";
 			$this->comactive_id = $comactive_id;
 		}
+		if($isovertime = intval($postdate['isovertime'])){
+			switch ($isovertime){
+				case "1":
+					$condition .= " and crm_client.isoverdate = 0";
+				break;
+				case "2":
+					$condition .= " and crm_client.isoverdate = 1";
+				break;
+			}
+			$this->isovertime = $isovertime;
+		}
 		$sort = 'crm_client.createtime desc';
 		if($postdate['sort'].'a' !== 'a'){
 			switch ($postdate['sort']){
@@ -133,8 +130,11 @@ class clientdepart_oversea extends spController {
 		if($client_rs = $obj_client
 			->join("crm_client_level")
 			->join("crm_user", "crm_user.id = crm_client.user_sales_id")
-			->join("crm_client_process", "crm_client_process.id = crm_client.process_id", "left")
-			->spPager($page, 20)->findAll($condition, $sort, "crm_client.*, crm_client_level.name as level_name, crm_user.realname as realname_sale, crm_client_process.pname, IF(crm_client.ispay = 0, datediff(curdate(), FROM_UNIXTIME(crm_client.overdatestart, '%Y-%m-%d')), 0) as overdate")){
+			->join("crm_client_seehouse")
+			->join("crm_client_overtime", "crm_client_overtime.client_id = crm_client.id and crm_client_overtime.endtime = 0", "left")
+			->join("crm_client_process", "crm_client_process.id = crm_client.process_id and crm_client.process_id > 0", "left")
+			->join("crm_client_plan", "crm_client.id = crm_client_plan.client_id and crm_client_plan.typeid = 2 and crm_client_plan.isfinish = 0 and crm_client_plan.starttime <= UNIX_TIMESTAMP()", "left")
+			->spPager($page, 20)->findAll($condition, $sort, "crm_client.*, crm_client_level.name as level_name, crm_client_seehouse.see_status, count(crm_client_plan.id) as plan_count, crm_client_overtime.fromtime, crm_user.realname as realname_sale, crm_client_process.pname, IF(crm_client.ispay = 0, datediff(curdate(), FROM_UNIXTIME(crm_client.overdatestart, '%Y-%m-%d')), 0) as overdate", "crm_client.id")){
 			foreach($client_rs as $key => $val){
 				if($val["sourcetype"] == 1){
 					$client_rs[$key]["oname"] = "渠道来源";
@@ -158,6 +158,10 @@ class clientdepart_oversea extends spController {
 					$client_rs[$key]["ctname"] = $obj_country->getname($val["exp_country_id"]);
 				}
 				$client_rs[$key]["record_count"] = $obj_record->getCountById($val["id"]);
+				$client_rs[$key]["record_call_count"] = $obj_intrecord->getCountByClientId($val["id"]);
+				if($int_rs = $obj_int->find(array("client_id"=>$val["id"]), null, "createtime")){
+					$client_rs[$key]["int_createtime"] = $int_rs["createtime"];
+				}
 			}
 			$this->client_rs = $client_rs;
 		}
@@ -165,7 +169,7 @@ class clientdepart_oversea extends spController {
 		$this->level_rs = $obj_level->getlist();
 		$this->user_rs = $user_rs;
 		$this->pager = $obj_client->spPager()->getPager();
-		$this->url = spUrl('clientdepart_oversea', 'clientlist', array("starttime"=>$this->starttime, "endtime"=>$this->endtime, "sort"=>$this->sort, "level_id"=>$this->level_id, "statdate"=>$this->statdate, "searchkey"=>$this->searchkey, "user_sales_id"=>$this->user_sales_id, "comactive_id"=>$this->comactive_id));
+		$this->url = spUrl('clientdepart_oversea', 'clientlist', array("starttime"=>$this->starttime, "endtime"=>$this->endtime, "sort"=>$this->sort, "level_id"=>$this->level_id, "statdate"=>$this->statdate, "searchkey"=>$this->searchkey, "user_sales_id"=>$this->user_sales_id, "comactive_id"=>$this->comactive_id, "isovertime"=>$this->isovertime));
 	}
 	
 	public function viewclient(){
@@ -260,6 +264,87 @@ class clientdepart_oversea extends spController {
 			$this->url = spUrl('clientdepart_oversea', 'allrecordlist', array("starttime"=>$this->starttime, "endtime"=>$this->endtime, "user_sales_id"=>$this->user_sales_id));
 			$this->user_rs = $obj_user->getUser_prep("crm_user.depart_id = 3 and find_in_set('getclient', crm_user.identity_attr)");
 			$this->controller = "clientdepart_oversea";
+		}catch(Exception $e){
+			$this->redirect(spUrl("clientdepart_oversea", "clientlist"), $e->getMessage());
+		}
+	}
+	
+	public function clientcallrecordlist(){
+		try {
+			$obj_type = spClass("client_intention_type");
+			if(!$this->type_rs = $obj_type->find(array("id"=>1)))
+				throw new Exception("type参数错误");
+			if(!$client_id = intval($this->spArgs("client_id")))
+				throw new Exception("参数丢失");
+			$obj_client = spClass("client");
+			if(!$this->client_rs = $obj_client->getClientById($client_id))
+				throw new Exception("找不到该客户，可能已被分配");
+			$obj_int = spClass("client_intention");
+			$this->int_rs = $obj_int->find(array("client_id"=>$client_id));
+			$obj_record = spClass("client_intention_record");
+			$postdata = $this->spArgs();
+			$page = intval(max($postdata['page'], 1));
+			$record_rs = $obj_record->join("crm_user")->join("crm_client_intention")->spPager($page, 15)->findAll(array("crm_client_intention_record.intention_id"=>$this->int_rs["id"]), "crm_client_intention_record.createtime desc", "crm_client_intention_record.*, crm_user.realname as realname_create");
+			$this->record_rs = $record_rs;
+			$this->pager = $obj_record->spPager()->getPager();
+			$this->url = spUrl('clientdepart_oversea', 'clientcallrecordlist', array("client_id"=>$client_id, "call_id"=>$call_id));
+			$this->backurl = spUrl("clientdepart_oversea", "clientlist");
+			$this->display("clientintention/clientrecordlist.html");
+		}catch(Exception $e){
+			$this->redirect(spUrl("clientdepart_oversea", "clientlist"), $e->getMessage());
+		}
+	}
+	
+	//客户计划列表
+	public function planlist(){
+		try {
+			$postdata = $this->spArgs();
+			$obj_plan = spClass("client_plan");
+			$obj_user = spClass("user");
+			$page = intval(max($postdata['page'], 1));
+			$condition = "crm_client_plan.typeid = 2";
+			if($client_id = intval($this->spArgs("client_id"))){
+				$obj_client = spClass("client");
+				if(!$this->client_rs = $obj_client->getClientById($client_id))
+					throw new Exception("找不到该客户");
+				$condition .= " and crm_client_plan.client_id = $client_id";
+				$this->client_id = $client_id;
+				$this->backurl = spUrl("clientdepart", "clientlist");
+			}
+			if($postdata["user_id"]){
+				$condition .= " and crm_client.user_sales_id = {$postdata["user_id"]}";
+				$this->user_id = $postdata["user_id"];
+			}
+			if($postdata["status"]){
+				switch ($postdata["status"]){
+					case "doing":
+						$condition .= " and crm_client_plan.isfinish = 0 and crm_client_plan.starttime <= ".time();
+						$this->status = $postdata["status"];
+						break;
+					case "going":
+						$condition .= " and crm_client_plan.isfinish = 0 and crm_client_plan.starttime <= ".time()." and crm_client_plan.endtime >=" . time();
+						$this->status = $postdata["status"];
+						break;
+					case "overdate":
+						$condition .= " and crm_client_plan.isfinish = 0 and crm_client_plan.endtime <= ".time();
+						$this->status = $postdata["status"];
+						break;
+					case "waiting":
+						$condition .= " and crm_client_plan.isfinish = 0 and crm_client_plan.starttime >= ".time();
+						$this->status = $postdata["status"];
+						break;
+					case "finish":
+						$condition .= " and crm_client_plan.isfinish = 1";
+						$this->status = $postdata["status"];
+						break;
+				}
+			}
+			$this->plan_rs = $obj_plan->join("crm_client")->join("crm_user")->spPager($page, 10)->findAll($condition, "crm_client_plan.createtime desc", "crm_client_plan.*, crm_client.realname, crm_client.telphone, crm_client.user_sales_id, crm_user.realname as realname_create");
+			$this->pager = $obj_plan->spPager()->getPager();
+			$this->user_prep_rs = $obj_user->getUser_prep("depart_id = 3 and find_in_set('getclient', identity_attr)");
+			$this->url = spUrl('clientdepart_oversea', 'planlist', array("user_id"=>$this->user_id, "status"=>$this->status));
+			$this->backurl = spUrl("clientdepart_oversea", "clientlist");
+			$this->display("clientdepart/planlist.html");
 		}catch(Exception $e){
 			$this->redirect(spUrl("clientdepart_oversea", "clientlist"), $e->getMessage());
 		}

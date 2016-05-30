@@ -1,0 +1,117 @@
+<{include file="header.html"}>
+
+<{include file="library/tipswindown.html"}>
+</head>
+<body>
+<table width="100%" height="100%" cellspacing="1" cellpadding="0" class="tablesl zxblockui">
+  <tr>
+    <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="40"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="75%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[大客户管理]-[我添加的客户]-[<{$client_rs.comname}>]-[对接人列表]</td>
+              </tr>
+            </table></td>
+            <td width="25%">
+	            <table border="0" align="right" cellpadding="0" cellspacing="0">
+	              <tr>
+	              	<td class="STYLE1"><div align="center"><a href="<{spUrl c=vipclients a=createmanage client_id=$client_id}>" style="display:block"><img src="images/add.gif" width="65" height="19" align="absmiddle" /></a></div></td>
+	              	<td width="20"></td>
+	              	<td class="STYLE1">
+	              		<a href="<{spUrl c=vipclients a=clientlist}>"><img src="images/back.png" width="14" height="14" align="top" /> 返回</a>
+	              	</td>
+	              </tr>
+	            </table>
+            </td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+        <td><table class="zx_data_list" width="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#b5d6e6">
+          <thead>
+          <tr>
+            <td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">序号</span></div></td>
+            <td width="20%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">姓名/性别/联系电话</span></div></td>
+            <td width="10%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">职务</span></div></td>
+            <td width="12%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">电话所在地</span></div></td>
+            <td width="12%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">电子邮箱</span></div></td>
+            <td width="12%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">微信号</span></div></td>
+            <td width="6%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">主联系人</span></div></td>
+            <td width="12%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">创建时间</span></div></td>
+            <td width="12%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">操作</span></div></td>
+          </tr>
+          </thead>
+          <tbody>
+          <{foreach item=i key=k from=$manage_rs}>
+          <tr>
+            <td height="20" bgcolor="#FFFFFF">
+            	<div align="center" class="STYLE1">
+              		<div align="center"><{$k+1}></div>
+            	</div>
+            </td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.realname}> / <{if $i.sex == 1}>男<{elseif $i.sex == 2}>女<{else}>未知<{/if}> / <{if $i.telphone}><{$i.telphone}><{else}>-<{/if}></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.managepost}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1"><{$i.tel_location}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1"><{$i.email}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1"><{$i.wechat}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div align="center">
+            <{if $i.ismain}>
+            <span class="STYLE1 zx_blue zx_weight">是</span>
+            <{else}>
+            <span class="STYLE1 zx_red zx_weight">否</span>
+            <{/if}>
+            </div></td>
+            <td height="20" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1"><{$i.createtime|date_format:"%Y-%m-%d %H:%M"}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF">
+            	<div class="listleft">
+            		<{if !$i.ismain}>
+            		<a class="general_post" href="javascript:" zxhref="<{spUrl c=vipclients a=manage_main client_id=$client_id id=$i.id}>" zxalert="确定要将该对接人设置为该大客户的主对接人吗？"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>设为主联系人</a>
+            		<{else}>
+            		-
+            		<{/if}>
+            		<{if !$i.tel_location || !$i.email || !$i.wechat}>
+            		<a href="<{spUrl c=vipclients a=modifymanage client_id=$client_id id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>修改</a>
+            		<{/if}>
+            	</div>
+            </td>
+          </tr>
+          <{foreachelse}>
+			<tr>
+            	<td height="20" bgcolor="#FFFFFF" colspan="9"><div style="margin-left:7px; margin-top:10px">无匹配记录</div></td>
+			</tr>
+          <{/foreach}> 
+          </tbody>
+          <tfoot>
+          <tr height="50" bgcolor="#FFFFFF"><td colspan="9">&nbsp;</td></tr>
+          </tfoot>
+        </table></td>
+        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td height="35" background="images/tab_19.gif">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="35"><img src="images/tab_18.gif" width="12" height="35" /></td>
+        <td>
+        	<{include file="pager.html"}>
+		</td>
+        <td width="16"><img src="images/tab_20.gif" width="16" height="35" /></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</div>
+</body>
+<{include file="footer.html"}>

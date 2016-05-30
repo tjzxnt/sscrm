@@ -10,6 +10,8 @@ class channels extends spController {
 				if(!$_SESSION["sscrm_user"]["user_identity"]["operate"]["enabled"])
 					$obj_cpt->check_login_competence("CHANNEL");
 			}
+			$this->controller = "channels";
+			$this->clisturl = spUrl($this->controller, "channellist");
 		}catch(Exception $e){
 			$backurl = spUrl("main", "welcome");
 			$this->redirect($backurl, $e->getMessage());
@@ -67,6 +69,7 @@ class channels extends spController {
 					$channel_rs[$key]["type_rs"] = $obj_type->getinfo($val["typeid"]);
 				if($val["type2id"])
 					$channel_rs[$key]["type2name"] = $obj_type->getname($val["type2id"]);
+				$channel_rs[$key]["client_count"] = $obj_channel->getclientcount($val["id"]);
 			}
 		}
 		$this->level_rs = $obj_level->getlist();
@@ -85,7 +88,7 @@ class channels extends spController {
 		$postdate = $this->spArgs();
 		$page = intval(max($postdate['page'], 1));
 		$nowtime = date("Y-m-d");
-		$condition = "crm_channel.ishide = 0 and crm_channel.maintenance_id = ".$_SESSION["sscrm_user"]["id"];
+		$condition = "crm_channel.ishide = 0 and crm_channel.isoverdate = 0 and crm_channel.maintenance_id = ".$_SESSION["sscrm_user"]["id"];
 		if($postdate['searchkey'] != ''){
 			$condition .= " and (crm_channel.mechanism like '%{$postdate['searchkey']}%' or crm_channel.main_contact like '%{$postdate['searchkey']}%' or crm_channel.main_tel like '%{$postdate['searchkey']}%')";
 			$this->searchkey = $postdate['searchkey'];
@@ -126,7 +129,7 @@ class channels extends spController {
 				break;
 			}
 		}
-		if($channel_rs = $obj_channel->join("crm_channel_level")->join("crm_client_plan", "crm_channel.id = crm_client_plan.channel_id and crm_client_plan.typeid = 3 and find_in_set({$_SESSION["sscrm_user"]["id"]}, crm_client_plan.main_id) and crm_client_plan.isfinish = 0 and crm_client_plan.starttime <= UNIX_TIMESTAMP()", "left")->join("crm_channel_type")->join("crm_user as cuser", "cuser.id = crm_channel.create_id")->join("crm_user as fuser", "fuser.id = crm_channel.from_id")->join("crm_user as muser", "muser.id = crm_channel.maintenance_id")->spPager($page, 20)->findAll($condition, $sort, "crm_channel.*, crm_channel_level.name as level_name, count(crm_client_plan.id) as plan_count, cuser.realname as c_realname, fuser.realname as f_realname, muser.realname as m_realname, crm_channel_type.isactive, crm_channel_type.name as typename, IF(crm_channel.issign > 0, 0, datediff(curdate(), IF(crm_channel.sign_enddate > '0000-00-00', crm_channel.sign_enddate, FROM_UNIXTIME(crm_channel.createtime, '%Y-%m-%d')))) as overdate", "crm_channel.id")){
+		if($channel_rs = $obj_channel->join("crm_channel_level")->join("crm_client_plan", "crm_channel.id = crm_client_plan.channel_id and crm_client_plan.typeid = 3 and find_in_set({$_SESSION["sscrm_user"]["id"]}, crm_client_plan.main_id) and crm_client_plan.isfinish = 0 and crm_client_plan.starttime <= UNIX_TIMESTAMP()", "left")->join("crm_channel_overtime", "crm_channel_overtime.channel_id = crm_channel.id and crm_channel_overtime.endtime = 0", "left")->join("crm_channel_type")->join("crm_user as cuser", "cuser.id = crm_channel.create_id")->join("crm_user as fuser", "fuser.id = crm_channel.from_id")->join("crm_user as muser", "muser.id = crm_channel.maintenance_id")->spPager($page, 20)->findAll($condition, $sort, "crm_channel.*, crm_channel_level.name as level_name, count(crm_client_plan.id) as plan_count, cuser.realname as c_realname, fuser.realname as f_realname, muser.realname as m_realname, crm_channel_type.isactive, crm_channel_type.name as typename, IF(crm_channel.issign > 0, 0, datediff(curdate(), IF(crm_channel.sign_enddate > '0000-00-00', crm_channel.sign_enddate, FROM_UNIXTIME(crm_channel.createtime, '%Y-%m-%d')))) as overdate, crm_channel_overtime.fromtime", "crm_channel.id")){
 		//if($channel_rs = $obj_channel->join("crm_channel_level")->join("crm_channel_type")->join("crm_user as cuser", "cuser.id = crm_channel.create_id")->join("crm_user as fuser", "fuser.id = crm_channel.from_id")->join("crm_user as muser", "muser.id = crm_channel.maintenance_id")->spPager($page, 20)->findAll($condition, $sort, "crm_channel.*, crm_channel_level.name as level_name, cuser.realname as c_realname, fuser.realname as f_realname, muser.realname as m_realname, crm_channel_type.isactive, crm_channel_type.name as typename, IF(crm_channel.issign > 0, 0, datediff(curdate(), IF(crm_channel.sign_enddate > '0000-00-00', crm_channel.sign_enddate, FROM_UNIXTIME(crm_channel.createtime, '%Y-%m-%d')))) as overdate")){
 			foreach($channel_rs as $key => $val){
 				if($val["isactive"])
@@ -205,7 +208,7 @@ class channels extends spController {
 			$obj_type = spClass("channel_type");
 			if(!$channelid = intval($this->spArgs("channelid")))
 				throw new Exception("参数丢失");
-			if(!$channel_rs = $obj_channel->find(array("id"=>$channelid, "ishide"=>0)))
+			if(!$channel_rs = $obj_channel->find(array("id"=>$channelid, "ishide"=>0, "isoverdate"=>0)))
 				throw new Exception("找不到该渠道，可能已经删除");
 			if($channel_rs["issign"])
 				throw new Exception("该渠道已签约，无法修改");
@@ -481,6 +484,7 @@ class channels extends spController {
 			$channelid = intval($this->spArgs("channelid"));
 			$channel_rs = $obj_channel->get_act_mychannel($channelid);
 			$obj_record = spClass("channel_record");
+			$obj_od = spClass("channel_overtime");
 			if($_SERVER['REQUEST_METHOD'] == 'POST'){
 				try {
 					$postdate = $this->spArgs();
@@ -499,6 +503,8 @@ class channels extends spController {
 					if(!$obj_record->create($data))
 						throw new Exception("未知错误，沟通记录添加失败");
 					$obj_channel->update(array("id"=>$channelid), array("recordtime"=>time()));
+					if($od_rs = $obj_od->find(array("channel_id"=>$channelid, "endtime"=>0)))
+						$obj_od->update(array("id"=>$od_rs["id"]), array("endtime"=>time()));
 					spClass('user_log')->save_log(2, "添加了渠道 ".$channel_rs['mechanism']." [id:$channelid] 的沟通记录", array("channel_id"=>$channelid));
 					$message = array('msg'=>"沟通记录添加成功", 'result'=>1, "url"=>spUrl("channels", "channelrecordlist", array("channelid"=>$channelid)));
 					echo json_encode($message);
@@ -558,6 +564,17 @@ class channels extends spController {
 			$condition .= " and crm_client.level_id = {$level_id}";
 			$this->level_id = $level_id;
 		}
+		if($isovertime = intval($postdate['isovertime'])){
+			switch ($isovertime){
+				case "1":
+					$condition .= " and crm_client.isoverdate = 0";
+				break;
+				case "2":
+					$condition .= " and crm_client.isoverdate = 1";
+				break;
+			}
+			$this->isovertime = $isovertime;
+		}
 		$client_sort = "crm_client.createtime desc";
 		if($sort = $postdate['sort']){
 			switch ($sort){
@@ -592,7 +609,7 @@ class channels extends spController {
 		$this->level_rs = $obj_level->getlist();
 		$this->channel_rs = $obj_channel->getAllChannel_prep("maintenance_id = {$_SESSION["sscrm_user"]["id"]}");
 		$this->pager = $obj_client->spPager()->getPager();
-		$this->url = spUrl($this->controller, $this->action, array("starttime"=>$this->starttime, "level_id"=>$this->level_id, "endtime"=>$this->endtime, "statdate"=>$this->statdate, "sort"=>$this->sort, "searchkey"=>$this->searchkey, "ispay"=>$this->ispay, "channel_id"=>$this->channel_id, "channelact_id"=>$this->channelact_id));
+		$this->url = spUrl($this->controller, $this->action, array("starttime"=>$this->starttime, "level_id"=>$this->level_id, "endtime"=>$this->endtime, "statdate"=>$this->statdate, "sort"=>$this->sort, "searchkey"=>$this->searchkey, "ispay"=>$this->ispay, "channel_id"=>$this->channel_id, "channelact_id"=>$this->channelact_id, "isovertime"=>$this->isovertime));
 	}
 	
 	public function viewclient(){
@@ -699,7 +716,7 @@ class channels extends spController {
 					break;
 				}
 			}
-			$this->plan_rs = $obj_plan->join("crm_channel")->join("crm_user")->spPager($page, 10)->findAll($condition, "crm_client_plan.createtime desc", "crm_client_plan.*, crm_channel.mechanism, crm_channel.maintenance_id, crm_user.realname as realname_create");
+			$this->plan_rs = $obj_plan->join("crm_channel")->join("crm_user")->spPager($page, 10)->findAll($condition, "crm_client_plan.createtime desc", "crm_client_plan.*, crm_channel.mechanism, crm_channel.main_tel, crm_channel.maintenance_id, crm_user.realname as realname_create");
 			$this->pager = $obj_plan->spPager()->getPager();
 			$this->url = spUrl('channels', 'planlist', array("status"=>$this->status));
 		}catch(Exception $e){
@@ -853,6 +870,34 @@ class channels extends spController {
 			$this->channel_id = $channel_id;
 		}catch(Exception $e){
 			$this->redirect(spUrl("channels", "channellist"), $e->getMessage());
+		}
+	}
+	
+	public function allodlist(){
+		try {
+			$obj_user = spClass("user");
+			$postdata = $this->spArgs();
+			$obj_od = spClass("channel_overtime");
+			$page = intval(max($postdata['page'], 1));
+			$condition = "crm_channel.maintenance_id = {$_SESSION["sscrm_user"]["id"]} and crm_channel.ishide = 0";
+			if($postdata["endtime"]){
+				switch($postdata["endtime"]){
+					case "ing":
+						$condition .= " and crm_channel_overtime.endtime = 0";
+					break;
+					case "end":
+						$condition .= " and crm_channel_overtime.endtime > 0";
+					break;
+				}
+				$this->endtime = $postdata["endtime"];
+			}
+			$this->od_rs = $obj_od->join("crm_user")->join("crm_channel")->spPager($page, 15)->findAll($condition, "crm_channel_overtime.createtime desc", "crm_channel_overtime.*, crm_channel.mechanism, crm_channel.main_tel, crm_user.realname as realname");
+			$this->pager = $obj_od->spPager()->getPager();
+			$this->url = spUrl("channels", "allodlist", array("endtime"=>$this->endtime, "main_id"=>$this->main_id));
+			$this->controller = "channels";
+			$this->display("channeldeparts/allodlist.html");
+		}catch(Exception $e){
+			$this->redirect(spUrl("channelall", "channellist"), $e->getMessage());
 		}
 	}
 	

@@ -16,7 +16,7 @@ $(function(){
   <tr>
     <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
-        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td width="12" height="40"><img src="images/tab_03.gif" width="12" height="30" /></td>
         <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td width="46%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -112,25 +112,38 @@ $(function(){
                                     <label class="label"><span class="input_required">*</span>公司名</label> 
                                     <input name="comname" type="text" id="comname" value="<{$client_rs.comname}>"/>
                                 </div>
+                            </fieldset>
+                            <fieldset>
+                             	<legend>主对接人资料</legend>
                                 <div class="rowElem">
-                                    <label class="label"><span class="input_required">*</span>客户姓名</label> 
-                                    <input name="realname" type="text" id="realname" value="<{$client_rs.realname}>">
+                                    <label class="label"><span class="input_required">*</span>姓名</label> 
+                                    <span class="viewtxt"><{$client_rs.realname}></span>
                                 </div>
                                 <div class="rowElem">
-                                    <label class="label">客户性别</label> 
-                                    <input type="radio" class="radio" name="sex" value="0" <{if !$client_rs.sex}>checked<{/if}>/><label class="zx_red zx_weight">未知</label>
-                                    &nbsp;&nbsp;
-									<input type="radio" class="radio" name="sex" value="1" <{if $client_rs.sex eq '1'}>checked<{/if}>/><label>男</label>
-									<input type="radio" class="radio" name="sex" value="2" <{if $client_rs.sex eq '2'}>checked<{/if}>/><label>女</label>
+                                    <label class="label">性别</label> 
+									<span class="viewtxt"><{if !$client_rs.sex}>未知<{elseif $client_rs.sex eq '1'}>男<{else if $client_rs.sex eq '2'}>女<{/if}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>职务</label> 
+                                    <span class="viewtxt"><{$client_rs.managepost}></span>
                                 </div>
                                 <div class="rowElem">
                                     <label class="label">电话所在地</label> 
-                                    <input class="shortinput" type="text" name="tel_location" id="tel_location" value="<{$client_rs.tel_location}>"/> (如：台湾省)
+                                    <span class="viewtxt"><{$client_rs.tel_location}></span>
                                 </div>
                                 <div class="rowElem">
-                                    <label class="label">客户电话</label> 
+                                    <label class="label">联系电话</label> 
                                     <span class="viewtxt"><{$client_rs.telphone}></span>
                                 </div>
+                                <div class="rowElem">
+                                    <label class="label">电子邮箱</label> 
+                                    <span class="viewtxt"><{$client_rs.email}></span>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">微信号</label> 
+                                    <span class="viewtxt"><{$client_rs.wechat}></span>
+                                </div>
+                                <{*
                                 <div class="rowElem">
                                     <label class="label">证件类型</label>
                                     <select name="cred_id">
@@ -148,12 +161,7 @@ $(function(){
                                 <div class="rowElem">
                                     <label class="label">客户职业</label> <input name="profession" type="text" id="profession" value="<{$client_rs.profession}>">
                                 </div>
-                                <div class="rowElem">
-                                    <label class="label">电子邮箱</label> <input name="email" type="text" id="email" value="<{$client_rs.email}>">
-                                </div>
-                                <div class="rowElem">
-                                    <label class="label">微信号</label> <input name="wechat" type="text" id="wechat" value="<{$client_rs.wechat}>">
-                                </div>
+                                *}>
                             </fieldset>
                             <fieldset>
                                 <legend>业务相关基本信息</legend>
@@ -167,20 +175,18 @@ $(function(){
                                     </select>
                                 </div>
                                 <div class="rowElem">
-                                    <label class="label"><span class="input_required">#</span>客户需求</label> <input name="demand" type="text" id="demand" value="<{$client_rs.demand}>">
-                                    (例如：停车位，自住待建)
+                                    <label class="label"><span class="input_required">#</span>推荐项目</label> <input name="demand" type="text" id="demand" value="<{$client_rs.demand}>">
                                 </div>
                                 <div class="rowElem">
                                     <label class="label">其他反馈</label> 
                                     <textarea name="feedback" rows="5" cols="50"><{$client_rs.feedback}></textarea>
                                 </div>
                                 <div class="rowElem">
-                                    <label class="label"><span class="input_required">#</span>首次到访时间</label> 
+                                    <label class="label"><span class="input_required">*</span>首次面资时间</label> 
                                     <{if $client_rs.visit_time}>
                                     <span class="viewtxt"><{$client_rs.visit_time|date_format:'%Y-%m-%d %H:%M'}></span>
                                     <{else}>
 	                                <input class="ui_timepicker" name="visit_time" type="text" id="visit_time" value="<{if $client_rs.visit_time}><{$client_rs.visit_time|date_format:'%Y-%m-%d %H:%M'}><{/if}>" readonly/>
-                                    <a href="javascript:" id="clear_visittime">清空到访时间</a>
                                     (保存后无法修改)
 	                                <{/if}>
                                 </div>

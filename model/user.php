@@ -243,15 +243,16 @@
 		}
 		
 		public function getUserGroupDepart_prep($condition_ext){
+			$condition = "isdel = 0";
 			if($condition_ext){
-				$condition = is_array($condition_ext) ? array_merge(array("isdel"=>0), $condition_ext) : "isdel = 0 and (".$condition_ext.")";
-			}else{
-				$condition = array("isdel"=>0);
+				//$condition = is_array($condition_ext) ? array_merge(array("isdel"=>0), $condition_ext) : "isdel = 0 and (".$condition_ext.")";
+				$condition .= " and (".(is_array($condition_ext) ? implode(" and ", $condition_ext) : $condition_ext).")";
 			}
 			$obj_depart = spClass("department");
 			if($depart_rs = $obj_depart->getlist_all()){
 				foreach($depart_rs as $key => $val){
-					if(!$depart_rs[$key]["user_rs"] = $this->findAll(array_merge($condition, array("depart_id"=>$val["id"])), "py asc", "*, fristPinyin(realname) as py"))
+					$dep_condition = $condition." and depart_id = {$val["id"]}";
+					if(!$depart_rs[$key]["user_rs"] = $this->findAll($dep_condition, "py asc", "*, fristPinyin(realname) as py"))
 						unset($depart_rs[$key]);
 				}
 			}

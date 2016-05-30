@@ -10,6 +10,8 @@ class channeldeparts extends spController {
 				if(!$_SESSION["sscrm_user"]["isdirector"])
 					throw new Exception("您无权查看该页面");
 			}
+			$this->controller = "channeldeparts";
+			$this->clisturl = spUrl($this->controller, "channellist");
 		}catch(Exception $e){
 			$backurl = spUrl("main", "welcome");
 			$this->redirect($backurl, $e->getMessage());
@@ -28,20 +30,35 @@ class channeldeparts extends spController {
 		$postdate = $this->spArgs();
 		$page = intval(max($postdate['page'], 1));
 		$user_rs = $obj_user->getUser_prep("crm_user.depart_id = $depart_id");
-		$condition = "crm_channel.ishide = 0 and muser.depart_id = ".$depart_id;
+		//$condition = "crm_channel.ishide = 0 and muser.depart_id = ".$depart_id;
+		$condition = "crm_channel.ishide = 0 and crm_channel.isoverdate = 0";
 		if($postdate['searchkey'] != '')
 			$condition .= " and (crm_channel.mechanism like '%{$postdate['searchkey']}%' or crm_channel.main_contact like '%{$postdate['searchkey']}%' or crm_channel.main_tel like '%{$postdate['searchkey']}%')";
 		if($postdate['typeid']."a" != 'a'){
 			$condition .= " and crm_channel.typeid = " . intval($postdate['typeid']);
 			$this->typeid = $postdate['typeid'];
 		}
-		if($main_id = intval($postdate["main_id"])){
+		if($postdate["main_id"] == "other"){
+			$condition .= " and muser.depart_id <> 2";
+			$this->main_id = $postdate["main_id"];
+		}elseif($main_id = intval($postdate["main_id"])){
 			$condition .= " and crm_channel.maintenance_id = $main_id";
 			$this->main_id = $main_id;
 		}
 		if($level_id = intval($postdate['level_id'])){
 			$condition .= " and crm_channel.level_id = {$level_id}";
 			$this->level_id = $level_id;
+		}
+		if($isovertime = intval($postdate['isovertime'])){
+			switch ($isovertime){
+				case "1":
+					$condition .= " and crm_channel.isoverdate = 0";
+				break;
+				case "2":
+					$condition .= " and crm_channel.isoverdate = 1";
+				break;
+			}
+			$this->isovertime = $isovertime;
 		}
 		$sort = 'crm_channel.createtime desc';
 		if($postdate['sort'].'a' !== 'a'){
@@ -67,7 +84,7 @@ class channeldeparts extends spController {
 				break;
 			}
 		}
-		if($channel_rs = $obj_channel->join("crm_channel_level")->join("crm_client_plan", "crm_channel.id = crm_client_plan.channel_id and crm_client_plan.typeid = 3 and crm_client_plan.isfinish = 0 and crm_client_plan.starttime <= UNIX_TIMESTAMP()", "left")->join("crm_channel_type")->join("crm_user as cuser", "cuser.id = crm_channel.create_id")->join("crm_user as fuser", "fuser.id = crm_channel.from_id")->join("crm_user as muser", "muser.id = crm_channel.maintenance_id")->spPager($page, 20)->findAll($condition, $sort, "crm_channel.*, crm_channel_level.name as level_name, count(crm_client_plan.id) as plan_count, cuser.realname as c_realname, fuser.realname as f_realname, muser.realname as m_realname, crm_channel_type.isactive, crm_channel_type.name as typename", "crm_channel.id")){
+		if($channel_rs = $obj_channel->join("crm_channel_level")->join("crm_client_plan", "crm_channel.id = crm_client_plan.channel_id and crm_client_plan.typeid = 3 and crm_client_plan.isfinish = 0 and crm_client_plan.starttime <= UNIX_TIMESTAMP()", "left")->join("crm_channel_overtime", "crm_channel_overtime.channel_id = crm_channel.id and crm_channel_overtime.endtime = 0", "left")->join("crm_channel_type")->join("crm_user as cuser", "cuser.id = crm_channel.create_id")->join("crm_user as fuser", "fuser.id = crm_channel.from_id")->join("crm_user as muser", "muser.id = crm_channel.maintenance_id")->spPager($page, 20)->findAll($condition, $sort, "crm_channel.*, crm_channel_level.name as level_name, count(crm_client_plan.id) as plan_count, cuser.realname as c_realname, fuser.realname as f_realname, muser.realname as m_realname, crm_channel_type.isactive, crm_channel_type.name as typename, IF(crm_channel.issign > 0, 0, datediff(curdate(), IF(crm_channel.sign_enddate > '0000-00-00', crm_channel.sign_enddate, FROM_UNIXTIME(crm_channel.createtime, '%Y-%m-%d')))) as overdate, crm_channel_overtime.fromtime", "crm_channel.id")){
 		//if($channel_rs = $obj_channel->join("crm_channel_level")->join("crm_channel_type")->join("crm_user as cuser", "cuser.id = crm_channel.create_id")->join("crm_user as fuser", "fuser.id = crm_channel.from_id")->join("crm_user as muser", "muser.id = crm_channel.maintenance_id")->spPager($page, 20)->findAll($condition, $sort, "crm_channel.*, crm_channel_level.name as level_name, cuser.realname as c_realname, fuser.realname as f_realname, muser.realname as m_realname, crm_channel_type.isactive, crm_channel_type.name as typename")){
 			foreach($channel_rs as $key => $val){
 				if($val["isactive"])
@@ -75,6 +92,7 @@ class channeldeparts extends spController {
 				if($val["type2id"])
 					$channel_rs[$key]["type2name"] = $obj_type->getname($val["type2id"]);
 				$channel_rs[$key]["record_count"] = $obj_record->getCountById($val["id"]);
+				$channel_rs[$key]["client_count"] = $obj_channel->getclientcount($val["id"]);
 			}
 		}
 		$this->level_rs = $obj_level->getlist();
@@ -83,7 +101,7 @@ class channeldeparts extends spController {
 		$this->type_rs = $obj_type->getlist();
 		$this->searchkey = $postdate['searchkey'];
 		$this->user_rs = $user_rs;
-		$this->url = spUrl('channeldeparts', 'channellist', array("searchkey"=>$this->searchkey, "level_id"=>$this->level_id, "typeid"=>$this->typeid, "main_id"=>$main_id, "sort"=>$this->sort,"inuse"=>$this->inuse));
+		$this->url = spUrl('channeldeparts', 'channellist', array("searchkey"=>$this->searchkey, "level_id"=>$this->level_id, "isovertime"=>$this->isovertime, "typeid"=>$this->typeid, "main_id"=>$main_id, "sort"=>$this->sort,"inuse"=>$this->inuse));
 	}
 	
 	public function verifychannellist(){
@@ -97,7 +115,7 @@ class channeldeparts extends spController {
 		$page = intval(max($postdate['page'], 1));
 		$user_rs = $obj_user->getUser_prep("crm_user.depart_id = $depart_id");
 		//$condition = "crm_channel.ishide = 0 and crm_channel.issign = 0 and crm_user.depart_id = ".$_SESSION["sscrm_user"]["depart_id"];
-		$condition = "crm_channel.ishide = 0 and crm_channel.issign = 0";
+		$condition = "crm_channel.ishide = 0 and crm_channel.issign = 0 and crm_channel.isoverdate = 0";
 		if($postdate['searchkey'] != '')
 			$condition .= " and (crm_channel.mechanism like '%{$postdate['searchkey']}%' or crm_channel.main_contact like '%{$postdate['searchkey']}%' or crm_channel.main_tel like '%{$postdate['searchkey']}%')";
 		if($postdate['typeid']."a" != 'a'){
@@ -234,7 +252,7 @@ class channeldeparts extends spController {
 			$this->channelid = $channelid;
 			$this->channel_rs = $channel_rs;
 			$this->controller = "channeldeparts";
-			$this->backurl = $_SERVER['HTTP_REFERER'];
+			$this->backurl = spUrl("channeldeparts", "channellist");
 			$this->url = spUrl('channeldeparts', 'actlist', array("channelid"=>$channelid, "searchkey"=>$this->searchkey));
 		}catch(Exception $e){
 			$this->redirect(spUrl("channeldeparts", "channellist"), $e->getMessage());
@@ -281,6 +299,17 @@ class channeldeparts extends spController {
 			$condition .= " and crm_client.level_id = {$level_id}";
 			$this->level_id = $level_id;
 		}
+		if($isovertime = intval($postdate['isovertime'])){
+			switch ($isovertime){
+				case "1":
+					$condition .= " and crm_client.isoverdate = 0";
+					break;
+				case "2":
+					$condition .= " and crm_client.isoverdate = 1";
+					break;
+			}
+			$this->isovertime = $isovertime;
+		}
 		$client_sort = "crm_client.createtime desc";
 		if($sort = $postdate['sort']){
 			switch ($sort){
@@ -317,7 +346,7 @@ class channeldeparts extends spController {
 		$this->user_rs = $obj_user->getUser_prep("crm_user.depart_id = 2");
 		$this->channel_rs = $obj_channel->getAllChannel_prep();
 		$this->pager = $obj_client->spPager()->getPager();
-		$this->url = spUrl($this->controller, $this->action, array("level_id"=>$this->level_id, "starttime"=>$this->starttime, "endtime"=>$this->endtime, "statdate"=>$this->statdate, "sort"=>$this->sort, "searchkey"=>$this->searchkey, "ispay"=>$this->ispay, "channel_id"=>$this->channel_id, "channel_muserid"=>$this->channel_muserid, "channelact_id"=>$this->channelact_id));
+		$this->url = spUrl($this->controller, $this->action, array("level_id"=>$this->level_id, "starttime"=>$this->starttime, "endtime"=>$this->endtime, "statdate"=>$this->statdate, "sort"=>$this->sort, "searchkey"=>$this->searchkey, "ispay"=>$this->ispay, "channel_id"=>$this->channel_id, "channel_muserid"=>$this->channel_muserid, "channelact_id"=>$this->channelact_id, "isovertime"=>$this->isovertime));
 		$this->display("channels/clientlist.html");
 	}
 	
@@ -431,7 +460,7 @@ class channeldeparts extends spController {
 			$record_rs = $obj_record->join("crm_channel")->join("crm_user")->spPager($page, 20)->findAll($condition, "crm_channel_record.acttime desc", "crm_channel_record.*, crm_channel.mechanism, crm_user.realname");
 			$this->record_rs = $record_rs;
 			$this->pager = $obj_record->spPager()->getPager();
-			$this->url = spUrl('clientall', 'allrecordlist', array("starttime"=>$this->starttime, "endtime"=>$this->endtime, "maintenance_id"=>$this->maintenance_id));
+			$this->url = spUrl('channeldeparts', 'allrecordlist', array("starttime"=>$this->starttime, "endtime"=>$this->endtime, "maintenance_id"=>$this->maintenance_id));
 			$this->user_rs = $obj_user->getUser_prep("crm_user.depart_id = 2");
 			$this->controller = "channeldeparts";
 		}catch(Exception $e){
@@ -444,7 +473,7 @@ class channeldeparts extends spController {
 		try {
 			$obj_channel = spClass("channel");
 			$channelid = intval($this->spArgs("channelid"));
-			$condition = "crm_channel.ishide = 0 and crm_user.depart_id = 2";
+			$condition = "crm_channel.ishide = 0";
 			$condition .= " and crm_channel.id = $channelid";
 			$obj_user = spClass("user");
 			$obj_department = spClass('department');
@@ -499,7 +528,7 @@ class channeldeparts extends spController {
 			$obj_plan = spClass("client_plan");
 			$obj_user = spClass("user");
 			$page = intval(max($postdata['page'], 1));
-			$condition = "1";
+			$condition = "crm_client_plan.typeid = 3";
 			if($channel_id = intval($this->spArgs("channel_id"))){
 				$obj_channel = spClass("channel");
 				if(!$this->channel_rs = $obj_channel->getinfoById($channel_id))
@@ -532,13 +561,352 @@ class channeldeparts extends spController {
 						break;
 				}
 			}
-			$this->plan_rs = $obj_plan->join("crm_channel")->join("crm_user")->spPager($page, 10)->findAll($condition, "crm_client_plan.createtime desc", "crm_client_plan.*, crm_channel.mechanism, crm_channel.maintenance_id, crm_user.realname as realname_create");
+			$this->plan_rs = $obj_plan->join("crm_channel")->join("crm_user")->spPager($page, 10)->findAll($condition, "crm_client_plan.createtime desc", "crm_client_plan.*, crm_channel.mechanism, crm_channel.main_tel, crm_channel.maintenance_id, crm_user.realname as realname_create");
 			$this->pager = $obj_plan->spPager()->getPager();
 			$this->user_prep_rs = $obj_user->getUser_prep("depart_id = 2");
 			$this->url = spUrl('channeldeparts', 'planlist', array("user_id"=>$this->user_id, "status"=>$this->status));
 		}catch(Exception $e){
 			$this->redirect(spUrl("channeldeparts", "channellist"), $e->getMessage());
 		}
+	}
+	
+	//全部过期记录
+	public function allodlist(){
+		try {
+			$obj_user = spClass("user");
+			$postdata = $this->spArgs();
+			$obj_od = spClass("channel_overtime");
+			$page = intval(max($postdata['page'], 1));
+			$condition = "crm_channel.ishide = 0";
+			if($postdata["endtime"]){
+				switch($postdata["endtime"]){
+					case "ing":
+						$condition .= " and crm_channel_overtime.endtime = 0";
+						break;
+					case "end":
+						$condition .= " and crm_channel_overtime.endtime > 0";
+						break;
+				}
+				$this->endtime = $postdata["endtime"];
+			}
+			if($postdata["main_id"]){
+				$condition .= " and crm_channel.maintenance_id = {$postdata["main_id"]}";
+				$this->main_id = $postdata["main_id"];
+			}
+			$this->od_rs = $obj_od->join("crm_user")->join("crm_channel")->spPager($page, 15)->findAll($condition, "crm_channel_overtime.createtime desc", "crm_channel_overtime.*, crm_channel.mechanism, crm_channel.main_tel, crm_user.realname as realname");
+			$this->pager = $obj_od->spPager()->getPager();
+			$this->url = spUrl("channeldeparts", "allodlist", array("endtime"=>$this->endtime, "main_id"=>$this->main_id));
+			$this->controller = "channeldeparts";
+			$this->istel = 1;
+			$this->user_prep_rs = $obj_user->getUser_prep("depart_id = 2");
+			$this->display("channeldeparts/allodlist.html");
+		}catch(Exception $e){
+			$this->redirect(spUrl("channelall", "channellist"), $e->getMessage());
+		}
+	}
+	
+	//将客户强制转为无意向中
+	public function channeloverdate(){
+		try {
+			if(!$id = intval($this->spArgs('channelid')))
+				throw new Exception('请先选择渠道，再进行操作！');
+			$backurl = $_SERVER['HTTP_REFERER'];
+			//$backurl = spUrl("clientdepart", "clientlist");
+			$obj_channel = spClass("channel");
+			$obj_origin = spClass("origin");
+			$obj_user = spClass("user");
+			$obj_department = spClass('department');
+			$obj_sep = spClass('department_sep');
+			$depart_id = 2;
+			try {
+				$depart_rs = $obj_department->getinfoById($depart_id);
+				$extcondition = "";
+				if($depart_rs["is_sep"]){
+					if(!$sep_id = $_SESSION["sscrm_user"]["depart_sep_id"])
+						throw new Exception("您尚未分配到".$depart_rs["dname"]."下的所在组，请尝试重新登录");
+					if(!$sep_rs = $obj_sep->find(array("depart_id"=>$depart_id, "id"=>$sep_id)))
+						throw new Exception("您所在的组不正确，请尝试重新登录");
+					$this->sep_name = "(".$sep_rs["sep_name"].")";
+					$extcondition = " and crm_user.depart_sep_id = $sep_id";
+				}
+			}catch(Exception $e){
+				$this->redirect(spUrl("main", "welcome"), $e->getMessage());
+				exit();
+			}
+			if(!$channel_rs = $obj_channel->getChannelById($id))
+				throw new Exception("找不到该渠道，可能已被删除");
+			if($channel_rs["issign"])
+				throw new Exception("该渠道为已签协议状态，无法进行该操作");
+			$this->check_private($channel_rs);
+			if($_SERVER['REQUEST_METHOD'] == 'POST'){
+				try {
+					$postdata = $this->spArgs();
+					$data = array();
+					$data["isoverdate"] = 1;
+					$data["overdatetime"] = time();
+					$data["overdatereason"] = "强制，原因：".$postdata["reason"];
+					$tourl = $postdata["backurl"] ? $postdata["backurl"] : spUrl("channeldeparts", "channellist");
+					if(!$postdata["reason"])
+						throw new Exception("请填写原因");
+					$obj_channel->update(array("id"=>$id), $data);
+					spClass('user_log')->save_log(2, "将渠道 ".$channel_rs["mechanism"]." [id:".$id."] 强制转为无意向", array("channel_id"=>$id));
+					$message = array('msg'=>"该渠道已被强制转为无意向", 'result'=>1, "url"=>$tourl);
+					echo json_encode($message);
+					exit();
+				}catch(Exception $e){
+					$message = array('msg'=>$e->getMessage(), 'result'=>0);
+					echo json_encode($message);
+					exit();
+				}
+			}
+			$this->backurl = $backurl;
+			$this->id = $id;
+			$this->channel_rs = $channel_rs;
+		}catch(Exception $e){
+			$this->redirect(spUrl("channeldeparts", "channellist"), $e->getMessage());
+		}
+	}
+	
+	//批量转移
+	public function batchtransfer(){
+		$obj_channel = spClass('channel');
+		$obj_level = spClass('channel_level');
+		$obj_active = spClass('channel_active');
+		$obj_type = spClass("channel_type");
+		$obj_user = spClass('user');
+		$obj_record = spClass('channel_record');
+		$depart_id = 2;
+		$postdate = $this->spArgs();
+		$page = intval(max($postdate['page'], 1));
+		//$condition = "crm_channel.ishide = 0 and muser.depart_id = ".$depart_id;
+		$user_condition = "crm_user.depart_id = $depart_id";
+		$user_rs = $obj_user->getUser_prep($user_condition);
+		$condition = "crm_channel.ishide = 0 and crm_channel.isoverdate = 0";
+		$postdata = $this->spArgs();
+		if($_SERVER['REQUEST_METHOD'] == 'POST'){
+			try {
+				$data = array();
+				$id = $postdata["id"];
+				$main_id = intval($postdata["maintenance_id"]);
+				if(!$id)
+					throw new Exception("请先选择渠道再进行该操作");
+				if(!$main_id)
+					throw new Exception("请先选择分配人再进行该操作");
+				$id_implode = implode(",", $id);
+				$id_str = "'".implode("','", $id)."'";
+				$count_id = count($id);
+				$condition .= " and crm_channel.id in($id_str)";
+				$total_rs = $obj_channel->find($condition, null, "count(id) as total");
+				$total_id = intval($total_rs["total"]);
+				if($count_id != $total_id)
+					throw new Exception("您所选的渠道不符合转移标准，无法进行该操作");
+				if(!$channel_implode_rs = $obj_channel->findAll($condition, "field(id,{$id_implode})", "id, mechanism, main_tel"))
+					throw new Exception("渠道汇总错误，如有问题请联系管理员");
+				$user_condition .= " and crm_user.id = $main_id";
+				if(!$user_rs = $obj_user->find($user_condition, null, "id, realname"))
+					throw new Exception("您所选的分配人不符合标准");
+				$obj_channel->getDb()->beginTrans();
+				if(!$obj_channel->update($condition, array("maintenance_id"=>$main_id)))
+					throw new Exception("未知错误，渠道转移失败");
+				if($channel_implode_rs){
+					$channel_group_rs = array();
+					foreach($channel_implode_rs as $val){
+						$channel_group_rs[] = $val["id"].":".$val["mechanism"];
+					}
+					$channel_group_str = implode(",", $channel_group_rs);
+				}
+				spClass('user_log')->save_log(2, "将渠道 (id:渠道名)[{$channel_group_str}]批量转移给了 {$user_rs["realname"]} [id:{$user_rs["id"]}]", array("channel_id"=>$id_implode));
+				$obj_channel->getDb()->commitTrans();
+				$message = array('msg'=>"渠道批量转移成功", 'result'=>1);
+				echo json_encode($message);
+				exit();
+			}catch(Exception $e){
+				$obj_channel->getDb()->rollbackTrans();
+				echo json_encode(array("msg"=>$e->getMessage(), "result"=>0));
+				exit();
+			}
+		}
+		if($postdate['searchkey'] != '')
+			$condition .= " and (crm_channel.mechanism like '%{$postdate['searchkey']}%' or crm_channel.main_contact like '%{$postdate['searchkey']}%' or crm_channel.main_tel like '%{$postdate['searchkey']}%')";
+		if($postdate['typeid']."a" != 'a'){
+			$condition .= " and crm_channel.typeid = " . intval($postdate['typeid']);
+			$this->typeid = $postdate['typeid'];
+		}
+		if($postdate["main_id"] == "other"){
+			$condition .= " and muser.depart_id <> 2";
+			$this->main_id = $postdate["main_id"];
+		}elseif($main_id = intval($postdate["main_id"])){
+			$condition .= " and crm_channel.maintenance_id = $main_id";
+			$this->main_id = $main_id;
+		}
+		if($level_id = intval($postdate['level_id'])){
+			$condition .= " and crm_channel.level_id = {$level_id}";
+			$this->level_id = $level_id;
+		}
+		$sort = 'crm_channel.createtime desc';
+		if($postdate['sort'].'a' !== 'a'){
+			switch ($postdate['sort']){
+				case "recordtime_desc":
+					$sort = "recordtime desc, ".$sort;
+					$this->sort = $postdate['sort'];
+				break;
+				case "level_asc":
+					$sort = "crm_channel_level.sort asc, ".$sort;
+					$this->sort = $postdate['sort'];
+				break;
+				case "level_desc":
+					$sort = "crm_channel_level.sort desc, ".$sort;
+					$this->sort = $postdate['sort'];
+				break;
+				case "plan_desc":
+					$sort = "count(crm_client_plan.id) desc, ".$sort;
+					$this->sort = $postdate['sort'];
+				break;
+				default:
+						
+				break;
+			}
+		}
+		if($channel_rs = $obj_channel->join("crm_channel_level")->join("crm_client_plan", "crm_channel.id = crm_client_plan.channel_id and crm_client_plan.typeid = 3 and crm_client_plan.isfinish = 0 and crm_client_plan.starttime <= UNIX_TIMESTAMP()", "left")->join("crm_channel_overtime", "crm_channel_overtime.channel_id = crm_channel.id and crm_channel_overtime.endtime = 0", "left")->join("crm_channel_type")->join("crm_user as cuser", "cuser.id = crm_channel.create_id")->join("crm_user as fuser", "fuser.id = crm_channel.from_id")->join("crm_user as muser", "muser.id = crm_channel.maintenance_id")->spPager($page, 20)->findAll($condition, $sort, "crm_channel.*, crm_channel_level.name as level_name, count(crm_client_plan.id) as plan_count, cuser.realname as c_realname, fuser.realname as f_realname, muser.realname as m_realname, crm_channel_type.isactive, crm_channel_type.name as typename, IF(crm_channel.issign > 0, 0, datediff(curdate(), IF(crm_channel.sign_enddate > '0000-00-00', crm_channel.sign_enddate, FROM_UNIXTIME(crm_channel.createtime, '%Y-%m-%d')))) as overdate, crm_channel_overtime.fromtime", "crm_channel.id")){
+		//if($channel_rs = $obj_channel->join("crm_channel_level")->join("crm_channel_type")->join("crm_user as cuser", "cuser.id = crm_channel.create_id")->join("crm_user as fuser", "fuser.id = crm_channel.from_id")->join("crm_user as muser", "muser.id = crm_channel.maintenance_id")->spPager($page, 20)->findAll($condition, $sort, "crm_channel.*, crm_channel_level.name as level_name, cuser.realname as c_realname, fuser.realname as f_realname, muser.realname as m_realname, crm_channel_type.isactive, crm_channel_type.name as typename")){
+			foreach($channel_rs as $key => $val){
+				if($val["isactive"])
+					$channel_rs[$key]["active_count"] = $obj_active->getCountById($val["id"]);
+				if($val["type2id"])
+					$channel_rs[$key]["type2name"] = $obj_type->getname($val["type2id"]);
+				$channel_rs[$key]["record_count"] = $obj_record->getCountById($val["id"]);
+				$channel_rs[$key]["client_count"] = $obj_channel->getclientcount($val["id"]);
+			}
+		}
+		$this->level_rs = $obj_level->getlist();
+		$this->channel_rs = $channel_rs;
+		$this->pager = $obj_channel->spPager()->getPager();
+		$this->type_rs = $obj_type->getlist();
+		$this->searchkey = $postdate['searchkey'];
+		$this->user_rs = $user_rs;
+		$this->url = spUrl('channeldeparts', 'batchtransfer', array("searchkey"=>$this->searchkey, "level_id"=>$this->level_id, "typeid"=>$this->typeid, "main_id"=>$main_id, "sort"=>$this->sort,"inuse"=>$this->inuse));
+	}
+	
+	//批量无意向
+	public function batchoverdate(){
+		$obj_channel = spClass('channel');
+		$obj_level = spClass('channel_level');
+		$obj_active = spClass('channel_active');
+		$obj_type = spClass("channel_type");
+		$obj_user = spClass('user');
+		$obj_record = spClass('channel_record');
+		$depart_id = 2;
+		$postdate = $this->spArgs();
+		$page = intval(max($postdate['page'], 1));
+		//$condition = "crm_channel.ishide = 0 and muser.depart_id = ".$depart_id;
+		$condition = "crm_channel.ishide = 0 and crm_channel.isoverdate = 0 and crm_channel.issign = 0";
+		$postdata = $this->spArgs();
+		if($_SERVER['REQUEST_METHOD'] == 'POST'){
+			try {
+				$data = array();
+				$id = $postdata["id"];
+				if(!$id)
+					throw new Exception("请先选择渠道再进行该操作");
+				$id_implode = implode(",", $id);
+				$id_str = "'".implode("','", $id)."'";
+				$count_id = count($id);
+				$condition .= " and crm_channel.id in($id_str)";
+				$total_rs = $obj_channel->find($condition, null, "count(id) as total");
+				$total_id = intval($total_rs["total"]);
+				if($count_id != $total_id)
+					throw new Exception("您所选的渠道不符合批量无意向标准，无法进行该操作");
+				if(!$channel_implode_rs = $obj_channel->findAll($condition, "field(id,{$id_implode})", "id, mechanism, main_tel"))
+					throw new Exception("渠道汇总错误，如有问题请联系管理员");
+				$obj_channel->getDb()->beginTrans();
+				$data = array();
+				$data["isoverdate"] = 1;
+				$data["overdatetime"] = time();
+				$data["overdatereason"] = "强制批量，原因：".$postdata["reason"];
+				if(!$postdata["reason"])
+					throw new Exception("请填写原因");
+				if(!$obj_channel->update($condition, $data))
+					throw new Exception("未知错误，渠道批量无意向失败");
+				if($channel_implode_rs){
+					$channel_group_rs = array();
+					foreach($channel_implode_rs as $val){
+						$channel_group_rs[] = $val["id"].":".$val["mechanism"];
+					}
+					$channel_group_str = implode(",", $channel_group_rs);
+				}
+				spClass('user_log')->save_log(2, "将渠道 (id:渠道名)[{$channel_group_str}]批量转为无意向渠道", array("channel_id"=>$id_implode));
+				$obj_channel->getDb()->commitTrans();
+				$message = array('msg'=>"渠道批量无意向操作成功", 'result'=>1);
+				echo json_encode($message);
+				exit();
+			}catch(Exception $e){
+				$obj_channel->getDb()->rollbackTrans();
+				echo json_encode(array("msg"=>$e->getMessage(), "result"=>0));
+				exit();
+			}
+		}
+		if($postdate['searchkey'] != '')
+			$condition .= " and (crm_channel.mechanism like '%{$postdate['searchkey']}%' or crm_channel.main_contact like '%{$postdate['searchkey']}%' or crm_channel.main_tel like '%{$postdate['searchkey']}%')";
+		if($postdate['typeid']."a" != 'a'){
+			$condition .= " and crm_channel.typeid = " . intval($postdate['typeid']);
+			$this->typeid = $postdate['typeid'];
+		}
+		if($postdate["main_id"] == "other"){
+			$condition .= " and muser.depart_id <> 2";
+			$this->main_id = $postdate["main_id"];
+		}elseif($main_id = intval($postdate["main_id"])){
+			$condition .= " and crm_channel.maintenance_id = $main_id";
+			$this->main_id = $main_id;
+		}
+		if($level_id = intval($postdate['level_id'])){
+			$condition .= " and crm_channel.level_id = {$level_id}";
+			$this->level_id = $level_id;
+		}
+		$sort = 'crm_channel.createtime desc';
+		if($postdate['sort'].'a' !== 'a'){
+			switch ($postdate['sort']){
+				case "recordtime_desc":
+					$sort = "recordtime desc, ".$sort;
+					$this->sort = $postdate['sort'];
+					break;
+				case "level_asc":
+					$sort = "crm_channel_level.sort asc, ".$sort;
+					$this->sort = $postdate['sort'];
+					break;
+				case "level_desc":
+					$sort = "crm_channel_level.sort desc, ".$sort;
+					$this->sort = $postdate['sort'];
+					break;
+				case "plan_desc":
+					$sort = "count(crm_client_plan.id) desc, ".$sort;
+					$this->sort = $postdate['sort'];
+					break;
+				default:
+	
+					break;
+			}
+		}
+		if($channel_rs = $obj_channel->join("crm_channel_level")->join("crm_client_plan", "crm_channel.id = crm_client_plan.channel_id and crm_client_plan.typeid = 3 and crm_client_plan.isfinish = 0 and crm_client_plan.starttime <= UNIX_TIMESTAMP()", "left")->join("crm_channel_overtime", "crm_channel_overtime.channel_id = crm_channel.id and crm_channel_overtime.endtime = 0", "left")->join("crm_channel_type")->join("crm_user as cuser", "cuser.id = crm_channel.create_id")->join("crm_user as fuser", "fuser.id = crm_channel.from_id")->join("crm_user as muser", "muser.id = crm_channel.maintenance_id")->spPager($page, 20)->findAll($condition, $sort, "crm_channel.*, crm_channel_level.name as level_name, count(crm_client_plan.id) as plan_count, cuser.realname as c_realname, fuser.realname as f_realname, muser.realname as m_realname, crm_channel_type.isactive, crm_channel_type.name as typename, IF(crm_channel.issign > 0, 0, datediff(curdate(), IF(crm_channel.sign_enddate > '0000-00-00', crm_channel.sign_enddate, FROM_UNIXTIME(crm_channel.createtime, '%Y-%m-%d')))) as overdate, crm_channel_overtime.fromtime", "crm_channel.id")){
+			//if($channel_rs = $obj_channel->join("crm_channel_level")->join("crm_channel_type")->join("crm_user as cuser", "cuser.id = crm_channel.create_id")->join("crm_user as fuser", "fuser.id = crm_channel.from_id")->join("crm_user as muser", "muser.id = crm_channel.maintenance_id")->spPager($page, 20)->findAll($condition, $sort, "crm_channel.*, crm_channel_level.name as level_name, cuser.realname as c_realname, fuser.realname as f_realname, muser.realname as m_realname, crm_channel_type.isactive, crm_channel_type.name as typename")){
+			foreach($channel_rs as $key => $val){
+				if($val["isactive"])
+					$channel_rs[$key]["active_count"] = $obj_active->getCountById($val["id"]);
+				if($val["type2id"])
+					$channel_rs[$key]["type2name"] = $obj_type->getname($val["type2id"]);
+				$channel_rs[$key]["record_count"] = $obj_record->getCountById($val["id"]);
+				$channel_rs[$key]["client_count"] = $obj_channel->getclientcount($val["id"]);
+			}
+		}
+		$this->level_rs = $obj_level->getlist();
+		$this->channel_rs = $channel_rs;
+		$this->pager = $obj_channel->spPager()->getPager();
+		$this->type_rs = $obj_type->getlist();
+		$this->searchkey = $postdate['searchkey'];
+		$this->url = spUrl('channeldeparts', 'batchoverdate', array("searchkey"=>$this->searchkey, "level_id"=>$this->level_id, "typeid"=>$this->typeid, "main_id"=>$main_id, "sort"=>$this->sort,"inuse"=>$this->inuse));
+	}
+	
+	private function check_private($channel_rs){
+		if($channel_rs["isoverdate"])
+			throw new Exception("该客户已为无意向客户，无法进行该操作");
 	}
 }
 ?>

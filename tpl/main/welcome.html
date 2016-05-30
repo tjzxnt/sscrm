@@ -372,7 +372,7 @@ $(function(){
  	
  	<script>
  	function reload_recent_plan(){
- 		return false;
+ 		return false;//如开启，部分浏览器容易挂
  		$.ajax({
 			type : "post",
 			url : "<{spUrl c=apis a=rencent_plan}>",
@@ -390,11 +390,13 @@ $(function(){
 			}
 		});
  	}
+ 	/*
  	$(function(){
  		setInterval(function() {
  			reload_recent_plan();
  		}, 10 * 60e3);
  	})
+ 	*/
  	</script>
  	
 </div>

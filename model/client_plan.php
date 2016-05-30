@@ -8,6 +8,10 @@
 				'mapkey' => 'id',
 				'fkey' => 'client_id'
 			),
+			'crm_client_intention' => array(
+				'mapkey' => 'id',
+				'fkey' => 'intention_id'
+			),
 			'crm_channel' => array(
 				'mapkey' => 'id',
 				'fkey' => 'channel_id'

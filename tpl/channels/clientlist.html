@@ -44,7 +44,7 @@ $(function(){
   <tr>
     <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
-        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td width="12" height="40"><img src="images/tab_03.gif" width="12" height="30" /></td>
         <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td width="20%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -76,11 +76,13 @@ $(function(){
 	                  		至
 	                  		<input type="text" name="endtime" class="posttime zx_width_bsmall" value="<{$endtime}>">
 	                  	</td>
+	                  	<{*
 	                  	<td>&nbsp;</td>
 	                  	<td class="STYLE1">
 	                  		全款时间：
 	                  	</td>
 	                  	<td class="STYLE1"><div align="center"><input type="text" name="statdate" class="Wdate zx_width_bsmall" value="<{$statdate}>" onclick="WdatePicker()" readonly/></div></td>
+	                  	*}>
 	                  	<td>&nbsp;</td>
 	                  	<td>姓名：</td>
 	                  	<td class="STYLE1"><div align="center"><input type="text" name="searchkey" class="zx_width_bsmall" value="<{$searchkey}>"/></div></td>
@@ -109,7 +111,7 @@ $(function(){
 	                    	<select name="channel_id" id="channel_id">
 	                  			<option value="">==请选择渠道==</option>
 	                  			<{foreach item=i key=k from=$channel_rs}>
-	                  			<option value="<{$i.id}>" <{if $i.id == $channel_id}>selected<{/if}>><{$i.py}> - <{$i.mechanism}></option>
+	                  			<option value="<{$i.id}>" <{if $i.id == $channel_id}>selected<{/if}>><{$i.py}> - <{$i.mechanism|truncate:10}></option>
 	                  			<{/foreach}>
 	                  		</select>
 	                    </td>
@@ -124,6 +126,14 @@ $(function(){
 	                  			<{/if}>
 	                  		</select>
 	                    </td>
+	                    <td>&nbsp;</td>
+	                    <td class="STYLE1"><div align="center">
+	                    	<select name="isovertime">
+	                  			<option value="0">==有效状态==</option>
+	                  			<option value="1" <{if $isovertime eq '1'}>selected<{/if}>>有效</option>
+	                  			<option value="2" <{if $isovertime eq '2'}>selected<{/if}>>无意向</option>
+	                  		</select>
+	                    </div></td>
 	                    <td class="STYLE1"><div align="top" style="margin-left:7px"><input type="image" value="" src="images/search.gif"></div></td>
 	                  </tr>
 	                </table>
@@ -150,7 +160,7 @@ $(function(){
             </td>
             -->
             <td width="2%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">序号</span></div></td>
-            <td width="9%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">客户姓名 / 性别</span></div></td>
+            <td width="9%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">客户姓名 / 性别 / 电话</span></div></td>
             <td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">级别</span></div></td>
             <td width="8%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">来源渠道</span></div></td>
             <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">渠道维护人</span></div></td>
@@ -171,7 +181,7 @@ $(function(){
               		<div align="center"><{$k+1}></div>
             	</div>
             </td>
-            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.realname}> / <{if $i.sex == 1}>男<{elseif $i.sex == 2}>女<{else}>未知<{/if}><{* / <{if $i.telphone}><{$i.telphone}><{else}>-<{/if}>*}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.realname}> / <{if $i.sex == 1}>男<{elseif $i.sex == 2}>女<{else}>未知<{/if}> / <{if $i.telphone}><{$i.telphone}><{else}>-<{/if}></span></div></td>
             <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.level_name}></span></div></td>
             <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.mechanism}></span></div></td>
             <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.mchannel_realname}></span></div></td>
@@ -187,6 +197,9 @@ $(function(){
             <span class="zx_green">已付全款</span>
             <{else}>
             <span class="zx_gray">未成交</span>
+            <{/if}>
+            <{if $i.isoverdate}>
+            <span class="zx_red zx_weight">(无意向)</span>
             <{/if}>
             </div></td>
             <td height="20" bgcolor="#FFFFFF"><div class="listleft">

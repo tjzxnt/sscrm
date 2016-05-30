@@ -10,7 +10,7 @@
   <tr>
     <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
-        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td width="12" height="40"><img src="images/tab_03.gif" width="12" height="30" /></td>
         <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td width="36%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -42,10 +42,12 @@
 	                  		至
 	                  		<input type="text" name="endtime" class="posttime" value="<{$endtime}>">
 	                  	</td>
+	                  	<{*
 	                  	<td>&nbsp;</td>
 	                  	<td class="STYLE1">
 	                  		全款时间：
 	                  	</td>
+	                  	*}>
 	                  	<td class="STYLE1"><div align="center"><input type="text" name="statdate" class="Wdate" value="<{$statdate}>" onclick="WdatePicker()" readonly/></div></td>
 	                  	<td>&nbsp;</td>
 	                    <td class="STYLE1">
@@ -90,15 +92,22 @@
             </td>
             -->
             <td width="2%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">序号</span></div></td>
-            <td width="8%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">客户姓名 / 性别</span></div></td>
+            <td width="8%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">客户姓名 / 性别 / 电话</span></div></td>
             <td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">级别</span></div></td>
             <td width="6%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">客户来源</span></div></td>
             <td width="8%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">国家 / 需求</span></div></td>
             <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">置业顾问</span></div></td>
-            <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">来访时间</span></div></td>
+            <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">客户创建时间</span></div></td>
+            <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">首次来访时间</span></div></td>
+            <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">转化到店天数</span></div></td>
+            <td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">跟踪天数</span></div></td>
+            <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">跟进状态</span></div></td>
+            <td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">看房状态</span></div></td>
+            <{*
             <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">款项状态</span></div></td>
             <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">房款金额</span></div></td>
             <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">全款时间</span></div></td>
+            *}>
             <td width="8%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">操作</span></div></td>
           </tr>
           </thead>
@@ -110,12 +119,33 @@
               		<div align="center"><{$k+1}></div>
             	</div>
             </td>
-            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.realname}> / <{if $i.sex == 1}>男<{elseif $i.sex == 2}>女<{else}>未知<{/if}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.realname}> / <{if $i.sex == 1}>男<{elseif $i.sex == 2}>女<{else}>未知<{/if}> / <{if $i.telphone}><{$i.telphone}><{else}>-<{/if}></span></div></td>
             <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.level_name}></span></div></td>
             <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.oname}></span></div></td>
             <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{if $i.ctname}><{$i.ctname}><{else}>-<{/if}> / <{if $i.demand}><{$i.demand}><{else}>-<{/if}></span></div></td>
             <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.realname_sale}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{if $i.int_createtime}><{$i.int_createtime|date_format:"%Y-%m-%d %H:%M"}><{else}><{$i.createtime|date_format:"%Y-%m-%d %H:%M"}><{/if}></span></div></td>
             <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{if $i.visit_time}><{$i.visit_time|date_format:"%Y-%m-%d %H:%M"}><{else}>-<{/if}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{if $i.int_createtime}><{if $i.visit_time}><{php}>echo abs(max(ceil(($this->_tpl_vars['i']['visit_time']-$this->_tpl_vars['i']['int_createtime'])/(24*3600)), 0));<{/php}><{else}>-<{/if}><{else}>0<{/if}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{if $i.visit_time}><{php}>echo max(ceil((time()-$this->_tpl_vars['i']['visit_time'])/(24*3600)), 0);<{/php}><{else}>-<{/if}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft">
+	            <{if $i.ispay eq '0'}>
+	            <span class="zx_red">跟进中</span>
+	            <{elseif $i.ispay eq '1'}>
+	            <span class="zx_brown">未付完全款</span>
+	            <{elseif $i.ispay eq '2'}>
+	            <span class="zx_green">已付全款</span>
+	            <{else}>
+	            <span class="zx_gray">未成交</span>
+	            <{/if}>
+	            <{if $i.isoverdate}>
+	            <span class="zx_red zx_weight">(无效)</span>
+	            <{/if}>
+            </div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft">
+            	<{$i.see_status}>
+            </div></td>
+            <{*
             <td height="20" bgcolor="#FFFFFF"><div class="listleft">
             <{if $i.ispay eq '0'}>
             <span class="zx_red">跟进中</span>
@@ -134,11 +164,12 @@
             	<span class="STYLE1">-</span>
             	<{/if}></div></td>
             <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{if $i.fullpay_arrivaltime}><{$i.fullpay_arrivaltime|date_format:"%Y-%m-%d"}><{else}>-<{/if}></span></div></td>
+            *}>
             <td bgcolor="#FFFFFF" class="listleft">
             	<{*
             	<a href="<{spUrl c=clientsrelated a=viewclient id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>查看</a>
             	*}>
-            	<a href="<{spUrl c=clientsrelated a=clientrecordlist client_id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>回访反馈(<span <{if $i.record_count eq '0'}>class="zx_red zx_weight"<{/if}>><{$i.record_count}></span>)</a>
+            	<a href="<{spUrl c=clientsrelated a=clientrecordlist client_id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>跟踪记录(<span <{if $i.record_count eq '0'}>class="zx_red zx_weight"<{/if}>><{$i.record_count}></span>)</a>
             	<{if $i.ispay == 1 or $i.ispay == 2}>
             	<a href="<{spUrl c=clientsrelated a=clientorderfundlist client_id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>款项记录</a>
             	<{/if}>
@@ -146,12 +177,12 @@
           </tr>
           <{foreachelse}>
 			<tr>
-            	<td height="20" bgcolor="#FFFFFF" colspan="11"><div style="margin-left:7px; margin-top:10px">无匹配记录</div></td>
+            	<td height="20" bgcolor="#FFFFFF" colspan="13"><div style="margin-left:7px; margin-top:10px">无匹配记录</div></td>
 			</tr>
           <{/foreach}> 
           </tbody>
           <tfoot>
-          <tr height="50" bgcolor="#FFFFFF"><td colspan="11">&nbsp;</td></tr>
+          <tr height="50" bgcolor="#FFFFFF"><td colspan="13">&nbsp;</td></tr>
           </tfoot>
         </table></td>
         <td width="8" background="images/tab_15.gif">&nbsp;</td>

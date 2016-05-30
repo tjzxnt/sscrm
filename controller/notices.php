@@ -4,9 +4,15 @@ class notices extends spController {
 	public function alertnotice(){
 		if($this->spArgs("overtime")){
 			$obj_client = spClass('client');
-			spClass('channel')->overtime();
+			$obj_int = spClass('client_intention');
+			$obj_vip = spClass('vipclient');
+			$obj_channel = spClass('channel');
+			$obj_channel->overtime();
 			$obj_client->overtime();
 			$obj_client->record_overtime();
+			$obj_int->record_overtime();
+			$obj_vip->record_overtime();
+			$obj_channel->record_overtime();
 		}
 		if($_SESSION["sscrm_user"]["competence"]["CLIENTSALE"]){
 			$obj_ot = spClass("client_overtime");
@@ -37,9 +43,15 @@ class notices extends spController {
 	
 	public function checkovertime(){
 		$obj_client = spClass('client');
-		spClass('channel')->overtime();
+		$obj_int = spClass('client_intention');
+		$obj_vip = spClass('vipclient');
+		$obj_channel = spClass('channel');
+		$obj_channel->overtime();
 		$obj_client->overtime();
 		$obj_client->record_overtime();
+		$obj_int->record_overtime();
+		$obj_vip->record_overtime();
+		$obj_channel->record_overtime();
 	}
 	
 	public function noticelist(){

@@ -1,25 +1,41 @@
 <{include file="header.html"}>
 
+<script>
+$(function(){
+	$(".intention_filter").click(function(){
+		$intention_id = $(this).attr("intention_id");
+		$form = $("#searchform");
+		$form.find("input[name=intention_id]").val($intention_id);
+		$form.submit();
+	});
+	$(".intention_filter_canel").click(function(){
+		$form = $("#searchform");
+		$form.find("input[name=intention_id]").val("");
+		$form.submit();
+	});
+})
+</script>
 </head>
 <body>
 <table width="100%" height="100%" cellspacing="1" cellpadding="0" class="tablesl zxblockui">
   <tr>
     <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
-        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td width="12" height="40"><img src="images/tab_03.gif" width="12" height="30" /></td>
         <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td width="40%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
               <tr>
                 <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
-                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[意向客户]-[<{$type_rs.name}>]-[全部回访反馈记录]</td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[蓄水客户]<{if $type_rs}>-[<{$type_rs.name}>]<{/if}>-[全部回访反馈记录]<{if $int_rs}>-[<{$int_rs.realname}> / <{if $int_rs.sex == 1}>男<{elseif $int_rs.sex == 2}>女<{else}>未知<{/if}> / <{if $int_rs.telphone}><{$int_rs.telphone}><{else}>-<{/if}>] <a href="javascript:" class="intention_filter_canel zx_red zx_weight">[返回查看全部人员]</a><{/if}></td>
               </tr>
             </table></td>
             <td width="54%">
-            <form method="GET">
+            <form method="GET" id="searchform">
             <input type="hidden" name="c" value="<{$controller}>"/>
             <input type="hidden" name="a" value="allrecordlist"/>
             <input type="hidden" name="type" value="<{$type_rs.id}>"/>
+            <input type="hidden" name="intention_id" value="<{$intention_id}>"/>
             <table border="0" align="right" cellpadding="0" cellspacing="0">
               <tr>
                  <td>
@@ -32,11 +48,20 @@
 	                  		<input type="text" name="endtime" class="posttime" value="<{$endtime}>">
 	                  	</td>
 	                  	<td>&nbsp;</td>
+	                  	<td>
+	                  		<select name="type">
+	                  			<option value="">==蓄水客户类型==</option>
+	                  			<{foreach item=i key=k from=$usetype_rs}>
+	                  			<option value="<{$i.id}>" <{if $type_rs.id == $i.id}>selected<{/if}>><{$i.name}></option>
+	                  			<{/foreach}>
+	                  		</select>
+	                  	</td>
+	                  	<td>&nbsp;</td>
 	                    <td class="STYLE1">
-	                    	<select name="user_teler_id">
-	                  			<option>==所属CALL客==</option>
-	                  			<{foreach item=i key=k from=$user_teler_rs}>
-	                  			<option value="<{$i.id}>" <{if $i.id == $user_teler_id}>selected<{/if}>><{$i.py}> - <{$i.realname}></option>
+	                    	<select name="user_id">
+	                  			<option value="">==所属维护人==</option>
+	                  			<{foreach item=i key=k from=$user_rs}>
+	                  			<option value="<{$i.id}>" <{if $i.id == $user_id}>selected<{/if}>><{$i.py}> - <{$i.realname}></option>
 	                  			<{/foreach}>
 	                  		</select>
 	                    </td>
@@ -83,7 +108,7 @@
               		<div align="center"><{$k+1}></div>
             	</div>
             </td>
-            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1 <{if $i.fromtime > 0}>zx_red<{/if}>"><{$i.realname}> / <{if $i.sex == 1}>男<{elseif $i.sex == 2}>女<{else}>未知<{/if}> / <{if $i.telphone}><{$i.telphone}><{else}>-<{/if}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1 <{if $i.fromtime > 0}>zx_red<{/if}>"><a href="<{$clisturl}>&searchkey=<{$i.telphone}>" <{if !$clisturl}>onclick="return false"<{/if}>><{$i.realname}> / <{if $i.sex == 1}>男<{elseif $i.sex == 2}>女<{else}>未知<{/if}> / <{if $i.telphone}><{$i.telphone}><{else}>-<{/if}></a></span></div></td>
             <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.content}></div></td>
             <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.realname_create}></span></div></td>
             <td height="20" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1"><{$i.acttime|date_format:"%Y-%m-%d %H:%M"}></span></div></td>

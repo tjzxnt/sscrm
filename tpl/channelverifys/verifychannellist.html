@@ -5,7 +5,7 @@
   <tr>
     <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
-        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td width="12" height="40"><img src="images/tab_03.gif" width="12" height="30" /></td>
         <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td width="46%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -48,6 +48,13 @@
 		                    	<{/foreach}>
 		                    </select>
 	                    </div></td>
+	                    <td class="STYLE1"><div align="center">
+	                    	<select name="isovertime">
+	                  			<option value="0">==有效状态==</option>
+	                  			<option value="1" <{if $isovertime eq '1'}>selected<{/if}>>有效</option>
+	                  			<option value="2" <{if $isovertime eq '2'}>selected<{/if}>>无意向</option>
+	                  		</select>
+	                    </div></td>
 	                  	<td class="STYLE1"><div align="center">
 	                    	<select name="sort" style="margin:0 2px;">
 		                    	<option value="">添加时间倒序</option>
@@ -83,16 +90,18 @@
             -->
             <td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">序号</span></div></td>
             <td width="12%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">渠道机构</span></div></td>
+            <td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">级别</span></div></td>
             <td width="8%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">渠道类型</span></div></td>
-            <td width="6%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">未签约天数</span></div></td>
-            <td width="8%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">主联系人</span></div></td>
-            <{*
+            <td width="8%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">对接人</span></div></td>
             <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">创建人</span></div></td>
-            *}>
             <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">签约人</span></div></td>
             <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">维护人</span></div></td>
-            <td width="6%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">添加时间</span></div></td>
+            <td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">维护天数</span></div></td>
+            <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">未签约天数</span></div></td>
+            <td width="6%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">创建时间</span></div></td>
+            <{*
             <td width="6%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">最近沟通时间</span></div></td>
+            *}>
 			<td width="12%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">操作</span></div></td>
           </tr>
           </thead>
@@ -105,42 +114,47 @@
             	</div>
             </td>
             <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.mechanism}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.level_name}></span></div></td>
             <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">
             	<{$i.typename}>
             	<{if $i.type2name}>
             	- <{$i.type2name}>
             	<{/if}>
             </span></div></td>
-            <td height="20" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">
-            <{if $i.issign}>
-           	<span class="STYLE1 zx_brown">已签约</span>
-           	<{else}>
-           	<span class="STYLE1"><{$i.overdate}></span>
-           	<{/if}>
-            </span></div></td>
             <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.main_contact}> / <{$i.main_tel}></span></div></td>
-            <{*
             <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.c_realname}></span></div></td>
-            *}>
             <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.f_realname}></span></div></td>
             <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.m_realname}></span></div></td>
-            <td height="20" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1"><{$i.createtime|date_format:"%Y-%m-%d %H:%M"}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1"><{php}>echo max(ceil((time()-$this->_tpl_vars['i']['maintenance_time'])/(24*3600)), 0);<{/php}></span></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div align="center">
+            	<{if $i.issign}>
+            	<span class="STYLE1 zx_brown">已签约</span>
+            	<{else}>
+            	<span class="STYLE1"><{$i.overdate}></span>
+            	<{/if}>
+            	<{if $i.isoverdate}>
+	            <span class="zx_red zx_weight">(无意向)</span>
+	            <{/if}>
+            </div></td>
+            <{*
             <td height="20" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1"><{if $i.recordtime}><{$i.recordtime|date_format:"%Y-%m-%d %H:%M"}><{else}>-<{/if}></span></div></td>
+            *}>
+            <td height="20" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1"><{$i.createtime|date_format:"%Y-%m-%d %H:%M"}></span></div></td>
             <td bgcolor="#FFFFFF" class="listleft">
             	<a href="<{spUrl c=channelverifys a=signlist channel_id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>签约记录</a>
-            	<{if $i.type2id && $i.main_contact && $i.main_tel}>
+            	<{if $i.type2id && $i.main_contact && $i.main_tel && !$i.isoverdate}>
             	<a href="<{spUrl c=channelverifys a=verifychannelinfo channel_id=$i.id}>" class="zx_red zx_weight"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/><{if $i.issign}>再次签约？<{else}>已签约？<{/if}></a>
             	<{/if}>
             </td>
           </tr>
           <{foreachelse}>
 			<tr>
-            	<td height="20" bgcolor="#FFFFFF" colspan="11"><div style="margin-left:7px; margin-top:10px">无匹配记录</div></td>
+            	<td height="20" bgcolor="#FFFFFF" colspan="12"><div style="margin-left:7px; margin-top:10px">无匹配记录</div></td>
 			</tr>
           <{/foreach}> 
           </tbody>
           <tfoot>
-          <tr height="50" bgcolor="#FFFFFF"><td colspan="11">&nbsp;</td></tr>
+          <tr height="50" bgcolor="#FFFFFF"><td colspan="12">&nbsp;</td></tr>
           </tfoot>
         </table></td>
         <td width="8" background="images/tab_15.gif">&nbsp;</td>

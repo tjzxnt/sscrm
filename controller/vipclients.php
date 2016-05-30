@@ -4,7 +4,8 @@ class vipclients extends spController {
 	public function __construct(){
 		parent::__construct();
 		try {
-			
+			$this->controller = "vipclients";
+			$this->clisturl = spUrl($this->controller, "clientlist");
 		}catch(Exception $e){
 			$backurl = spUrl("main", "welcome");
 			$this->redirect($backurl, $e->getMessage());
@@ -20,6 +21,7 @@ class vipclients extends spController {
 		$obj_country = spClass('country');
 		$obj_comactive = spClass('comactive');
 		$obj_record = spClass("vipclient_record");
+		$obj_od = spClass("vipclient_overtime");
 		$postdate = $this->spArgs();
 		$page = intval(max($postdate['page'], 1));
 		$condition = "crm_vip_client.create_id = ".$_SESSION["sscrm_user"]["id"] . " and crm_vip_client.isdel = 0";
@@ -36,8 +38,8 @@ class vipclients extends spController {
 			$this->channel_main_id = $channel_main_id;
 		}
 		if($postdate['searchkey'] != '')
-			$condition .= " and (crm_vip_client.comname like '%{$postdate['searchkey']}%' or crm_vip_client.realname like '%{$postdate['searchkey']}%' or crm_vip_client.telphone like '%{$postdate['searchkey']}%')";
-		if($client_rs = $obj_client->join("crm_client_level")->join("crm_origin")->join("crm_credential")->join("crm_client_process")->spPager($page, 20)->findAll($condition, 'crm_vip_client.createtime desc', "crm_vip_client.*, crm_client_level.name as level_name, crm_origin.oname, crm_credential.cname, crm_client_process.pname")){
+			$condition .= " and (crm_vip_client.comname like '%{$postdate['searchkey']}%' or crm_vip_client_manage.realname like '%{$postdate['searchkey']}%' or crm_vip_client_manage.telphone like '%{$postdate['searchkey']}%')";
+		if($client_rs = $obj_client->join("crm_vip_client_manage", "crm_vip_client_manage.vip_client_id = crm_vip_client.id and crm_vip_client_manage.ismain = 1")->join("crm_client_level")->join("crm_origin")->join("crm_client_process")->join("crm_vip_client_overtime", "crm_vip_client_overtime.client_id = crm_vip_client.id and crm_vip_client_overtime.endtime = 0", "left")->spPager($page, 20)->findAll($condition, 'crm_vip_client.createtime desc', "crm_vip_client.*, crm_vip_client_manage.realname, crm_vip_client_manage.sex, crm_vip_client_manage.managepost, crm_vip_client_manage.tel_location, crm_vip_client_manage.telphone, crm_vip_client_manage.email, crm_vip_client_manage.wechat, crm_client_level.name as level_name, crm_origin.oname, crm_vip_client_overtime.fromtime, crm_client_process.pname", "crm_vip_client.id")){
 			foreach($client_rs as $key => $val){
 				if($val["user_overseas_id"]){
 					$over_seas_rs = $obj_user->findByPk($val["user_overseas_id"]);
@@ -47,6 +49,7 @@ class vipclients extends spController {
 					$client_rs[$key]["ctname"] = $obj_country->getname($val["exp_country_id"]);
 				}
 				$client_rs[$key]["record_count"] = $obj_record->getCountById($val["id"]);
+				$client_rs[$key]["overtime_count"] = $obj_od->getCount($val["id"]);
 			}
 			$this->client_rs = $client_rs;
 		}
@@ -94,13 +97,12 @@ class vipclients extends spController {
 			$obj_trader = spClass('trader');
 			$obj_travel = spClass('travel');
 			$obj_comactive = spClass("comactive");
-			$obj_ass = spClass("client_ass_intention");
+			$obj_manage = spClass("vipclient_manage");
 			$postdate = $this->spArgs();
 			if(!$origin_id = intval($postdate["origin_id"]))
 				throw new Exception("请选择客户来源");
 			if(!$origin_rs = $obj_origin->getOriginById($origin_id))
 				throw new Exception("请选择正确的客户来源");
-			$this->ass_rs = $obj_ass->find(array("origin_id"=>$origin_id, "isdel"=>0));
 			$extdata = array();
 			if($origin_rs["extinput"]){
 				$extinput_rs = explode("|", $origin_rs["extinput"]);
@@ -114,9 +116,14 @@ class vipclients extends spController {
 			}
 			if($origin_rs["isdatafrom"])
 				$this->user_prep_rs = $obj_user->getUser_prep();
+			/*
+			$obj_ass = spClass("client_ass_intention");
+			$this->ass_rs = $obj_ass->find(array("origin_id"=>$origin_id, "isdel"=>0));
+			*/
 			if($_SERVER['REQUEST_METHOD'] == 'POST'){
 				try {
 					$data = array();
+					$managedata = array();
 					$data['create_id'] = $_SESSION["sscrm_user"]["id"];
 					$data['createtime'] = time();
 					$data['origin_id'] = $origin_id;
@@ -136,32 +143,39 @@ class vipclients extends spController {
 					if($origin_rs["istravel"])
 						$data['travel_id'] = intval($postdate['travel_id']);
 					$data['comname'] = $postdate['comname'];
-					$data['realname'] = $postdate['realname'];
-					$data['sex'] = intval($postdate['sex']);
-					$data['tel_location'] = $postdate["tel_location"];
-					$data['telphone'] = $postdate['telphone'];
 					$data['cred_id'] = intval($postdate['cred_id']);
 					$data['cred_license'] = $postdate['cred_license'];
 					$data['address'] = $postdate['address'];
 					$data['profession'] = $postdate['profession'];
-					$data['email'] = $postdate['email'];
-					$data['wechat'] = $postdate['wechat'];
 					$data['exp_country_id'] = intval($postdate['exp_country_id']);
 					$data['demand'] = $postdate['demand'];
 					$data['feedback'] = $postdate['feedback'];
 					if($postdate['visit_time'])
 						$data['visit_time'] = strtotime($postdate['visit_time']);
 					$data = array_merge($data, $extdata);
+					$managedata['realname'] = $postdate['realname'];
+					$managedata['sex'] = intval($postdate['sex']);
+					$managedata["managepost"] = $postdate["managepost"];
+					$managedata['tel_location'] = $postdate["tel_location"];
+					$managedata['telphone'] = $postdate['telphone'];
+					$managedata['email'] = $postdate['email'];
+					$managedata['wechat'] = $postdate['wechat'];
 					if($result = $obj_client->getValidatorForOrigin()->spValidator($data)){
 						foreach($result as $item) {
 							throw new Exception($item[0]);
 							break;
 						}
 					}
-					if(spClass("client")->find(array("telphone"=>$data['telphone'])))
+					if($result = $obj_manage->spValidator($managedata)){
+						foreach($result as $item) {
+							throw new Exception($item[0]);
+							break;
+						}
+					}
+					if(spClass("client")->find(array("telphone"=>$managedata['telphone'])))
 						throw new Exception("该电话号码已在普通客户中存在，无法再次录入系统");
-					if($obj_client->find(array("telphone"=>$data['telphone'])))
-						throw new Exception("该电话号码已在大客户中存在，无法再次录入系统");
+					if($obj_manage->find(array("telphone"=>$managedata['telphone'])))
+						throw new Exception("该电话号码在大客户联系人中已存在，无法再次录入系统");
 					if($ext_field_rs){
 						foreach ($ext_field_rs as $val){
 							if($val["demand"] == "required" && !$data[$val[field]])
@@ -262,22 +276,41 @@ class vipclients extends spController {
 						}
 					}
 					$obj_client->getDb()->beginTrans();
+					/*
 					if($this->ass_rs){
 						$obj_int = spClass("client_intention");
-						$ass_field = $this->ass_rs["fields"];
-						if(!$data[$ass_field])
-							throw new Exception($this->ass_rs["fieldnull"]);
-						if(!$int_rs = $obj_int->checkintention($this->ass_rs["type"], $data[$ass_field], $data['telphone']))
-							throw new Exception($this->ass_rs["checkerror"]);
+						if($this->ass_rs["fields"] == "SEARCHBYTEL"){
+							$int_temp_rs = $obj_int->getintention($this->ass_rs["type"], $data["telphone"]);
+							$ass_field = intval($int_temp_rs["create_id"]);
+						}else
+							$ass_field = $this->ass_rs["fields"];
+						if(!$ass_field){
+							if($this->ass_rs["ismustass"])
+								throw new Exception($this->ass_rs["fieldnull"]);
+						}
+						eval("\$ass_createid = $ass_field;");
+						if(!$int_rs = $obj_int->checkintention($this->ass_rs["type"], $ass_createid, $data)){
+							if($this->ass_rs["ismustass"])
+								throw new Exception($this->ass_rs["checkerror"].$data[$ass_field]);
+						}
+						//throw new Exception("技术部调试中，请稍后".$ass_createid."x");
 					}
+					*/
 					if(!$id = $obj_client->create($data))
 						throw new Exception("未知错误，添加失败");
 					if($postdate["channel_id"])
 						$obj_channel->updatetime($postdate["channel_id"], $id);
+					$managedata["vip_client_id"] = $id;
+					$managedata["ismain"] = 1;
+					$managedata["createtime"] = time();
+					if(!$manageid = $obj_manage->create($managedata))
+						throw new Exception("未知错误，大客户联系人创建失败");
+					/*
 					if($int_rs["id"]){
 						if(!$obj_int->update(array("id"=>$int_rs["id"]), array("vip_client_id"=>$id)))
 							throw new Exception("CALL客户验证过程中出现问题，请稍后再试");
 					}
+					*/
 					spClass('user_log')->save_log(12, "添加了来源为 ".$origin_rs["oname"]." 的大客户 ".$data['realname']." [id:$id]", array("vip_client_id"=>$id));
 					if($record_data["content"]){
 						$record_data["client_id"] = $id;
@@ -452,6 +485,7 @@ class vipclients extends spController {
 				$this->ext_field_rs = $ext_field_rs;
 			}
 			$this->from_rs = $obj_origin->getClientViewFrom($this->origin_rs, $client_rs);
+			$this->vip = 1;
 		}catch(Exception $e){
 			$this->redirect($url, $e->getMessage());
 		}
@@ -496,6 +530,43 @@ class vipclients extends spController {
 		}
 	}
 	
+	//修改面资轮数
+	public function modify_round(){
+		try {
+			if(!$client_id = intval($this->spArgs("client_id")))
+				throw new Exception("参数丢失");
+			$obj_client = spClass("vipclient");
+			$obj_level = spClass("client_level");
+			if(!$this->client_rs = $obj_client->getMyClientById($client_id))
+				throw new Exception("找不到该客户");
+			$backurl = $_SERVER['HTTP_REFERER'];
+			if($_SERVER['REQUEST_METHOD'] == 'POST'){
+				try {
+					$postdata = $this->spArgs();
+					$data = array();
+					$data["rounds"] = abs(intval($postdata["rounds"]));
+					if($data["rounds"] > 10)
+						throw new Exception("面资轮数超过上限");
+					if(!$obj_client->update(array("id"=>$client_id), $data))
+						throw new Exception("未知错误，更新失败");
+					spClass('user_log')->save_log(12, "更新了大客户 ".$this->client_rs['realname']." [id:$client_id] 的面资轮数，由 {$this->client_rs["rounds"]} 改为了 {$data["rounds"]}", array("vip_client_id"=>$client_id));
+					$backurl = $postdata["backurl"] ? $postdata["backurl"] : spUrl("vipclients", "clientlist");
+					$message = array('msg'=>"大客户面资轮数修改成功", 'result'=>1, "url"=>$backurl);
+					echo json_encode($message);
+					exit();
+				}catch(Exception $e){
+					$message = array('msg'=>$e->getMessage(), 'result'=>0);
+					echo json_encode($message);
+					exit();
+				}
+			}
+			$this->backurl = $backurl;
+			$this->client_id = $client_id;
+		}catch(Exception $e){
+			$this->redirect(spUrl("vipclients", "clientlist"), $e->getMessage());
+		}
+	}
+	
 	public function clientrecordlist(){
 		try {
 			if(!$client_id = intval($this->spArgs("client_id")))
@@ -516,6 +587,44 @@ class vipclients extends spController {
 		}
 	}
 	
+	public function allrecordlist(){
+		try {
+			$obj_user = spClass('user');
+			$obj_record = spClass("vipclient_record");
+			$postdate = $this->spArgs();
+			$page = intval(max($postdate['page'], 1));
+			$condition = "crm_vip_client_record.rtype_id = 1 and crm_vip_client.create_id = {$_SESSION["sscrm_user"]["id"]}";
+			if($postdate['starttime'] != ''){
+				$condition .= " and crm_vip_client_record.acttime >= ".strtotime($postdate['starttime']);
+				$this->starttime = $postdate['starttime'];
+			}
+			if($postdate['endtime'] != ''){
+				$condition .= " and crm_vip_client_record.acttime <= ".strtotime($postdate['endtime']);
+				$this->endtime = $postdate['endtime'];
+			}
+			if(intval($postdate['create_id'])){
+				$condition .= " and crm_vip_client.create_id = ".intval($postdate['create_id']);
+				$this->create_id = $postdate['create_id'];
+			}
+			if($client_id = intval($this->spArgs("client_id"))){
+				$obj_client = spClass("client");
+				if($this->client_rs = $obj_client->find(array("id"=>$client_id))){
+					$condition .= " and crm_vip_client_record.client_id = $client_id";
+					$this->client_id = $client_id;
+				}
+			}
+			$record_rs = $obj_record->join("crm_user")->join("crm_vip_client")->join("crm_vip_client_manage", "crm_vip_client_manage.vip_client_id = crm_vip_client.id and crm_vip_client_manage.ismain = 1")->spPager($page, 20)->findAll($condition, "crm_vip_client_record.acttime desc", "crm_vip_client_record.*, crm_vip_client.comname, crm_vip_client_manage.telphone, crm_user.realname as realname_create");
+			$this->record_rs = $record_rs;
+			$this->pager = $obj_record->spPager()->getPager();
+			$this->url = spUrl('vipclients', 'allrecordlist', array("starttime"=>$this->starttime, "endtime"=>$this->endtime, "create_id"=>$this->create_id, "client_id"=>$this->client_id));
+			$this->controller = "vipclients";
+			$this->display("vipclientall/allrecordlist.html");
+			exit();
+		}catch(Exception $e){
+			$this->redirect(spUrl("vipclients", "mycreateclientlist"), $e->getMessage());
+		}
+	}
+	
 	public function createrecord(){
 		try {
 			if(!$client_id = intval($this->spArgs("client_id")))
@@ -524,6 +633,7 @@ class vipclients extends spController {
 			if(!$this->client_rs = $obj_client->getMyClientById($client_id))
 				throw new Exception("找不到该客户");
 			$obj_record = spClass("vipclient_record");
+			$obj_od = spClass("vipclient_overtime");
 			$postdate = $this->spArgs();
 			$backurl = spUrl("vipclients", "clientrecordlist", array("client_id"=>$client_id));
 			if($_SERVER['REQUEST_METHOD'] == 'POST'){
@@ -543,6 +653,8 @@ class vipclients extends spController {
 					}
 					if(!$obj_record->create($data))
 						throw new Exception("未知错误，沟通记录添加失败");
+					if($od_rs = $obj_od->find(array("client_id"=>$client_id, "endtime"=>0)))
+						$obj_od->update(array("id"=>$od_rs["id"]), array("endtime"=>time()));
 					spClass('user_log')->save_log(12, "添加了大客户 ".$this->client_rs['realname']." [id:$client_id] 的沟通记录", array("vip_client_id"=>$client_id));
 					$message = array('msg'=>"沟通记录添加成功", 'result'=>1, "url"=>$backurl);
 					echo json_encode($message);
@@ -846,6 +958,171 @@ class vipclients extends spController {
 			$this->saveurl = spUrl("vipclients", "createorderfund");
 		}catch(Exception $e){
 			$this->redirect(spUrl("vipclients", "clientorderfundlist", array("client_id"=>$client_id)), $e->getMessage());
+		}
+	}
+	
+	public function managelist(){
+		try {
+			$obj_manage = spClass("vipclient_manage");
+			if(!$client_id = intval($this->spArgs("client_id")))
+				throw new Exception("参数丢失");
+			$obj_client = spClass("vipclient");
+			if(!$this->client_rs = $obj_client->getMyClientById($client_id))
+				throw new Exception("找不到该客户");
+			$this->manage_rs = $obj_manage->findAll(array("vip_client_id"=>$client_id, "isdel"=>0), "createtime desc");
+			$this->client_id = $client_id;
+		}catch(Exception $e){
+			$this->redirect(spUrl("vipclients", "clientlist"), $e->getMessage());
+		}
+	}
+	
+	//添加对接人
+	public function createmanage(){
+		try {
+			$obj_manage = spClass("vipclient_manage");
+			if(!$client_id = intval($this->spArgs("client_id")))
+				throw new Exception("参数丢失");
+			$obj_client = spClass("vipclient");
+			if(!$this->client_rs = $obj_client->getMyClientById($client_id))
+				throw new Exception("找不到该客户");
+			if($_SERVER['REQUEST_METHOD'] == 'POST'){
+				try{
+					$postdate = $this->spArgs();
+					$data['realname'] = $postdate['realname'];
+					$data['sex'] = intval($postdate['sex']);
+					$data["managepost"] = $postdate["managepost"];
+					$data['tel_location'] = $postdate["tel_location"];
+					$data['telphone'] = $postdate['telphone'];
+					$data['email'] = $postdate['email'];
+					$data['wechat'] = $postdate['wechat'];
+					$data["vip_client_id"] = $client_id;
+					$data["ismain"] = 0;
+					$data["createtime"] = time();
+					if($result = $obj_manage->spValidator($data)){
+						foreach($result as $item) {
+							throw new Exception($item[0]);
+							break;
+						}
+					}
+					if($obj_manage->find(array("telphone"=>$data['telphone'])))
+						throw new Exception("该电话号码在大客户联系人中已存在，无法再次录入系统");
+					if(!$manageid = $obj_manage->create($data))
+						throw new Exception("未知错误，大客户联系人创建失败");
+					spClass('user_log')->save_log(12, "添加了大客户 ".$this->client_rs['realname']." [id:$client_id]的对接人 {$data['realname']} [id:$manageid]", array("vip_client_id"=>$client_id));
+					$message = array('msg'=>"大客户对接人添加成功", 'result'=>1, "url"=>spUrl("vipclients", "managelist", array("client_id"=>$client_id)));
+					echo json_encode($message);
+					exit();
+				}catch(Exception $e){
+					$message = array('msg'=>$e->getMessage(), 'result'=>0);
+					echo json_encode($message);
+					exit();
+				}
+			}
+			$this->saveurl = spUrl("vipclients", "createmanage");
+			$this->client_id = $client_id;
+		}catch(Exception $e){
+			$this->redirect(spUrl("vipclients", "clientlist"), $e->getMessage());
+		}
+	}
+	
+	//完善对接人信息
+	public function modifymanage(){
+		try {
+			$obj_manage = spClass("vipclient_manage");
+			if(!$client_id = intval($this->spArgs("client_id")))
+				throw new Exception("参数丢失");
+			if(!$id = intval($this->spArgs("id")))
+				throw new Exception("参数丢失");
+			$obj_client = spClass("vipclient");
+			if(!$this->client_rs = $obj_client->getMyClientById($client_id))
+				throw new Exception("找不到该大客户");
+			if(!$manage_rs = $obj_manage->find(array("vip_client_id"=>$client_id, "id"=>$id)))
+				throw new Exception("找不到该对接人，可能已被删除");
+			if($_SERVER['REQUEST_METHOD'] == 'POST'){
+				try{
+					$postdate = $this->spArgs();
+					$data = array();
+					$data['tel_location'] = $manage_rs["tel_location"] ? $manage_rs["tel_location"] : $postdate["tel_location"];
+					$data['email'] = $manage_rs["email"] ? $manage_rs["email"] : $postdate['email'];
+					$data['wechat'] = $manage_rs["wechat"] ? $manage_rs["wechat"] : $postdate['wechat'];
+					if(!$postdate["tel_location"] && !$postdate['email'] && !$postdate['wechat'])
+						throw new Exception("没有任何更新项，更新失败");
+					if(!$manageid = $obj_manage->update(array("id"=>$id), $data))
+						throw new Exception("未知错误，大客户联系人更新失败");
+					spClass('user_log')->save_log(12, "更新了大客户 ".$this->client_rs['realname']." [id:$client_id]的对接人 {$manage_rs['realname']} [id:$id]", array("vip_client_id"=>$client_id));
+					$message = array('msg'=>"大客户对接人更新成功", 'result'=>1, "url"=>spUrl("vipclients", "managelist", array("client_id"=>$client_id)));
+					echo json_encode($message);
+					exit();
+				}catch(Exception $e){
+					$message = array('msg'=>$e->getMessage(), 'result'=>0);
+					echo json_encode($message);
+					exit();
+				}
+			}
+			$this->id = $id;
+			$this->manage_rs = $manage_rs;
+			$this->saveurl = spUrl("vipclients", "modifymanage");
+			$this->client_id = $client_id;
+		}catch(Exception $e){
+			$this->redirect(spUrl("vipclients", "clientlist"), $e->getMessage());
+		}
+	}
+	
+	//切换主对接人
+	public function manage_main(){
+		try {
+			$obj_manage = spClass("vipclient_manage");
+			if(!$client_id = intval($this->spArgs("client_id")))
+				throw new Exception("参数丢失");
+			if(!$id = intval($this->spArgs("id")))
+				throw new Exception("参数丢失");
+			$obj_client = spClass("vipclient");
+			if(!$this->client_rs = $obj_client->getMyClientById($client_id))
+				throw new Exception("找不到该客户");
+			if(!$manage_oral_rs = $obj_manage->find(array("vip_client_id"=>$client_id, "ismain"=>1)))
+				throw new Exception("找不到该大客户的主对接人，可能已被删除");
+			if(!$manage_rs = $obj_manage->find(array("vip_client_id"=>$client_id, "id"=>$id)))
+				throw new Exception("找不到该对接人，可能已被删除");
+			if($manage_rs["ismain"])
+				throw new Exception("该对接人就是主对接人，无法进行该操作");
+			$obj_manage->getDb()->beginTrans();
+			$obj_manage->update(array("vip_client_id"=>$client_id), array("ismain"=>0));
+			$obj_manage->update(array("vip_client_id"=>$client_id, "id"=>$id), array("ismain"=>1));
+			spClass('user_log')->save_log(12, "切换了大客户 ".$this->client_rs['realname']." [id:$client_id]的主对接人 由 {$manage_oral_rs["realname"]} [id:{$manage_oral_rs["id"]}] 切换到了 {$manage_rs['realname']} [id:{$manage_rs["id"]}]", array("vip_client_id"=>$client_id));
+			$obj_client->getDb()->commitTrans();
+			$message = array('msg'=>"主对接人切换成功", 'result'=>1);
+			echo json_encode($message);
+			exit();
+		}catch(Exception $e){
+			$obj_manage->getDb()->rollbackTrans();
+			$message = array('msg'=>$e->getMessage(), 'result'=>0);
+			echo json_encode($message);
+			exit();
+		}
+	}
+	
+	//查看过期
+	public function odlist(){
+		try {
+			if(!$id = intval($this->spArgs('id')))
+				throw new Exception('请先选择客户，再进行操作！');
+			$backurl = spUrl("clientsales", "clientlist");
+			$obj_client = spClass("vipclient");
+			$obj_origin = spClass("origin");
+			$obj_user = spClass("user");
+			if(!$client_rs = $obj_client->getMyClientById($id))
+				throw new Exception("找不到该客户");
+			$postdata = $this->spArgs();
+			$obj_od = spClass("vipclient_overtime");
+			$page = intval(max($postdata['page'], 1));
+			$this->od_rs = $obj_od->join("crm_user")->spPager($page, 20)->findAll(array("client_id"=>$id), "createtime desc", "crm_vip_client_overtime.*, crm_user.realname as realname");
+			$this->client_rs = $client_rs;
+			$this->id = $id;
+			$this->pager = $obj_od->spPager()->getPager();
+			$this->url = spUrl("vipclients", "odlist", array("id"=>$id));
+			$this->backurl = spUrl("vipclients", "clientlist");
+		}catch(Exception $e){
+			$this->redirect(spUrl("vipclients", "clientlist"), $e->getMessage());
 		}
 	}
 	

@@ -1,0 +1,266 @@
+<{include file="header.html"}>
+<style>
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, button, textarea, p, blockquote, th, td {
+	margin: 0;
+	padding: 0;
+}
+.fontshrink {
+	-webkit-text-size-adjust: none;
+	-webkit-transform: scale(0.8);
+	-o-transform: scale(1);
+	display: inline-block
+}
+html, body {
+	-webkit-text-size-adjust: none;
+}
+body {
+	background: #fff;
+	color: #555;
+	font-size: 14px;
+	font-family: "微软雅黑";
+}
+td, th, caption {
+	font-size: 14px;
+}
+h1, h2, h3, h4, h5, h6 {
+	font-weight: normal;
+	font-size: 100%;
+}
+address, caption, cite, code, dfn, em, th, var {
+	font-style: normal;
+	font-weight: normal;
+}
+a {
+	color: #555;
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: none;
+}
+img {
+	border: none;
+}
+ol, ul, li, p {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+input, textarea, select, button {
+	font: 14px Verdana, Helvetica, Arial, sans-serif;
+}
+table {
+	border-collapse: collapse;
+}
+#linkspan {
+	cursor: pointer
+}
+.tagbox {
+	margin-top: 20px;
+	padding-left: 20px
+}
+.tagbox .tagdiv {
+	margin-top: 10px
+}
+.tagbox .taginfo { /*text-indent:2em;*/
+}
+.page-title {
+	color: #666;
+	display: block;
+	font-family: "HelveticaNeue", "Helvetica Neue", Helvetica, Arial;
+	font-size: 30px;
+	font-weight: 300;
+	letter-spacing: -1px;
+	margin: 20px 0 25px;
+	padding: 0;
+}
+.page-title small {
+	color: #888;
+	font-size: 14px;
+	font-weight: 300;
+	letter-spacing: 0;
+}
+.rb {
+	width: 100%;
+}
+.rb1, .rb2, .rb3, .rb4,.rb5, .rb6 {
+	padding: 1.5%;
+	width: 20%;
+	margin-right: 2%;
+	float: left; margin-bottom:2%;
+}
+.rb1:hover, .rb2:hover, .rb3:hover, .rb4:hover,.rb5:hover, .rb6:hover {
+	border-color: #339;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(102, 175, 233, 0.6);
+	outline: 0 none;
+}
+.rb1:hover {
+	background-color:#0093d4;
+}
+.rb2:hover {
+	background-color:#009756;
+}
+.rb3:hover {
+	background-color:#4f0061;
+}
+.rb4:hover {
+	background-color:#e39b2a;
+}
+.rb5:hover {
+	background-color:#960000;
+}
+.rb6:hover {
+	background-color:#003f4a;
+}
+.rb1 {
+	background-color: #27a9e3;
+}
+.c-text {
+	color: #FFF;
+	margin-right: 30px;
+	font-weight: bold; display:block;
+
+}
+.c-text i {
+	display: block;
+	font-style: normal;
+	text-align: right;
+	margin-bottom: 3px;
+}
+.c-text b {
+	display: block;
+	font-size: 18px;
+}
+.rb2 {
+	background-color: #28b779;
+}
+.rb-f {
+	font-size: 50px;
+	color: #FFF;
+	vertical-align: middle;
+	display: block;
+	float: left;
+}
+.style1 {
+	font-size: 16px;
+}
+.rb3 {
+	background-color: #6e1881;
+}
+.rb a {
+	cursor: pointer;
+	display: block;
+}
+.rb4 {
+	background-color: #ffb848;
+}
+.rb5 {
+	background-color: #c30000;
+}
+.rb6 {
+	background-color: #0f606e;
+}
+
+.nub{ font-size:30px; color:#fff; font-style:normal;font-family:Arial, Helvetica, sans-serif; }
+.st{margin-top:20px;}
+.no-text{  color:#FFF; font-size:16px;  display:block; float:left; margin-bottom:15px;}
+.p-text{ float:right; font-size:16px;color:#FFF;display:block; font-weight:bold; }
+.clear{content:"."; display:block; height:0; visibility:hidden; clear:both; }
+</style>
+<script src="<{$web_root}>/js/layer/layer.js"></script>
+<script>
+$(function(){
+	 $.each($(".forAnalysis"), function(i,item){
+		$obj = $(this);
+		$.ajax({
+			type: "POST",
+			url: "<{spUrl c=apis a=getAnalysis}>",
+			data: "code=" + $obj.attr("val"),
+			dataType: 'json',
+			beforeSend: function(){
+				
+			},
+			success: function(json, textStatus){
+				if(json.result == 1){
+					$(".forAnalysis").eq(i).after(json.html).hide();
+				}
+			},
+			error: function(xml, status){
+				
+			}
+		});
+	});
+});
+</script>
+
+</head><body>
+<div style="padding: 30px 0 0 30px; overflow:hidden;">
+	<div class="rb">
+		<!-- 
+      <a href="<{$i.url}>">
+			<div class="rb1">
+				<i class="nub"></i>
+				<span class="c-text">
+					<b>全部蓄水客户</b>
+                    
+				</span>
+                <div class="clear"></div>
+                <div class="st">
+                <span class="no-text">到访：10/全部：200</span>
+                <span class="p-text">转化率：5%</span>
+                </div>
+			</div>
+		</a>
+        
+        <a href="<{$i.url}>">
+			<div class="rb2">
+				<i class="nub"></i>
+				<span class="c-text">
+					<b>全部回访记录</b>
+                    
+				</span>
+                <div class="clear"></div>
+                 <div class="st">
+                <span class="no-text">回访总数：1000</span>
+         </div>
+			</div>
+		</a>
+        
+        
+                <a href="<{$i.url}>">
+			<div class="rb3">
+				<i class="nub"></i>
+				<span class="c-text">
+					<b>全部计划列表</b>
+                    
+				</span>
+                <div class="clear"></div>
+                 <div class="st">
+                <span class="no-text">完成计划：20/全部计划：150</span>
+         </div>
+			</div>
+		</a>
+         -->
+         
+		<{foreach item=i key=k from=$module.menu}>
+		<{if $k>0 && $k%4 == 0}>
+		<div class="zxclear"></div>
+		<{/if}>
+		<a href="<{$i.url}>">
+			<div class="rb<{math equation='(k%6) + 1' k=$k}>">
+				<i class="nub"></i>
+				<span class="c-text">
+					<b><{$i.submenu}></b>
+				</span>
+                <div class="clear"></div>
+                <div class="st">
+	                <{$i.tail}>
+                </div>
+			</div>
+		</a>
+		<{/foreach}>
+	</div>
+</div>
+
+
+
+<{include file="footer.html"}>

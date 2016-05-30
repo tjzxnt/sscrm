@@ -37,8 +37,10 @@ function getNotice(args){
 			if(json.result == 1){
 				$.toaster({ priority : 'info', title : '提示', message : json.html});
 			}
+			/*
 			if(json.hmtime == '18:00')
 				alert("当前时间18:00，服务器可能会随时关闭，若需要继续使用请通知技术部");
+			*/
 	   },
 		error: function(xml, status){
 			//alert(xml.responseText);
@@ -80,7 +82,8 @@ $(function(){
 <body>
 	<div class="top">
 		<div class="logo1">
-			<img src="assets/img/logo1.png">
+		<img src="assets/img/logo1.png">
+       
 		</div>
 	<!--	<div class="title"><{$app_config.website_name}></div>-->
 		<div class="icon">
@@ -91,7 +94,10 @@ $(function(){
 				<li><a href="#nogo" onclick="window.top.frames[3].location.reload();"><i class="iconfont">&#xe60d; </i>刷新</a></li>
 				<li><a href="<{spUrl c=main a=logout}>" target="_parent"><i class="iconfont">&#xe60b; </i>退出</a></li>
 				<li><a href="<{spUrl c=basic a=mypwd}>" target="center"><i class="iconfont">&#xe619; </i>修改个人资料</a></i></li>
-				<li style="padding-left:30px;">
+				<{if $smarty.session.sscrm_user.master}>
+				<li><a href="<{spUrl c=logs a=loglist}>" target="center"><i class="iconfont">&#xe61a; </i>查看我的日志</a></i></li>
+				<{/if}>
+				<li style="color:#666; margin-left:30px;">
 					<script language="javascript">   
 					    $(function(){   
 					        //setInterval("$('#currentTime').text(new Date().toLocalsString());",1000);
@@ -102,6 +108,7 @@ $(function(){
 					        },1000);
 					    });   
 					</script>
+					<i class="iconfont" style="color:#666;">&#xe64b;</i>
 					当前时间：<span id="currentTime"></span>
 				</li>
 			</ul>

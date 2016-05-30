@@ -31,6 +31,10 @@
 			'crm_client_level' => array(
 				'mapkey' => 'id',
 				'fkey' => 'level_id'
+			),
+			'crm_client_seehouse' => array(
+				'mapkey' => 'id',
+				'fkey' => 'seehouse'
 			)
 		);
 		
@@ -48,6 +52,9 @@
 					'required' => true,
 					'minlength' => 8,
 					'maxlength' => 14
+				),
+				"visit_time" => array(
+					"required" => true
 				),
 				'exp_country' => array(
 					'minlength' => 2,
@@ -74,6 +81,9 @@
 					'required' => '客户电话不能为空',
 					'minlength' => '请输入8~14位客户电话',
 					'maxlength' => '请输入8~14位客户电话'
+				),
+				"visit_time" => array(
+					"required" => '到访时间必填'
 				),
 				'exp_country' => array(
 					'minlength' => '意向国家不能少于2个字符',
@@ -1271,7 +1281,7 @@
 			return $order_rs;
 		}
 		
-		//更新客户动态时间，防止超时
+		//更新客户动态时间，防止超时(超过xx天自动转为无意向)
 		public function overtime(){
 			/*
 			 if(strtolower($_SERVER['HTTP_HOST']) !== "localhost")

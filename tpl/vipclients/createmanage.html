@@ -1,0 +1,123 @@
+<{include file="header.html"}>
+
+<{include file="library/validator.html"}>
+</head>
+<body>
+<table width="100%" height="100%" cellspacing="0" cellpadding="0">
+  <tr>
+    <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="40"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="46%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[大客户管理]-[我添加的客户]-[<{$client_rs.comname}>]-[添加新联系人]</td>
+              </tr>
+            </table></td>
+            <td width="54%"><table border="0" align="right" cellpadding="0" cellspacing="0">
+              <tr>
+                <td width="60"><table width="90%" border="0" cellpadding="0" cellspacing="0">
+                  <tr>
+					<td class="STYLE1"><div align="center"><a href="#nogo" onClick="javascript:history.go(-1)"><img src="images/back.png" width="14" height="14" align="top" /> 返回</a></div></td>
+                    <td class="STYLE1"><div align="center"></div></td>
+                  </tr>
+                </table></td>
+              </tr>
+            </table></td>
+          </tr>
+        </table></td>
+        <td width="16"><img src="images/tab_07.gif" width="16" height="30" /></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td>
+	    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	      <tr>
+	        <td width="8" background="images/tab_12.gif">&nbsp;</td>
+	        <td>
+	        	<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#b5d6e6">
+	        		<tr height="50" bgcolor="#FFFFFF">
+	        			<td>
+	        			<form class="form" method="post" action="<{$saveurl}>">
+	        				<input type="hidden" name="isAjax" value="0" />
+	        				<input type="hidden" name="client_id" value="<{$client_id}>" />
+                             <fieldset>
+                             	<legend>主对接人资料</legend>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>姓名</label> 
+                                    <input name="realname" type="text" id="realname" value=""/>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">性别</label> 
+									<input type="radio" class="radio" name="sex" value="1" checked/><label>男</label>
+									<input type="radio" class="radio" name="sex" value="2"/><label>女</label>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>职务</label> 
+                                    <input name="managepost" type="text" id="managepost" value=""/>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">电话所在地</label> 
+                                    <input class="shortinput" name="tel_location" type="text" id="tel_location" value=""> (如：台湾省)
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label"><span class="input_required">*</span>联系电话</label> 
+                                    <input class="num_input" name="telphone" type="text" id="telphone" value="">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">电子邮箱</label> <input name="email" type="text" id="email" value="">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">微信号</label> <input name="wechat" type="text" id="wechat" value="">
+                                </div>
+                                <{*
+                                <div class="rowElem">
+                                    <label class="label">证件类型</label>
+                                    <select name="cred_id">
+                                    	<{foreach item=i key=k from=$cred_rs}>
+                                    	<option value="<{$i.id}>"><{$i.cname}></option>
+                                    	<{/foreach}>
+                                    </select>
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">证件号</label> <input name="cred_license" type="text" id="cred_license" value="">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">家庭住址</label> <input name="address" type="text" id="address" value="">
+                                </div>
+                                <div class="rowElem">
+                                    <label class="label">客户职业</label> <input name="profession" type="text" id="profession" value="">
+                                </div>
+                                *}>
+                                <div class="rowElem">
+                                	<label class="label">&nbsp;</label>
+                                    <button type="submit" id="submit-go">Submit</button>
+                                </div>
+                                <span class="zx_red zx_weight zx_font_mid">(该部分非必填项未知可不填, 填完后保存无法修改)</span>
+                            </fieldset>
+                        </form>
+						</td>
+	        		</tr>
+	        	</table>
+	        </td>
+	        <td width="8" background="images/tab_15.gif">&nbsp;</td>
+	      </tr>
+	    </table>
+    </td>
+  </tr>
+  <tr>
+    <td height="35" background="images/tab_19.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td width="12" height="35"><img src="images/tab_18.gif" width="12" height="35" /></td>
+        <td>&nbsp;</td>
+        <td width="16"><img src="images/tab_20.gif" width="16" height="35" /></td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</div>
+</body>
+<{include file="footer.html"}>

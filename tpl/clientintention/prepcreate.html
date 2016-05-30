@@ -1,0 +1,80 @@
+<{include file="library/chosen.html"}>
+
+<script>
+$(function(){
+	$("#prepsubmit").click(function(){
+		$.ajax({
+		   type: "POST",
+		   url: "<{$saveurl}>",
+		   data: $(".prepform").serialize(),
+		   dataType: 'json',
+		   beforeSend: function(){
+		   		showBlockMsg(".tipsdowntable", "");
+				return true;
+		   },
+		   success: function(json, textStatus){
+				if(json.result == 1){
+					window.location.href = json.url.replace(/&amp;/g,'&').replace(/&amp;/g,'&');
+				}else{
+					alert(json.msg);
+					hideBlockMsg('.tipsdowntable');
+				}
+				prepfinish();
+		   },
+			error: function(xml, status){
+				hideBlockMsg('.tipsdowntable');
+				showErrorDialog(xml.responseText);
+			}
+		});
+	})
+})
+</script>
+<style>
+	.chosen-results{
+		max-height:300px !important;
+	}
+	.input_chosen{
+		width:190px;
+		border:1px solid #aaa;
+		border-radius:5px;
+		height:23px;
+		line-height:24px;
+		background-color: #fff;
+		background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(20%, #ffffff), color-stop(50%, #f6f6f6), color-stop(52%, #eeeeee), color-stop(100%, #f4f4f4));
+		background: -webkit-linear-gradient(top, #ffffff 20%, #f6f6f6 50%, #eeeeee 52%, #f4f4f4 100%);
+		background: -moz-linear-gradient(top, #ffffff 20%, #f6f6f6 50%, #eeeeee 52%, #f4f4f4 100%);
+		background: -o-linear-gradient(top, #ffffff 20%, #f6f6f6 50%, #eeeeee 52%, #f4f4f4 100%);
+		background: linear-gradient(top, #ffffff 20%, #f6f6f6 50%, #eeeeee 52%, #f4f4f4 100%);
+		background-clip: padding-box;
+		box-shadow: 0 0 3px white inset, 0 1px 1px rgba(0, 0, 0, 0.1);
+		color: #444;
+		white-space: nowrap;
+		padding:0 0 0 8px;
+	}
+	.tipsdowntable tr{
+		height:25px;
+	}
+	.tipstdleft{
+		text-align:right;
+	}
+</style>
+
+<form class="prepform">
+	<table class="tipsdowntable">
+		<tr class="origin_tr">
+			<td>
+				<select class="chosen-select-nosearch" id="origin_select" name="type" <{*style="min-height:200px"*}>>
+					<option value="">==请选择==</option>
+					<{foreach item=i key=k from=$usetype_rs}>
+					<option value="<{$i.id}>"><{$i.name}></option>
+					<{/foreach}>
+				</select>
+			</td>
+		</tr>
+		<tr class="<{*zxhide*}> subtr">
+			<td colspan="2">
+				<input type="button" id="prepsubmit" value="确认"/>
+			</td>
+		</tr>
+	</table>
+</form>

@@ -7,7 +7,7 @@
   <tr>
     <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
-        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td width="12" height="40"><img src="images/tab_03.gif" width="12" height="30" /></td>
         <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td width="46%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -119,6 +119,7 @@
             <td width="6%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">国家 / 需求</span></div></td>
             <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">款项状态</span></div></td>
             <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">客户状态</span></div></td>
+            <td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">看房状态</span></div></td>
             <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">未签成(<{$app_config.client_overdate}>天过期)</span></div></td>
 			<td width="16%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">操作</span></div></td>			
           </tr>
@@ -160,6 +161,9 @@
             <td height="20" bgcolor="#FFFFFF"><div align="center">
             <{$i.pname}>
             </div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft">
+	            <{$i.see_status}>
+            </div></td>
             <td height="20" bgcolor="#FFFFFF" align="center">
             	<{if $i.ispay eq '0'}>
             	<{$i.overdate}>
@@ -174,7 +178,7 @@
             	<{else}>
             	<a href="<{spUrl c=clientsales a=viewmysalesclient id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>查看/更新</a>
             	<{/if}>
-            	<a href="<{spUrl c=clientsales a=clientrecordlist client_id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>回访反馈(<span <{if $i.record_count eq '0'}>class="zx_red zx_weight"<{/if}>><{$i.record_count}></span>)</a>
+            	<a href="<{spUrl c=clientsales a=clientrecordlist client_id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>跟踪记录(<span <{if $i.record_count eq '0'}>class="zx_red zx_weight"<{/if}>><{$i.record_count}></span>)</a>
             	<{if $i.user_teler_id}>
             	<a href="<{spUrl c=clientsales a=clientcallrecordlist client_id=$i.id call_id=$i.user_teler_id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>CALL反馈(<span <{if $i.record_call_count eq '0'}>class="zx_red zx_weight"<{/if}>><{$i.record_call_count}></span>)</a>
             	<{/if}>

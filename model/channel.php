@@ -200,6 +200,13 @@
 			return $rs["mechanism"];
 		}
 		
+		//获取渠道客户数
+		public function getclientcount($id){
+			$obj_client = spClass("client");
+			$total_rs = $obj_client->find(array("channel_id"=>$id, "isdel"=>0), null, "count(id) as total");
+			return intval($total_rs["total"]);
+		}
+		
 		//更新渠道动态时间，防止超时
 		public function updatetime($channel_id, $client_id){
 			$this->update(array("id"=>$channel_id), array("saletime"=>time(), "saleid"=>$client_id));
@@ -227,18 +234,18 @@
 		
 		public function getChannel_prep($condition_ext){
 			if($condition_ext){
-				$condition = is_array($condition_ext) ? array_merge(array("issign"=>1, "ishide"=>0), $condition_ext) : "issign = 1 and ishide = 0 and (".$condition_ext.")";
+				$condition = is_array($condition_ext) ? array_merge(array("issign"=>1, "ishide"=>0), $condition_ext) : "issign = 1 and isoverdate = 0 ishide = 0 and (".$condition_ext.")";
 			}else{
-				$condition = array("issign"=>1, "ishide"=>0);
+				$condition = array("issign"=>1, "ishide"=>0, "isoverdate"=>0);
 			}
 			return $this->findAll($condition, "py asc", "id, mechanism, fristPinyin(mechanism) as py");
 		}
 		
 		public function getAllChannel_prep($condition_ext){
 			if($condition_ext){
-				$condition = is_array($condition_ext) ? array_merge(array("ishide"=>0), $condition_ext) : "ishide = 0 and (".$condition_ext.")";
+				$condition = is_array($condition_ext) ? array_merge(array("ishide"=>0), $condition_ext) : "ishide = 0 and isoverdate = 0 and (".$condition_ext.")";
 			}else{
-				$condition = array("ishide"=>0);
+				$condition = array("ishide"=>0, "isoverdate"=>0);
 			}
 			return $this->findAll($condition, "py asc", "id, mechanism, fristPinyin(mechanism) as py, issign");
 		}
@@ -247,6 +254,8 @@
 		public function resend($channel_rs, $toid){
 			$data = array();
 			$data["maintenance_id"] = $toid;
+			$data["maintenance_time"] = time();
+			$data["isoverdate"] = 0;
 			$obj_user = spClass("user");
 			if(!$main_rs = $obj_user->getDepartUserinfo(2, $toid))
 				throw new Exception("找不到该被分配人，分配失败");
@@ -255,7 +264,10 @@
 			if(!$this->update(array("id"=>$channel_rs["id"]), $data))
 				throw new Exception("未知错误，分配失败");
 			spClass("user_notice")->send_notice($toid, "将渠道 ".$channel_rs[mechanism]." 重新分配", "渠道 ".$channel_rs[mechanism]." 被 " . $_SESSION["sscrm_user"]["realname"] . " 分配给您");
-			spClass('user_log')->save_log(2, "将渠道 ".$channel_rs["mechanism"]." [id:".$channel_rs["id"]."] 由 ".$from_rs[realname]." [id:".$from_rs["id"]."] 分配给了 ".$main_rs[realname]." [id:".$main_rs["id"]."]", array("channel_id"=>$channel_rs["channel_id"]));
+			$logmsg = "将渠道 ".$channel_rs["mechanism"]." [id:".$channel_rs["id"]."] 由 ".$from_rs[realname]." [id:".$from_rs["id"]."] 分配给了 ".$main_rs[realname]." [id:".$main_rs["id"]."]";
+			if($channel_rs["isoverdate"])
+				$logmsg .= "并再次启动了该渠道";
+			spClass('user_log')->save_log(2, $logmsg, array("channel_id"=>$channel_rs["channel_id"]));
 		}
 		
 		//处理超时渠道,暂无用
@@ -271,10 +283,38 @@
 			$data["ishide"] = 1;
 			$data["hidetime"] = time();
 			$data["hidereason"] = "[系统]超过 " . $overdate . " 天未成交客户";
-			if($over_rs = $this->findAll("ishide = 0 and IF(saletime > createtime, datediff(curdate(), FROM_UNIXTIME(saletime, '%Y-%m-%d')) > $overdate, datediff(curdate(), FROM_UNIXTIME(createtime, '%Y-%m-%d')) >= $overdate)", null, "id, mechanism, maintenance_id, createtime")){
+			if($over_rs = $this->findAll("ishide = 0 and isoverdate = 0 IF(saletime > createtime, datediff(curdate(), FROM_UNIXTIME(saletime, '%Y-%m-%d')) > $overdate, datediff(curdate(), FROM_UNIXTIME(createtime, '%Y-%m-%d')) >= $overdate)", null, "id, mechanism, maintenance_id, createtime")){
 				foreach($over_rs as $val){
 					spClass("user_notice")->send_notice($val["maintenance_id"], "渠道 ".$val[mechanism]." 因过期而被取消", "渠道 ".$val[mechanism]." 的创建时间是 " . date("Y-m-d H:i", $val[createtime]) . ",最近添加客户的时间是 " . ($val[saletime] ? date("Y-m-d H:i", $val[saletime]) : "-") . "，因 " . $overdate . " 天无添加客户而被取消", 1);
 					$this->update(array("id"=>$val["id"]), $data);
+				}
+			}
+		}
+		
+		//回访超时,插入记录
+		public function record_overtime(){
+			$sql = "SELECT * FROM
+					(
+						SELECT crm_channel.id, crm_channel.maintenance_id, IF(maxrecord.acttime, maxrecord.acttime, crm_channel.createtime) as recordtime FROM crm_channel
+						LEFT JOIN
+						(
+							SELECT crm_channel_record.channel_id, MAX(crm_channel_record.acttime) as acttime FROM crm_channel_record GROUP BY crm_channel_record.channel_id
+						) as maxrecord
+						ON
+						maxrecord.channel_id = crm_channel.id
+						where crm_channel.ishide = 0 and crm_channel.isoverdate = 0
+						order by crm_channel.id asc
+					) as channel_recordtime
+					where channel_recordtime.id not in(
+						SELECT channel_id FROM crm_channel_overtime WHERE endtime = 0
+					)
+					and
+					channel_recordtime.recordtime <=  unix_timestamp(now()) -  60*60*24*14
+					";
+			if($overtime_rs = $this->findSql($sql)){
+				$obj_overtime = spClass("channel_overtime");
+				foreach($overtime_rs as $val){
+					$obj_overtime->addovertime($val);
 				}
 			}
 		}

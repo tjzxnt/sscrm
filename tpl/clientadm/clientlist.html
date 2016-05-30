@@ -10,7 +10,7 @@
   <tr>
     <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
-        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td width="12" height="40"><img src="images/tab_03.gif" width="12" height="30" /></td>
         <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td>
@@ -139,7 +139,7 @@
 	                  			<select name="isovertime">
 		                  			<option value="0">==全部==</option>
 		                  			<option value="1" <{if $isovertime eq '1'}>selected<{/if}>>有效</option>
-		                  			<option value="2" <{if $isovertime eq '2'}>selected<{/if}>>过期</option>
+		                  			<option value="2" <{if $isovertime eq '2'}>selected<{/if}>>无意向</option>
 		                  		</select>
 	                  			<input type="image" value="" src="images/search.gif">
 	                  		</div>
@@ -219,6 +219,9 @@
             <span class="zx_green">已付全款</span>
             <{else}>
             <span class="zx_gray">未成交</span>
+            <{/if}>
+            <{if $i.isoverdate}>
+            <span class="zx_red zx_weight">(无效)</span>
             <{/if}>
             </div></td>
             <td height="20" bgcolor="#FFFFFF"><div class="listleft">

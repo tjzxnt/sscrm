@@ -7,7 +7,7 @@
   <tr>
     <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
-        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td width="12" height="40"><img src="images/tab_03.gif" width="12" height="30" /></td>
         <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td width="46%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -27,7 +27,7 @@
 	                  <tr>
 	                  	<td width="60"><table width="90%" border="0" cellpadding="0" cellspacing="0">
 		                  <tr>
-		                    <td class="STYLE1"><div align="center"><a href="#" class="tipwindow" tiptitle="添加客户" tipurl="<{spUrl c=clients a=prepcreate}>" tipwidth="300" tipheight="100" style="display:block"><img src="images/add.gif" width="48" height="19" align="absmiddle" /></a></div></td>
+		                    <td class="STYLE1"><div align="center"><a href="#" class="tipwindow" tiptitle="添加客户" tipurl="<{spUrl c=clients a=prepcreate}>" tipwidth="300" tipheight="100" style="display:block"><img src="images/add.gif" width="65" height="19" align="absmiddle" /></a></div></td>
 		                    <td class="STYLE1"><div align="center"></div></td>
 		                  </tr>
 		                </table></td>
@@ -49,7 +49,6 @@
 		                    	<option value="2" <{if $ispay == 2}>selected<{/if}>>已可结佣</option>
 		                    </select>
 	                    </div></td>
-	                    *}>
 	                    <td class="STYLE1"><div align="center">
 	                    	<select name="channel_main_id" style="margin:0 2px;">
 		                    	<option value="">渠道维护人</option>
@@ -58,6 +57,7 @@
 		                    	<{/foreach}>
 		                    </select>
 	                    </div></td>
+	                    *}>
 	                    <td class="STYLE1"><div align="center">
 	                    	<select name="comactive_id" style="margin:0 2px;">
 		                    	<option value="">==公司活动==</option>
@@ -125,10 +125,13 @@
             <td width="2%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">级别<img src="images/edt.gif" width="16" height="16" align="absmiddle"/></span></div></td>
             <td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">计划<img src="images/edt.gif" width="16" height="16" align="absmiddle"/></span></div></td>
             <td width="6%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">客户来源</span></div></td>
-            <td width="6%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">所属渠道</span></div></td>
             <td width="6%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">国家 / 需求</span></div></td>
+            <{*
+            <td width="6%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">所属渠道</span></div></td>
+            *}>
             <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">款项状态</span></div></td>
             <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">客户状态</span></div></td>
+            <td width="3%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">看房状态<img src="images/edt.gif" width="16" height="16" align="absmiddle"/></span></div></td>
             <td width="4%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div align="center"><span class="STYLE1">未签成(<{$app_config.client_overdate}>天过期)</span></div></td>
 			<td width="16%" height="22" background="images/bg1.gif" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1">操作</span></div></td>			
           </tr>
@@ -154,8 +157,10 @@
             	</a>
             </div></td>
             <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.oname}></span></div></td>
-            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{if $i.mechanism}><{$i.mechanism}><{else}>-<{/if}></span></div></td>
             <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{if $i.ctname}><{$i.ctname}><{else}>-<{/if}> / <{if $i.demand}><{$i.demand}><{else}>-<{/if}></span></div></td>
+            <{*
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{if $i.mechanism}><{$i.mechanism}><{else}>-<{/if}></span></div></td>
+            *}>
             <td height="20" bgcolor="#FFFFFF"><div align="center">
             <{if $i.ispay eq '0'}>
             <span class="zx_red">跟进中</span>
@@ -169,6 +174,12 @@
             </div></td>
             <td height="20" bgcolor="#FFFFFF"><div align="center">
             <{$i.pname}>
+            </div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft">
+            	<a href="<{spUrl c=clientsales a=modify_seehouse client_id=$i.id}>" class="zxblock td_edit">
+	            	<{$i.see_status}>
+	            	<img src="images/edt.gif" width="16" height="16" align="absmiddle"/>
+            	</a>
             </div></td>
             <td height="20" bgcolor="#FFFFFF" align="center">
             	<{if $i.ispay eq '0'}>
@@ -184,9 +195,9 @@
             	<{else}>
             	<a href="<{spUrl c=clientsales a=viewmysalesclient id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>查看/更新</a>
             	<{/if}>
-            	<a href="<{spUrl c=clientsales a=clientrecordlist client_id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>回访反馈(<span <{if $i.record_count eq '0'}>class="zx_red zx_weight"<{/if}>><{$i.record_count}></span>)</a>
-            	<{if $i.user_teler_id}>
-            	<a href="<{spUrl c=clientsales a=clientcallrecordlist client_id=$i.id call_id=$i.user_teler_id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>CALL反馈(<span <{if $i.record_call_count eq '0'}>class="zx_red zx_weight"<{/if}>><{$i.record_call_count}></span>)</a>
+            	<a href="<{spUrl c=clientsales a=clientrecordlist client_id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>跟踪记录(<span <{if $i.record_count eq '0'}>class="zx_red zx_weight"<{/if}>><{$i.record_count}></span>)</a>
+            	<{if $i.record_call_count}>
+            	<a href="<{spUrl c=clientsales a=clientintrecordlist client_id=$i.id}>"><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>蓄水反馈(<span <{if $i.record_call_count eq '0'}>class="zx_red zx_weight"<{/if}>><{$i.record_call_count}></span>)</a>
             	<{/if}>
             	<a href="<{spUrl c=clientsales a=odlist id=$i.id}>" <{if $i.fromtime > 0}>class="zx_red"<{/if}>><img src="images/edt.gif" width="16" height="16" align="absmiddle"/>查看过期(<{$i.overtime_count}>)</a>
             	<{if $i.ispay eq '0'}>

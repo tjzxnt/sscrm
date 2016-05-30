@@ -7,20 +7,20 @@
   <tr>
     <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
-        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td width="12" height="40"><img src="images/tab_03.gif" width="12" height="30" /></td>
         <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td width="75%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
               <tr>
                 <td width="5%"><div align="center"><img src="images/tb.gif" width="16" height="16" /></div></td>
-                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[渠道管理]-[渠道 <{$channel_rs.mechanism}>]-[沟通记录]</td>
+                <td width="95%" class="STYLE1"><span class="STYLE3">你当前的位置</span>：[渠道管理]-[渠道 <{$channel_rs.mechanism}>]-[跟踪记录]</td>
               </tr>
             </table></td>
             <td width="25%">
 	            <table border="0" align="right" cellpadding="0" cellspacing="0">
 	              <tr>
 	              	<{if $channel_rs.maintenance_id == $smarty.session.sscrm_user.id}>
-	              	<td class="STYLE1"><div align="center"><a href="<{spUrl c=channels a=createrecord channelid=$channelid}>" style="display:block"><img src="images/add.gif" width="48" height="19" align="absmiddle" /></a></div></td>
+	              	<td class="STYLE1"><div align="center"><a href="<{spUrl c=channels a=createrecord channelid=$channelid}>" style="display:block"><img src="images/add.gif" width="65" height="19" align="absmiddle" /></a></div></td>
 	              	<td width="20"></td>
 	              	<{/if}>
 	              	<td class="STYLE1">

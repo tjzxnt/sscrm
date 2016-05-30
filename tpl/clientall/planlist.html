@@ -6,7 +6,7 @@
   <tr>
     <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
-        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td width="12" height="40"><img src="images/tab_03.gif" width="12" height="30" /></td>
         <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td width="30%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -85,7 +85,7 @@
               		<div align="center"><{$k+1}></div>
             	</div>
             </td>
-            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.realname}></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><a href="<{$clisturl}>&searchkey=<{$i.telphone}>" <{if !$clisturl}>onclick="return false"<{/if}>><span class="STYLE1"><{$i.realname}></span></a></div></td>
             <td height="20" bgcolor="#FFFFFF"><div class="listleft">
             	<{if $i.isfinish}>
             		<span class="STYLE1 Finished"><{$i.finishtime|date_format:"%Y-%m-%d %H:%M"}> 完成</div>

@@ -67,7 +67,7 @@ form {
 
 .form legend {
 	color:#161b27;
-	margin-bottom:3px; font-weight:bold;
+	margin-bottom:15px; font-weight:bold; color:#16475b;
 	font:1.2em arial, sans-serif;
 }
 
@@ -84,6 +84,7 @@ form {
 .form fieldset div.rowElem{
 	margin-bottom:10px;
 	min-height:30px;
+	 padding-bottom:10px; border-bottom:#efefef dashed  1px;	
 }
 
 .form fieldset div.rowElem .imgbox{
@@ -287,3 +288,4 @@ label.success {
 	color:#FF0000;
 	padding-right:5px
 }
+select,ipnut{ border:#CCC solid 1px; color:#666;}

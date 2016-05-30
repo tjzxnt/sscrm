@@ -7,13 +7,14 @@ class vipclientall extends spController {
 			$obj_cpt = spClass("department_competence");
 			if(!$_SESSION["sscrm_user"]["user_identity"]["operate"]["enabled"])
 				$obj_cpt->check_login_competence("CLIENTALL");
+			$this->controller = "vipclientall";
+			$this->clisturl = spUrl($this->controller, "clientlist");
 		}catch(Exception $e){
 			$backurl = spUrl("main", "welcome");
 			$this->redirect($backurl, $e->getMessage());
 			exit();
 		}
 	}
-	
 
 	public function clientlist(){
 		$obj_client = spClass('vipclient');
@@ -25,6 +26,7 @@ class vipclientall extends spController {
 		$obj_level = spClass("client_level");
 		$obj_od = spClass('client_overtime');
 		$obj_comactive = spClass('comactive');
+		$obj_od = spClass("vipclient_overtime");
 		$postdate = $this->spArgs();
 		$page = intval(max($postdate['page'], 1));
 		$condition = "crm_vip_client.isdel = 0";
@@ -53,7 +55,7 @@ class vipclientall extends spController {
 			$this->endtime = $postdate['endtime'];
 		}
 		if($postdate["searchkey"]){
-			$condition .= " and (crm_vip_client.realname like '%".$postdate['searchkey']."%' or crm_vip_client.telphone like '%".$postdate['searchkey']."%')";
+			$condition .= " and (crm_vip_client.comname like '%".$postdate['searchkey']."%' or crm_vip_client_manage.realname like '%".$postdate['searchkey']."%' or crm_vip_client_manage.telphone like '%".$postdate['searchkey']."%')";
 			$this->searchkey = $postdate['searchkey'];
 		}
 		if(intval($postdate['channel_muserid'])){
@@ -69,7 +71,7 @@ class vipclientall extends spController {
 			$this->ispay = $postdate['ispay'];
 		}
 		if($postdate['fword']."a" != "a"){
-			$condition .= " and fristPinyin(crm_vip_client.realname) = '".$postdate['fword']."'";
+			$condition .= " and fristPinyin(crm_vip_client_manage.realname) = '".$postdate['fword']."'";
 			$this->fword = $postdate['fword'];
 		}
 		if($comactive_id = intval($postdate['comactive_id'])){
@@ -91,7 +93,7 @@ class vipclientall extends spController {
 			}
 			$this->sort = $sort;
 		}
-		if($client_rs = $obj_client->join("crm_user")->join("crm_channel", "crm_channel.id = crm_vip_client.channel_id and crm_vip_client.channel_id > 0", "left")->spPager($page, 20)->findAll($condition, $client_sort, "crm_vip_client.*, crm_user.realname as realname_sale, crm_user.realname as realname_sale, fristPinyin(crm_vip_client.realname) as py")){
+		if($client_rs = $obj_client->join("crm_client_level")->join("crm_vip_client_manage", "crm_vip_client_manage.vip_client_id = crm_vip_client.id and crm_vip_client_manage.ismain = 1")->join("crm_user")->join("crm_channel", "crm_channel.id = crm_vip_client.channel_id and crm_vip_client.channel_id > 0", "left")->join("crm_client_process")->join("crm_vip_client_overtime", "crm_vip_client_overtime.client_id = crm_vip_client.id and crm_vip_client_overtime.endtime = 0", "left")->spPager($page, 20)->findAll($condition, $client_sort, "crm_vip_client.*, crm_vip_client_manage.realname, crm_vip_client_manage.sex, crm_vip_client_manage.managepost, crm_vip_client_manage.tel_location, crm_vip_client_manage.telphone, crm_vip_client_manage.email, crm_vip_client_manage.wechat, crm_client_level.name as level_name, fristPinyin(crm_vip_client_manage.realname) as py, crm_user.realname as realname_sale, crm_vip_client_overtime.fromtime, crm_client_process.pname", "crm_vip_client.id")){
 		//if($client_rs = $obj_client->join("crm_client_level")->join("crm_user", "crm_user.id = crm_vip_client.user_sales_id")->join("crm_client_overtime", "crm_client_overtime.client_id = crm_vip_client.id and crm_client_overtime.endtime = 0", "left")->join("crm_channel", "crm_channel.id = crm_vip_client.channel_id and crm_vip_client.channel_id > 0", "left")->spPager($page, 20)->findAll($condition, $client_sort, "crm_client.*, crm_client_level.name as level_name, crm_client_overtime.fromtime, crm_user.realname as realname_sale, crm_user.realname as realname_sale, fristPinyin(crm_client.realname) as py")){
 			foreach($client_rs as $key => $val){
 				if($val["origin_id"]){
@@ -102,6 +104,7 @@ class vipclientall extends spController {
 				if($val["exp_country_id"]){
 					$client_rs[$key]["ctname"] = $obj_country->getname($val["exp_country_id"]);
 				}
+				$client_rs[$key]["overtime_count"] = $obj_od->getCount($val["id"]);
 			}
 			$this->client_rs = $client_rs;
 		}
@@ -160,9 +163,9 @@ class vipclientall extends spController {
 			$this->record_rs = $record_rs;
 			$this->pager = $obj_record->spPager()->getPager();
 			$this->client_id = $client_id;
-			$this->url = spUrl('vipclients', 'clientrecordlist', array("client_id"=>$client_id));
+			$this->url = spUrl('vipclientall', 'clientrecordlist', array("client_id"=>$client_id));
 		}catch(Exception $e){
-			$this->redirect(spUrl("vipclients", "clientlist"), $e->getMessage());
+			$this->redirect(spUrl("vipclientall", "clientlist"), $e->getMessage());
 		}
 	}
 	
@@ -172,28 +175,95 @@ class vipclientall extends spController {
 			$obj_record = spClass("vipclient_record");
 			$postdate = $this->spArgs();
 			$page = intval(max($postdate['page'], 1));
-			$condition = "crm_client_record.rtype_id = 1";
+			$condition = "crm_vip_client_record.rtype_id = 1";
 			if($postdate['starttime'] != ''){
-				$condition .= " and crm_client_record.acttime >= ".strtotime($postdate['starttime']);
+				$condition .= " and crm_vip_client_record.acttime >= ".strtotime($postdate['starttime']);
 				$this->starttime = $postdate['starttime'];
 			}
 			if($postdate['endtime'] != ''){
-				$condition .= " and crm_client_record.acttime <= ".strtotime($postdate['endtime']);
+				$condition .= " and crm_vip_client_record.acttime <= ".strtotime($postdate['endtime']);
 				$this->endtime = $postdate['endtime'];
 			}
-			if(intval($postdate['user_sales_id'])){
-				$condition .= " and crm_vip_client.user_sales_id = ".intval($postdate['user_sales_id']);
-				$this->user_sales_id = $postdate['user_sales_id'];
+			if(intval($postdate['create_id'])){
+				$condition .= " and crm_vip_client.create_id = ".intval($postdate['create_id']);
+				$this->create_id = $postdate['create_id'];
 			}
-			$record_rs = $obj_record->join("crm_user")->join("crm_client")->spPager($page, 20)->findAll($condition, "crm_client_record.acttime desc", "crm_client_record.*, crm_vip_client.realname, crm_vip_client.telphone, crm_user.realname as realname_create");
+			if($client_id = intval($this->spArgs("client_id"))){
+				$obj_client = spClass("client");
+				if($this->client_rs = $obj_client->find(array("id"=>$client_id))){
+					$condition .= " and crm_vip_client_record.client_id = $client_id";
+					$this->client_id = $client_id;
+				}
+			}
+			$record_rs = $obj_record->join("crm_user")->join("crm_vip_client")->join("crm_vip_client_manage", "crm_vip_client_manage.vip_client_id = crm_vip_client.id and crm_vip_client_manage.ismain = 1")->spPager($page, 20)->findAll($condition, "crm_vip_client_record.acttime desc", "crm_vip_client_record.*, crm_vip_client.comname, crm_vip_client_manage.telphone, crm_user.realname as realname_create");
 			$this->record_rs = $record_rs;
 			$this->pager = $obj_record->spPager()->getPager();
-			$this->url = spUrl('clientall', 'allrecordlist', array("starttime"=>$this->starttime, "endtime"=>$this->endtime, "user_sales_id"=>$this->user_sales_id));
-			$this->user_rs = $obj_user->getUser_prep("crm_user.depart_id = 3 and find_in_set('getclient', crm_user.identity_attr)");
-			$this->controller = "clientall";
-			$this->display("clientdepart/allrecordlist.html");
+			$this->url = spUrl('vipclientall', 'allrecordlist', array("starttime"=>$this->starttime, "endtime"=>$this->endtime, "create_id"=>$this->create_id, "client_id"=>$this->client_id));
+			$this->user_rs = $obj_user->getUser_prep("crm_user.depart_id = 2 or crm_user.depart_id = 3");
+			$this->controller = "vipclientall";
 		}catch(Exception $e){
-			$this->redirect(spUrl("clientall", "mycreateclientlist"), $e->getMessage());
+			$this->redirect(spUrl("vipclientall", "mycreateclientlist"), $e->getMessage());
+		}
+	}
+	
+	//查看过期
+	public function odlist(){
+		try {
+			if(!$id = intval($this->spArgs('id')))
+				throw new Exception('请先选择客户，再进行操作！');
+			$backurl = spUrl("clientsales", "clientlist");
+			$obj_client = spClass("vipclient");
+			$obj_origin = spClass("origin");
+			$obj_user = spClass("user");
+			if(!$client_rs = $obj_client->getClientById($id))
+				throw new Exception("找不到该客户");
+			$postdata = $this->spArgs();
+			$obj_od = spClass("vipclient_overtime");
+			$page = intval(max($postdata['page'], 1));
+			$this->od_rs = $obj_od->join("crm_user")->spPager($page, 20)->findAll(array("client_id"=>$id), "createtime desc", "crm_vip_client_overtime.*, crm_user.realname as realname");
+			$this->client_rs = $client_rs;
+			$this->id = $id;
+			$this->pager = $obj_od->spPager()->getPager();
+			$this->url = spUrl("vipclientall", "odlist", array("id"=>$id));
+			$this->backurl = spUrl("vipclientall", "clientlist");
+			$this->display("vipclients/odlist.html");
+		}catch(Exception $e){
+			$this->redirect(spUrl("vipclientall", "clientlist"), $e->getMessage());
+		}
+	}
+	
+	//全部过期记录
+	public function allodlist(){
+		try {
+			$obj_user = spClass("user");
+			$postdata = $this->spArgs();
+			$obj_od = spClass("vipclient_overtime");
+			$page = intval(max($postdata['page'], 1));
+			$condition = "1";
+			if($postdata["endtime"]){
+				switch($postdata["endtime"]){
+					case "ing":
+						$condition .= " and crm_vip_client_overtime.endtime = 0";
+						break;
+					case "end":
+						$condition .= " and crm_vip_client_overtime.endtime > 0";
+						break;
+				}
+				$this->endtime = $postdata["endtime"];
+			}
+			if($postdata["create_id"]){
+				$condition .= " and crm_vip_client.create_id = {$postdata["create_id"]}";
+				$this->create_id = $postdata["create_id"];
+			}
+			$this->od_rs = $obj_od->join("crm_user")->join("crm_vip_client")->join("crm_vip_client_manage", "crm_vip_client_manage.vip_client_id = crm_vip_client.id and crm_vip_client_manage.ismain = 1")->spPager($page, 15)->findAll($condition, "crm_vip_client_overtime.createtime desc", "crm_vip_client_overtime.*, crm_vip_client.comname, crm_vip_client_manage.telphone, crm_user.realname as realname");
+			$this->pager = $obj_od->spPager()->getPager();
+			$this->url = spUrl("vipclientall", "allodlist", array("endtime"=>$this->endtime, "create_id"=>$this->create_id));
+			$this->controller = "vipclientall";
+			$this->user_prep_rs = $obj_user->getUser_prep("crm_user.depart_id = 2 or crm_user.depart_id = 3");
+			$this->backurl = spUrl("vipclientall", "clientlist");
+			$this->display("vipclients/odlist.html");
+		}catch(Exception $e){
+			$this->redirect(spUrl("vipclientall", "clientlist"), $e->getMessage());
 		}
 	}
 }

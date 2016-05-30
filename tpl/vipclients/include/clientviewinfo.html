@@ -1,0 +1,42 @@
+<fieldset>
+	<legend>客户资料</legend>
+	<div class="rowElem">
+		<label class="label">客户姓名</label> 
+		<span class="viewtxt"><{$client_rs.comname}></span>
+	</div>
+</fieldset>
+<fieldset>
+	<legend>主对接人资料</legend>
+	<div class="rowElem">
+		<label class="label">姓名</label> 
+		<span class="viewtxt"><{$client_rs.realname}></span>
+	</div>
+	<div class="rowElem">
+		<label class="label">性别</label> 
+		<span class="viewtxt"> 
+			<{if $client_rs.sex eq '0' || !$client_rs}>未知<{/if}>
+			<{if $client_rs.sex eq '1'}>男<{/if}>
+			<{if $client_rs.sex eq '2'}>女<{/if}>
+		</span>
+	</div>
+	<div class="rowElem">
+		<label class="label">职务</label> 
+		<span class="viewtxt"><{$client_rs.managepost}></span>
+	</div>
+	<div class="rowElem">
+		<label class="label">电话所在地</label> 
+		<span class="viewtxt"><{$client_rs.tel_location}></span>
+	</div>
+	<div class="rowElem">
+		<label class="label">联系电话</label> 
+		<span class="viewtxt"><{$client_rs.telphone}></span>
+	</div>
+	<div class="rowElem">
+		<label class="label">电子邮箱</label> 
+		<span class="viewtxt"><{$client_rs.email}></span>
+	</div>
+	<div class="rowElem">
+		<label class="label">微信号</label> 
+		<span class="viewtxt"><{$client_rs.wechat}></span>
+	</div>
+</fieldset>

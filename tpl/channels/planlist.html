@@ -6,7 +6,7 @@
   <tr>
     <td height="30" background="images/tab_05.gif"><table width="100%" border="0" cellspacing="0" cellpadding="0">
       <tr>
-        <td width="12" height="30"><img src="images/tab_03.gif" width="12" height="30" /></td>
+        <td width="12" height="40"><img src="images/tab_03.gif" width="12" height="30" /></td>
         <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
           <tr>
             <td width="30%" valign="middle"><table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -35,7 +35,7 @@
                   	<td class="STYLE1"><div align="top" style="margin-left:7px"><input type="image" value="" src="images/search.gif"></div></td>
                   	<td>&nbsp;</td>
 	              	<{if $createurl}>
-	              	<td class="STYLE1"><div align="center"><a href="<{$createurl}>" style="display:block"><img src="images/add.gif" width="48" height="19" align="absmiddle" /></a></div></td>
+	              	<td class="STYLE1"><div align="center"><a href="<{$createurl}>" style="display:block"><img src="images/add.gif" width="65" height="19" align="absmiddle" /></a></div></td>
 	              	<{/if}>
 	              	<td width="20"></td>
 	              	<td class="STYLE1">
@@ -79,7 +79,7 @@
               		<div align="center"><{$k+1}></div>
             	</div>
             </td>
-            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><span class="STYLE1"><{$i.mechanism}></div></td>
+            <td height="20" bgcolor="#FFFFFF"><div class="listleft"><a href="<{$clisturl}>&searchkey=<{$i.main_tel}>" <{if !$clisturl}>onclick="return false"<{/if}>><span class="STYLE1"><{$i.mechanism}></div></td>
             <td height="20" bgcolor="#FFFFFF"><div class="listleft">
             	<{if $i.isfinish}>
             		<span class="STYLE1 Finished"><{$i.finishtime|date_format:"%Y-%m-%d %H:%M"}> 完成</div>
