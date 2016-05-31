@@ -25,25 +25,6 @@ $(function(){
 		}else{
 			$(".ass_fieldset").addClass("zxhide");
 		}
-		<{*
-		<{if $ass_rs.isselfcheck}>
-		if($(this).val()){
-			$(".ass_fieldset").removeClass("zxhide");
-		}else{
-			$(".ass_fieldset").addClass("zxhide");
-		}
-		<{else}>
-		if($(this).val()){
-			if($(this).val() == <{$smarty.session.sscrm_user.id}>){
-				$(".ass_fieldset").addClass("zxhide");
-			}else{
-				$(".ass_fieldset").removeClass("zxhide");
-			}
-		}else{
-			$(".ass_fieldset").addClass("zxhide");
-		}
-		<{/if}>
-		*}>
 	});
 	<{/if}>
 	$("#intent_check").click(function(){
@@ -170,7 +151,7 @@ $(function(){
                                 <div class="rowElem">
                                     <label class="label">请选择</label>
                                     <select name="user_owner_id" class="ass_input">
-	                                	<option>==请选择客户来源人==</option>
+	                                	<option value="">==请选择客户来源人==</option>
 	                                	<{foreach item=i key=k from=$user_group_rs}>
 	                                	<optgroup label="<{$i.dname}>">
 			                        	<{if $i.user_rs}>

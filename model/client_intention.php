@@ -92,7 +92,16 @@
 			return $int_rs;
 		}
 		
+		public function isclient($int_rs){
+			if($int_rs["client_id"])
+				throw new Exception("该蓄水客户已被录入到访客户中，无法再次录入");
+			if($int_rs["vip_client_id"])
+				throw new Exception("该蓄水客户已被录入到大客户中，无法再次录入");
+		}
+		
+		//已弃用
 		public function checkintention($type, $user_id, $data){
+			throw new Exception("该方法已弃用，如看到该提示请联系ERP管理员");
 			$rs = $this->join("crm_client_intention_type")->find(array("crm_client_intention.typeid"=>$type, "crm_client_intention.create_id"=>$user_id, "crm_client_intention.telphone"=>$data["telphone"], "crm_client_intention.isdel"=>0), null, "crm_client_intention.*, crm_client_intention_type.name as typename, crm_client_intention_type.ischannel");
 			if($rs["client_id"])
 				throw new Exception("该{$rs["typename"]}蓄水客户已被录入到客户中，无法再次录入");

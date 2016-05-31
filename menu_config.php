@@ -75,7 +75,7 @@ return array(
 		"toindex" => "dfkh",
 		"menu" => array(
 			//array("competence" => "CLIENTVISIT", "m_identity"=>"operate", "depart_id" => array(), "submenu"=>"客户来访管理", "url" => spUrl("clientvisits", "clientlist")),
-				array("competence" => "", "depart_id" => array(), "isceo"=>0, "u_identity"=>"", "submenu"=>"与我相关的客户", "url" => spUrl("clientsrelated", "clientlist"), "tail"=>'#clientsrelated_clientlist#'),
+			array("competence" => "", "depart_id" => array(), "isceo"=>0, "u_identity"=>"", "submenu"=>"与我相关的客户", "url" => spUrl("clientsrelated", "clientlist"), "tail"=>'#clientsrelated_clientlist#'),
 			array("competence" => "CLIENTALL", "m_identity"=>"operatex", "depart_id" => array(), "submenu"=>"系统客户管理", "url" => spUrl("clientall", "clientlist"), "tail"=>'#clientall_clientlist#'),
 			array("competence" => "CLIENTALL", "m_identity"=>"operatex", "depart_id" => array(), "submenu"=>"全部跟踪记录", "url" => spUrl("clientall", "allrecordlist"), "tail"=>'#clientall_allrecordlist#'),
 			array("competence" => "CLIENTALL", "m_identity"=>"operatex", "depart_id" => array(), "submenu"=>"全部计划任务", "url" => spUrl("clientall", "planlist"), "tail"=>'#clientall_planlist#'),
@@ -110,6 +110,9 @@ return array(
 			array("competence" => "", "m_identity"=>"", "isceo"=>0, "depart_id" => array(), "submenu"=>"我的大客户", "url" => spUrl("vipclients", "clientlist"), "tail"=>'#vipclients_clientlist#'),
 			array("competence" => "", "m_identity"=>"", "isceo"=>0, "depart_id" => array(), "submenu"=>"我的跟踪记录", "url" => spUrl("vipclients", "allrecordlist"), "tail"=>'#vipclients_allrecordlist#'),
 			array("competence" => "CLIENTOVERSEAS", "isdirector"=>1, "depart_id" => array(), "submenu"=>"我的海外客户", "url" => spUrl("vipclientoverseas", "myclientlist"), "tail"=>'#vipclientoverseas_myclientlist#'),
+			array("competence" => "", "isdirector"=>1, "isceo"=>0, "m_identity"=>"", "depart_id" => array(), "submenu"=>"部门大客户管理", "url" => spUrl("vipclientdepart", "clientlist"), "tail"=>'#vipclientdepart_clientlist#'),
+			array("competence" => "", "isdirector"=>1, "isceo"=>0, "m_identity"=>"", "depart_id" => array(), "submenu"=>"部门跟踪记录", "url" => spUrl("vipclientdepart", "allrecordlist"), "tail"=>'#vipclientdepart_allrecordlist#'),
+			array("competence" => "", "isdirector"=>1, "isceo"=>0, "m_identity"=>"", "depart_id" => array(), "submenu"=>"部门过期记录", "url" => spUrl("vipclientdepart", "allodlist"), "tail"=>'#vipclientdepart_allodlist#'),
 			array("competence" => "VIPCLIENTALL", "m_identity"=>"", "depart_id" => array(), "submenu"=>"大客户管理", "url" => spUrl("vipclientall", "clientlist"), "tail"=>'#vipclientall_clientlist#'),
 			array("competence" => "VIPCLIENTALL", "m_identity"=>"", "depart_id" => array(), "submenu"=>"全部跟踪记录", "url" => spUrl("vipclientall", "allrecordlist"), "tail"=>'#vipclientall_allrecordlist#'),
 			array("competence" => "VIPCLIENTALL", "m_identity"=>"", "depart_id" => array(), "submenu"=>"全部过期记录", "url" => spUrl("vipclientall", "allodlist"), "tail"=>'#vipclientall_allodlist#'),

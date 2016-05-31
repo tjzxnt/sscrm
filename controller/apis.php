@@ -154,52 +154,84 @@ class apis extends spController {
 	//验证意向客户并返回接口
 	public function intention_check(){
 		try{
+			$obj_origin = spClass("origin");
 			$obj_ass = spClass("client_ass_intention");
 			$obj_int = spClass("client_intention");
 			$obj_type = spClass("client_intention_type");
 			$postdata = $this->spArgs();
 			$origin_id = $postdata["origin_id"];
 			$type = $postdata["type"];
-			$fieldsval = $postdata["fieldsval"];
+			$fieldsval = $postdata["fieldsval"]; //传递关联参数，如call客id等
 			$telphone = $postdata["telphone"];
 			$channel_id = $postdata["channel_id"];
+			$channelact_id = $postdata["channelact_id"];
 			if(!$origin_id)
 				throw new Exception("origin_id丢失");
-			if(!$type)
-				throw new Exception("type丢失");
 			if(!$telphone)
 				throw new Exception("请输入要匹配的电话号码丢失");
-			if(!$ass_rs = $obj_ass->find(array("origin_id"=>$origin_id, "isdel"=>0)))
-				throw new Exception("该类型客户不用验证意向客户");
-			if(!$type_rs = $obj_type->find(array("id"=>$type)))
-				throw new Exception("类型参数不正确");
-			if($type_rs["ischannel"]){
-				if(!$channel_id)
-					throw new Exception("渠道参数丢失");
-				$obj_channel = spClass("channel");
-				if(!$channel_rs = $obj_channel->getChannelById($channel_id))
-					throw new Exception("找不到该渠道，可能已被删除");
-				$channel_rs["create_id"] = intval($channel_rs["create_id"]);
-				$fieldsval = $channel_rs["create_id"];
-			}
-			if($ass_rs["fields"] == "SEARCHBYTEL"){
-				$int_temp_rs = $obj_int->getintention($type, $telphone);
-				$ass_field = intval($int_temp_rs["create_id"]);
-			}else{
-				/*
-				$int_temp_rs = $obj_int->getintention($type, $telphone);
-				$ass_field = intval($int_temp_rs["create_id"]);
-				*/
-				$ass_field = $fieldsval;
-			}
-			if(!$ass_field){
-				if($ass_rs["ismustass"])
-					throw new Exception($ass_rs["checkerror"]);
-			}
-			eval("\$ass_createid = $ass_field;");
-			if(!$int_rs = $obj_int->checkintention($type, $ass_createid, $postdata)){
-				if($ass_rs["ismustass"])
-					throw new Exception($ass_rs["checkerror"]);
+			if(!$origin_rs = $obj_origin->getOriginById($origin_id))
+				throw new Exception("来源参数错误");
+			switch($origin_id){
+				case "2": //call客来源,必须匹配type=1,$fieldsval=call客来源，即蓄水call创建人
+					if(!$fieldsval)
+						throw new Exception("请先选择call客");
+					if(!$int_rs = $obj_int->find(array("typeid"=>1, "telphone"=>$telphone, "create_id"=>$fieldsval, "isdel"=>0)))
+						throw new Exception("您选择的CALL客没有对应的意向客户");
+					$obj_int->isclient($int_rs);
+				break;
+				case "3": //正常接电/自然到访,不必须匹配type=5，但如果其他类型蓄水存在则提示已存在
+					if($int_rs = $obj_int->find(array("telphone"=>$telphone, "isdel"=>0))){
+						$obj_int->isclient($int_rs);
+						if($int_rs["typeid"] != "5")
+							throw new Exception("该客户处于蓄水客户的其他分类中，无法录入【正常接电/自然到访】中");
+					}
+				break;
+				case "11": //渠道直推(需跟进)来源,必须匹配type=2,必须有$channel_id
+				case "16": //渠道直推(直接成单)来源,必须匹配type=2,必须有$channel_id
+					if(!$channel_id)
+						throw new Exception("请先选择渠道");
+					$obj_channel = spClass("channel");
+					if(!$channel_rs = $obj_channel->getChannelById($channel_id))
+						throw new Exception("找不到该渠道，可能已被删除");
+					if(!$int_rs = $obj_int->find(array("typeid"=>2, "telphone"=>$telphone, "create_id"=>$channel_id, "isdel"=>0)))
+						throw new Exception("你选择的渠道没有对应的渠道蓄水客户");
+					$obj_int->isclient($int_rs);
+					if($int_rs["channelact_id"])
+						throw new Exception("该蓄水客户来源于渠道活动，无法添加到该类型客户");
+				break;
+				case "12": //渠道活动到访,不必须匹配type=2，但如果其他类型蓄水存在则提示已存在,必须有$channel_id和$channelact_id
+					if($int_rs = $obj_int->find(array("telphone"=>$telphone, "isdel"=>0))){
+						if(!$channel_id)
+							throw new Exception("请先选择渠道");
+						if(!$channelact_id)
+							throw new Exception("请选择渠道活动");
+						$obj_int->isclient($int_rs);
+						if($channel_id != $int_rs["channel_id"])
+							throw new Exception("你选择的蓄水客户与渠道不匹配");
+						if(!$int_rs["channelact_id"])
+							throw new Exception("您选择的蓄水客户并没有指定渠道活动，如有问题请联系蓄水客户的添加人");
+						if($int_rs["channelact_id"] != $channelact_id)
+							throw new Exception("您选择的渠道活动与蓄水客户不相符，无法录入");
+						if($int_rs["typeid"] != "2")
+							throw new Exception("该客户处于蓄水客户的其他分类中，无法录入【渠道活动到访】中");
+					}
+				break;
+				case "14": //同事推荐来源,必须匹配type=4,$fieldsval=同事id
+					if(!$fieldsval)
+						throw new Exception("请先选择客户来源人");
+					if(!$int_rs = $obj_int->find(array("typeid"=>4, "telphone"=>$telphone, "user_owner_id"=>$fieldsval, "isdel"=>0)))
+						throw new Exception("您选择的同事和电话，没有匹配上对应的蓄水客户");
+					$obj_int->isclient($int_rs);
+				break;
+				case "18": //线上客户来源,必须匹配type=3
+					if(!$int_rs = $obj_int->find(array("typeid"=>3, "telphone"=>$telphone, "isdel"=>0)))
+						throw new Exception("您选择的CALL客没有对应的意向客户");
+					$obj_int->isclient($int_rs);
+				break;
+				default:
+					if($int_rs = $obj_int->find(array("telphone"=>$telphone, "isdel"=>0)))
+						throw new Exception("该客户在蓄水客户中已存在，无法录入");
+				break;
 			}
 			if($int_rs){
 				$data = array();
@@ -596,7 +628,7 @@ class apis extends spController {
 					$obj_client = spClass('vipclient');
 					$obj_od = spClass("vipclient_overtime");
 					$condition = "crm_vip_client.isdel = 0";
-					$total_rs = $obj_client->find($condition_over, null, "count(id) as total");
+					$total_rs = $obj_client->find($condition, null, "count(id) as total");
 					$total = intval($total_rs["total"]);
 					$condition_od = " and crm_vip_client_overtime.endtime = 0";
 					$od_rs = $obj_od->join("crm_vip_client")->find($condition.$condition_od, null, "count(crm_vip_client_overtime.id) as total");
@@ -617,6 +649,31 @@ class apis extends spController {
 					$total = intval($total_rs["total"]);
 					$html = "<span class=\"no-text\">全部：{$total}</span>";
 				break;
+				case "vipclientdepart_clientlist":
+					$obj_client = spClass('vipclient');
+					$obj_od = spClass("vipclient_overtime");
+					$condition = "crm_vip_client.isdel = 0 and crm_user.depart_id = {$_SESSION["sscrm_user"]["depart_id"]}";
+					$total_rs = $obj_client->join("crm_user")->find($condition, null, "count(crm_vip_client.id) as total");
+					$total = intval($total_rs["total"]);
+					$condition_od = " and crm_vip_client_overtime.endtime = 0";
+					$od_rs = $obj_od->join("crm_vip_client")->join("crm_user")->find($condition.$condition_od, null, "count(crm_vip_client_overtime.id) as total");
+					$total_od = intval($od_rs["total"]);
+					$html = "<span class=\"no-text\">全部：{$total}/过期：{$total_od}</span>";
+				break;
+				case "vipclientdepart_allrecordlist":
+					$obj_record = spClass("vipclient_record");
+					$condition = "crm_vip_client_record.rtype_id = 1 and crm_user.depart_id = {$_SESSION["sscrm_user"]["depart_id"]}";
+					$total_rs = $obj_record->join("crm_user")->find($condition, null, "count(crm_vip_client_record.id) as total");
+					$total = intval($total_rs["total"]);
+					$html = "<span class=\"no-text\">全部：{$total}</span>";
+					break;
+				case "vipclientdepart_allodlist":
+					$obj_od = spClass("vipclient_overtime");
+					$condition = "1 and crm_user.depart_id = {$_SESSION["sscrm_user"]["depart_id"]}";
+					$total_rs = $obj_od->join("crm_user")->find($condition, null, "count(crm_vip_client_overtime.id) as total");
+					$total = intval($total_rs["total"]);
+					$html = "<span class=\"no-text\">全部：{$total}</span>";
+					break;
 				case "vipclients_allrecordlist":
 					$obj_record = spClass("vipclient_record");
 					$condition = "crm_vip_client_record.rtype_id = 1 and crm_vip_client_record.create_id = {$_SESSION["sscrm_user"]["id"]}";

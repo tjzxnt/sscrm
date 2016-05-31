@@ -108,6 +108,26 @@
                                 </div>
                            	</fieldset>
                            	<{/if}>
+                           	<{if $use_type_rs.isowner}>
+                           	<fieldset>
+                                <legend><span class="input_required">*</span>选择客户来源</legend>
+                                <div class="rowElem">
+                                    <label class="label">请选择</label>
+                                    <select name="user_owner_id" class="ass_input">
+	                                	<option value="">==请选择客户来源人==</option>
+	                                	<{foreach item=i key=k from=$user_group_rs}>
+	                                	<optgroup label="<{$i.dname}>">
+			                        	<{if $i.user_rs}>
+			                        	<{foreach item=ii key=kk from=$i.user_rs}>
+			                        	<option value="<{$ii.id}>" <{if $int_rs.user_owner_id == $ii.id}>selected<{/if}>><{$ii.py}> - <{$ii.realname}></option>
+			                        	<{/foreach}>
+			                        	<{/if}>
+			                        	</optgroup>
+	                                	<{/foreach}>
+	                                </select>
+                                </div>
+                           	</fieldset>
+                           	<{/if}>
                            	<fieldset>
                                 <legend><{$type_rs.name}>意向客户资料</legend>
                                 <div class="rowElem">

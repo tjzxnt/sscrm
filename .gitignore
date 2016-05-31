@@ -7,10 +7,10 @@ backup/
 demo/
 document/
 tmp/
-tpl/sscrm_oral_tpl/
+tpl/sscrm_oral_tpl/*
 .buildpath
 .project
 test.php
 test2.php
 db_config.php
-*.db
+/*

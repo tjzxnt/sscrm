@@ -186,10 +186,14 @@ class clientintention extends spController {
 	
 	public function create(){
 		$obj_int = spClass("client_intention");
+		$obj_user = spClass("user");
+		$obj_type = spClass("client_intention_type");
 		$obj_client = spClass("client");
 		$obj_country = spClass('country');
 		$obj_channel = spClass("channel");
 		$postdata = $this->spArgs();
+		if(!$use_type_rs = $obj_type->find(array("id"=>$this->type_rs["id"])))
+			throw new Exception("该客户数据类型错误");
 		if($_SERVER['REQUEST_METHOD'] == 'POST'){
 			try {
 				if(!$this->type_rs)
@@ -198,9 +202,13 @@ class clientintention extends spController {
 				$isAjax = $postdata['isAjax'];
 				$data['typeid'] = $this->type_rs["id"];
 				$data["init_create_id"] = $data['create_id'] = $_SESSION["sscrm_user"]["id"];
-				if($this->type_rs["ischannel"]){
+				if($use_type_rs["ischannel"]){
 					$data['channel_id'] = intval($postdata['channel_id']);
 					$data['channelact_id'] = intval($postdata['channelact_id']);
+				}
+				if($use_type_rs["isowner"]){
+					if(!$data['user_owner_id'] = intval($postdata['user_owner_id']))
+						throw new Exception("请选择客户来源人");
 				}
 				$data['realname'] = $postdata['realname'];
 				$data['sex'] = intval($postdata['sex']);
@@ -264,7 +272,14 @@ class clientintention extends spController {
 				exit();
 			}
 		}
-		$this->channel_prep_rs = $obj_channel->getAllChannel_prep("maintenance_id = {$_SESSION["sscrm_user"]["id"]}");
+		if($use_type_rs["ischannel"])
+			$this->channel_prep_rs = $obj_channel->getAllChannel_prep("maintenance_id = {$_SESSION["sscrm_user"]["id"]}");
+		if($use_type_rs["isowner"]){
+			$groupdepart_condition = "crm_user.id <> {$_SESSION["sscrm_user"]["id"]}";
+			$this->user_group_rs = $obj_user->getUserGroupDepart_prep($groupdepart_condition);
+			unset($groupdepart_condition);
+		}
+		$this->use_type_rs = $use_type_rs;
 		$this->cred_rs = spClass("credential")->get_credential();
 		$this->country_rs = $obj_country->getlist();
 		$this->saveurl = spUrl("clientintention", "create");
@@ -272,6 +287,7 @@ class clientintention extends spController {
 	
 	public function modify(){
 		try {
+			$obj_user = spClass("user");
 			$obj_int = spClass("client_intention");
 			$obj_type = spClass("client_intention_type");
 			$obj_client = spClass("client");
@@ -296,6 +312,10 @@ class clientintention extends spController {
 					if($use_type_rs["ischannel"]){
 						$data['channel_id'] = intval($int_rs['channel_id']);
 						$data['channelact_id'] = intval($postdata['channelact_id']);
+					}
+					if($use_type_rs["isowner"]){
+						if(!$data['user_owner_id'] = intval($postdata['user_owner_id']))
+							throw new Exception("请选择客户来源人");
 					}
 					$data['typeid'] = $use_type_rs['id'];
 					$data['realname'] = $postdata['realname'];
@@ -334,6 +354,15 @@ class clientintention extends spController {
 					exit();
 				}
 			}
+			if($int_rs["channel_id"]){
+				$this->channel_name = $obj_channel->getname($int_rs["channel_id"]);
+				$this->act_rs = $obj_act->get_actives_by_channelid($int_rs["channel_id"]);
+			}
+			if($use_type_rs["isowner"]){
+				$groupdepart_condition = "crm_user.id <> {$_SESSION["sscrm_user"]["id"]}";
+				$this->user_group_rs = $obj_user->getUserGroupDepart_prep($groupdepart_condition);
+				unset($groupdepart_condition);
+			}
 			$this->id = $id;
 			$this->int_rs = $int_rs;
 			$this->country_rs = $obj_country->getlist();
@@ -341,10 +370,6 @@ class clientintention extends spController {
 			$this->saveurl = spUrl("clientintention", "modify");
 			$this->channel_prep_rs = $obj_channel->getAllChannel_prep("maintenance_id = {$_SESSION["sscrm_user"]["id"]}");
 			$this->use_type_rs = $use_type_rs;
-			if($int_rs["channel_id"]){
-				$this->channel_name = $obj_channel->getname($int_rs["channel_id"]);
-				$this->act_rs = $obj_act->get_actives_by_channelid($int_rs["channel_id"]);
-			}
 			$this->display("clientintention/create.html");
 			exit();
 		}catch(Exception $e){

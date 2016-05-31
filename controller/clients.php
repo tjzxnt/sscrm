@@ -302,23 +302,63 @@ class clients extends spController {
 						}
 					}
 					$obj_client->getDb()->beginTrans();
-					if($this->ass_rs){
-						$obj_int = spClass("client_intention");
-						if($this->ass_rs["fields"] == "SEARCHBYTEL"){
-							$int_temp_rs = $obj_int->getintention($this->ass_rs["type"], $data["telphone"]);
-							$ass_field = intval($int_temp_rs["create_id"]);
-						}else
-							$ass_field = $this->ass_rs["fields"];
-						if(!$ass_field){
-							if($this->ass_rs["ismustass"])
-								throw new Exception($this->ass_rs["fieldnull"]);
-						}
-						eval("\$ass_createid = $ass_field;");
-						if(!$int_rs = $obj_int->checkintention($this->ass_rs["type"], $ass_createid, $data)){
-							if($this->ass_rs["ismustass"])
-								throw new Exception($this->ass_rs["checkerror"].$data[$ass_field]);
-						}
-						//throw new Exception("技术部调试中，请稍后".$ass_createid."x");
+					$obj_int = spClass("client_intention");
+					switch($origin_id){
+						case "2": //call客来源,必须匹配type=1,$fieldsval=call客来源，即蓄水call创建人
+							if(!$data["user_teler_id"])
+								throw new Exception("请先选择call客");
+							if(!$int_rs = $obj_int->find(array("typeid"=>1, "telphone"=>$data["telphone"], "create_id"=>$data["user_teler_id"], "isdel"=>0)))
+								throw new Exception("您选择的CALL客没有对应的蓄水客户");
+							$obj_int->isclient($int_rs);
+						break;
+						case "3": //正常接电/自然到访,不必须匹配type=5，但如果其他类型蓄水存在则提示已存在
+							if($int_rs = $obj_int->find(array("telphone"=>$data["telphone"], "isdel"=>0))){
+								$obj_int->isclient($int_rs);
+								if($int_rs["typeid"] != "5")
+									throw new Exception("该客户处于蓄水客户的其他分类中，无法录入【正常接电/自然到访】中");
+							}
+						break;
+						case "11": //渠道直推(需跟进)来源,必须匹配type=2,必须有$channel_id
+						case "16": //渠道直推(直接成单)来源,必须匹配type=2,必须有$channel_id
+							if(!$int_rs = $obj_int->find(array("typeid"=>2, "telphone"=>$data["telphone"], "create_id"=>$channel_rs["create_id"], "isdel"=>0)))
+								throw new Exception("你选择的渠道没有对应的渠道蓄水客户");
+							$obj_int->isclient($int_rs);
+							if($int_rs["channelact_id"])
+								throw new Exception("该蓄水客户来源于渠道活动，无法添加到该类型客户");
+						break;
+						case "12": //渠道活动到访,不必须匹配type=2，但如果其他类型蓄水存在则提示已存在,必须有$channel_id和$channelact_id
+							if($int_rs = $obj_int->find(array("telphone"=>$data["telphone"], "isdel"=>0))){
+								if(!$data['channel_id'])
+									throw new Exception("请先选择渠道");
+								if(!$data['channelact_id'])
+									throw new Exception("请选择渠道活动");
+								$obj_int->isclient($int_rs);
+								if($data['channel_id'] != $int_rs["channel_id"])
+									throw new Exception("你选择的蓄水客户与渠道不匹配");
+								if(!$int_rs["channelact_id"])
+									throw new Exception("您选择的蓄水客户并没有指定渠道活动，如有问题请联系蓄水客户的添加人");
+								if($int_rs["channelact_id"] != $data['channelact_id'])
+									throw new Exception("您选择的渠道活动与蓄水客户不相符，无法录入");
+								if($int_rs["typeid"] != "2")
+									throw new Exception("该客户处于蓄水客户的其他分类中，无法录入【渠道活动到访】中");
+							}
+						break;
+						case "14": //同事推荐来源,必须匹配type=4,$fieldsval=同事id
+							if(!$data["user_owner_id"])
+								throw new Exception("请先选择客户来源人");
+							if(!$int_rs = $obj_int->find(array("typeid"=>4, "telphone"=>$data["telphone"], "user_owner_id"=>$data["user_owner_id"], "isdel"=>0)))
+								throw new Exception("您选择的同事推荐客户没有对应的蓄水客户");
+							$obj_int->isclient($int_rs);
+						break;
+						case "18": //线上客户来源,必须匹配type=3
+							if(!$int_rs = $obj_int->find(array("typeid"=>3, "telphone"=>$data["telphone"], "isdel"=>0)))
+								throw new Exception("您选择的线上客户没有对应的蓄水客户");
+							$obj_int->isclient($int_rs);
+						break;
+						default:
+							if($int_rs = $obj_int->find(array("telphone"=>$data["telphone"], "isdel"=>0)))
+								throw new Exception("该客户在蓄水客户中已存在，无法录入");
+						break;
 					}
 					if(!$id = $obj_client->create($data))
 						throw new Exception("未知错误，添加失败");
